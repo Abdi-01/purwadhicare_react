@@ -38,6 +38,12 @@ body {
   min-height: 80vh;
   margin-top: 72px;
 }
+.content-user {
+  overflow: hidden;
+  padding: 0 12.5px 5px 12.5px;
+  min-height: 80vh;
+  margin-top: 72px;
+}
 .left-side-menu {
   width: 250px;
   background: #fff;
@@ -3315,4 +3321,3 @@ body.authentication-bg {
   left: 0;
   right: 0;
 }
-/*# sourceMappingURL=app.min.css.map */
