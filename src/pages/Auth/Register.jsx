@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Redirect } from "react-router-dom";
-import { register } from "../action";
+import { register } from "../../redux/actions";
 import { Helmet } from "react-helmet-async";
 
 const defaultData = {
@@ -55,30 +55,21 @@ const Register = () => {
                     <div className="col-lg-6 p-5">
                       <div className="mx-auto mb-5">
                         <a href="index.html">
-                          <img
-                            src="assets/images/logo.png"
-                            alt=""
-                            height={90}
-                          />
+                          <img src="assets/images/logo.png" alt="" height={90} />
                           {/* <h3 className="d-inline align-middle ml-1 text-logo">
                             Purwadicare
                           </h3> */}
                         </a>
                       </div>
                       <h6 className="h5 mb-0 mt-4">Create your account</h6>
-                      <p className="text-muted mt-0 mb-4">
-                        Create a free account and start using Purwadhicare
-                      </p>
+                      <p className="text-muted mt-0 mb-4">Create a free account and start using Purwadhicare</p>
                       <form action="#" className="authentication-form">
                         <div className="form-group">
                           <label className="form-control-label">Username</label>
                           <div className="input-group input-group-merge">
                             <div className="input-group-prepend">
                               <span className="input-group-text">
-                                <i
-                                  className="fas fa-user"
-                                  data-feather="user"
-                                />
+                                <i className="fas fa-user" data-feather="user" />
                               </span>
                             </div>
                             <input
@@ -92,9 +83,7 @@ const Register = () => {
                           </div>
                         </div>
                         <div className="form-group">
-                          <label className="form-control-label">
-                            Email Address
-                          </label>
+                          <label className="form-control-label">Email Address</label>
                           <div className="input-group input-group-merge">
                             <div className="input-group-prepend">
                               <span className="input-group-text">
@@ -116,11 +105,7 @@ const Register = () => {
                           <div className="input-group input-group-merge">
                             <div className="input-group-prepend">
                               <span className="input-group-text">
-                                <i
-                                  className={isOpen()}
-                                  style={styles.password}
-                                  onClick={() => setOpenPass(!openPass)}
-                                />
+                                <i className={isOpen()} style={styles.password} onClick={() => setOpenPass(!openPass)} />
                               </span>
                             </div>
                             <input
@@ -133,17 +118,11 @@ const Register = () => {
                             />
                           </div>
                           <small style={{ color: "grey", fontSize: 12 }}>
-                            * Password must have min 5 character, include number
-                            and symbol
+                            * Password must have min 5 character, include number and symbol
                           </small>
                         </div>
                         <div className="form-group mb-0 text-center">
-                          <button
-                            className="btn btn-primary btn-block"
-                            type="submit"
-                            onClick={onSubmitForm}
-                            disabled={isLoading}
-                          >
+                          <button className="btn btn-primary btn-block" type="submit" onClick={onSubmitForm} disabled={isLoading}>
                             {isLoading === true ? "Loading..." : "Sign Up"}
                           </button>
                         </div>
@@ -153,12 +132,8 @@ const Register = () => {
                       <div className="auth-page-sidebar">
                         <div className="overlay" />
                         <div className="auth-user-testimonial">
-                          <p className="font-size-24 font-weight-bold text-white mb-1">
-                            Stay Safe & Healthy
-                          </p>
-                          <p className="lead">
-                            "Perfect Life comes from Perfect Health"
-                          </p>
+                          <p className="font-size-24 font-weight-bold text-white mb-1">Stay Safe & Healthy</p>
+                          <p className="lead">"Perfect Life comes from Perfect Health"</p>
                           <p>- Anonym</p>
                         </div>
                       </div>
@@ -172,10 +147,7 @@ const Register = () => {
                 <div className="col-12 text-center">
                   <p className="text-muted">
                     Already have account?{" "}
-                    <a
-                      href="/login"
-                      className="text-primary font-weight-bold ml-1"
-                    >
+                    <a href="/login" className="text-primary font-weight-bold ml-1">
                       Login
                     </a>
                   </p>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { login } from "../action";
+import { login } from "../../redux/actions";
 
 const defaultData = {
   email: "",
@@ -34,7 +34,6 @@ function Login() {
 
   const submitForm = (e) => {
     e.preventDefault();
-
     dispatch(login(data, history));
   };
 
@@ -53,22 +52,14 @@ function Login() {
                     <div className="col-md-6 p-5">
                       <div className="mx-auto mb-5">
                         <a href="index.html">
-                          <img
-                            src="assets/images/logo.png"
-                            alt=""
-                            height={90}
-                          />
+                          <img src="assets/images/logo.png" alt="" height={90} />
                         </a>
                       </div>
                       <h6 className="h5 mb-0 mt-4">Welcome back!</h6>
-                      <p className="text-muted mt-1 mb-4">
-                        Enter your email address and password.
-                      </p>
+                      <p className="text-muted mt-1 mb-4">Enter your email address and password.</p>
                       <form action="#" className="authentication-form">
                         <div className="form-group">
-                          <label className="form-control-label">
-                            Email Address
-                          </label>
+                          <label className="form-control-label">Email Address</label>
                           <div className="input-group input-group-merge">
                             <div className="input-group-prepend">
                               <span className="input-group-text">
@@ -87,20 +78,13 @@ function Login() {
                         </div>
                         <div className="form-group mt-4">
                           <label className="form-control-label">Password</label>
-                          <a
-                            href="/forget-password"
-                            className="float-right text-muted text-unline-dashed ml-1"
-                          >
+                          <a href="/forget-password" className="float-right text-muted text-unline-dashed ml-1">
                             Forgot your password?
                           </a>
                           <div className="input-group input-group-merge">
                             <div className="input-group-prepend">
                               <span className="input-group-text">
-                                <i
-                                  className={isOpen()}
-                                  style={styles.password}
-                                  onClick={() => setOpenPass(!openPass)}
-                                />
+                                <i className={isOpen()} style={styles.password} onClick={() => setOpenPass(!openPass)} />
                               </span>
                             </div>
                             <input
@@ -116,26 +100,14 @@ function Login() {
                         </div>
                         <div className="form-group mb-4">
                           <div className="custom-control custom-checkbox">
-                            <input
-                              type="checkbox"
-                              className="custom-control-input"
-                              id="checkbox-signin"
-                              defaultChecked
-                            />
-                            <label
-                              className="custom-control-label"
-                              htmlFor="checkbox-signin"
-                            >
+                            <input type="checkbox" className="custom-control-input" id="checkbox-signin" defaultChecked />
+                            <label className="custom-control-label" htmlFor="checkbox-signin">
                               Remember me
                             </label>
                           </div>
                         </div>
                         <div className="form-group mb-0 text-center">
-                          <button
-                            className="btn btn-primary btn-block"
-                            type="submit"
-                            onClick={submitForm}
-                          >
+                          <button className="btn btn-primary btn-block" type="submit" onClick={submitForm}>
                             {" "}
                             {isLoading ? "Loading..." : "Login"}
                           </button>
@@ -151,12 +123,8 @@ function Login() {
                       <div className="auth-page-sidebar">
                         <div className="overlay" />
                         <div className="auth-user-testimonial">
-                          <p className="font-size-24 font-weight-bold text-white mb-1">
-                            Stay Safe & Healthy
-                          </p>
-                          <p className="lead">
-                            "Perfect Life comes from Perfect Health"
-                          </p>
+                          <p className="font-size-24 font-weight-bold text-white mb-1">Stay Safe & Healthy</p>
+                          <p className="lead">"Perfect Life comes from Perfect Health"</p>
                           <p>- Anonym</p>
                         </div>
                       </div>
@@ -170,10 +138,7 @@ function Login() {
                 <div className="col-12 text-center">
                   <p className="text-muted">
                     Don't have an account?{" "}
-                    <a
-                      href="/register"
-                      className="text-primary font-weight-bold ml-1"
-                    >
+                    <a href="/register" className="text-primary font-weight-bold ml-1">
                       Sign Up
                     </a>
                   </p>

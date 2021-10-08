@@ -1,9 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Button, Modal, Form } from "react-bootstrap";
 import { API_URL } from "../../constants/API";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { Helmet } from "react-helmet-async";
 
 const Profile = () => {
+  const globalUser = useSelector((state) => state.user);
   const [userData, setUserData] = useState([]);
   const [uploadImg, setUploadImg] = useState({
     nameImg: "",
@@ -11,14 +16,23 @@ const Profile = () => {
     addFile: "",
     id: 29,
   });
+  const [isLoading, setIsLoading] = useState(true);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   useEffect(() => {
     fetchData();
+    setIsLoading(false);
   }, []);
 
   const fetchData = () => {
     axios
-      .get(API_URL + "/users/profile/" + 29)
+      .get(API_URL + "/user/profile", {
+        params: {
+          iduser: globalUser.user.iduser,
+        },
+      })
       .then((res) => {
         setUserData(res.data[0]);
       })
@@ -45,7 +59,11 @@ const Profile = () => {
       let formData = new FormData();
       formData.append("file", uploadImg.addFile);
       axios
-        .patch(API_URL + "/users/picture/" + uploadImg.id, formData)
+        .patch(API_URL + "/user/picture/" + globalUser.user.iduser, formData, {
+          params: {
+            oldFile: userData.picture,
+          },
+        })
         .then((res) => {
           fetchData();
           Swal.fire("Upload File!", res.data.message, "success");
@@ -64,27 +82,27 @@ const Profile = () => {
           <div className="form-group">
             <label className="col-lg-3 control-label">Nama Lengkap</label>
             <div className="col-lg-8">
-              <input className="form-control" type="text" value={userData.full_name} />
+              <input className="form-control" type="text" defaultValue={userData.full_name} />
             </div>
           </div>
           <div className="form-group">
             <label className="col-lg-3 control-label">Email</label>
             <div className="col-lg-8">
-              <input className="form-control" type="text" value={userData.email} />
+              <input className="form-control" type="text" defaultValue={userData.email} />
             </div>
           </div>
           <div className="form-group">
             <label className="col-lg-3 control-label">Umur</label>
             <div className="col-lg-8">
-              <input className="form-control" type="number" value={userData.age} />
+              <input className="form-control" type="number" defaultValue={userData.age} />
             </div>
           </div>
           <div className="form-group">
             <label className="col-lg-3 control-label">Jenis Kelamin</label>
             <div className="col-lg-8">
               <div className="ui-select">
-                <select id="user_time_zone" className="form-control">
-                  <option value="Laki laki">Laki Laki</option>
+                <select id="gender" className="form-control">
+                  <option defaultValue="Laki laki">Laki Laki</option>
                 </select>
               </div>
             </div>
@@ -107,8 +125,15 @@ const Profile = () => {
     );
   };
 
+  if (isLoading) {
+    return <h2 className="container">Loading.....</h2>;
+  }
+
   return (
     <div className="content-user">
+      <Helmet>
+        <title>Profile | Purwadhicare</title>
+      </Helmet>
       <div className="content">
         <div className="container-fluid ">
           <div className="d-flex flex-row justify-content-md-center my-4">
@@ -137,9 +162,36 @@ const Profile = () => {
               >
                 Ubah Foto
               </button>
-              <button className="btn btn-primary btn-block mt-3">Ubah Password</button>
+              <button className="btn btn-primary btn-block mt-3" onClick={handleShow}>
+                Ubah Password
+              </button>
             </div>
             <RenderForm />
+            <Modal show={show} onHide={handleClose} centered>
+              <Modal.Header closeButton>
+                <Modal.Title>Ubah Password</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                  <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control type="password" />
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                    <Form.Label>Re-Password</Form.Label>
+                    <Form.Control type="password" />
+                  </Form.Group>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                  Close
+                </Button>
+                <Button variant="primary" onClick={handleClose}>
+                  Save Changes
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </div>
         </div>
       </div>

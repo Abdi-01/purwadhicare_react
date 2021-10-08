@@ -2,6 +2,8 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet-async";
+import { API_URL } from "../../constants/API";
+import Swal from "sweetalert2";
 
 function ForgetPassword() {
   const [email, setEmail] = useState("");
@@ -12,8 +14,9 @@ function ForgetPassword() {
     e.preventDefault();
 
     axios
-      .post("http://localhost:2200/user/forgetPassword", { email })
+      .post(API_URL + "/user/forgetPassword", { email })
       .then((res) => {
+        Swal.fire("Reset Password!", "reset Password berhasil!", "success");
         console.log("success");
       })
       .catch((err) => {
@@ -35,25 +38,14 @@ function ForgetPassword() {
                     <div className=" p-5">
                       <div className="mx-auto mb-5">
                         <a href="index.html">
-                          <img
-                            src="https://i.ibb.co/8dp71H3/logo.png"
-                            alt=""
-                            height={90}
-                          />
+                          <img src="https://i.ibb.co/8dp71H3/logo.png" alt="" height={90} />
                         </a>
                       </div>
-                      <h6 className="h5 mb-0 mt-4">
-                        Enter your registered email address.
-                      </h6>
-                      <p className="text-muted mt-1 mb-4">
-                        We'll send you an email to reset / change your old
-                        password.
-                      </p>
+                      <h6 className="h5 mb-0 mt-4">Enter your registered email address.</h6>
+                      <p className="text-muted mt-1 mb-4">We'll send you an email to reset / change your old password.</p>
                       <form action="#" className="authentication-form">
                         <div className="form-group">
-                          <label className="form-control-label">
-                            Email Address
-                          </label>
+                          <label className="form-control-label">Email Address</label>
                           <div className="input-group input-group-merge">
                             <div className="input-group-prepend">
                               <span className="input-group-text">
@@ -71,11 +63,7 @@ function ForgetPassword() {
                           </div>
                         </div>
                         <div className="form-group mb-0 text-center">
-                          <button
-                            className="btn btn-primary btn-block"
-                            type="submit"
-                            onClick={onSubmitForm}
-                          >
+                          <button className="btn btn-primary btn-block" type="submit" onClick={onSubmitForm}>
                             {" "}
                             {isLoading ? "Loading..." : "Send"}
                           </button>
