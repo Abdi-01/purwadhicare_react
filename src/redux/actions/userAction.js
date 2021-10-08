@@ -1,4 +1,5 @@
 import Axios from "axios";
+import { API_URL } from "../../constants/API";
 
 // Action Untuk Fitur Register
 export const register = (data, setToLogin) => {
@@ -7,7 +8,7 @@ export const register = (data, setToLogin) => {
     dispatch({ type: "LOADING", payload: true });
     dispatch({ type: "ERROR", payload: [] });
     try {
-      await Axios.put("http://localhost:2200/user/register", data);
+      await Axios.put(API_URL + "/user/register", data);
       {
         setToLogin(true);
       }
@@ -26,15 +27,18 @@ export const register = (data, setToLogin) => {
 export const login = (data, history) => async (dispatch) => {
   dispatch({ type: "LOADING", payload: true });
   try {
-    const result = await Axios.post("http://localhost:2200/user/login", data);
-    localStorage.setItem("token", result.data.token);
-    dispatch({ type: "LOGIN", payload: result.data.user });
-    // console.log(result.data.dataLogin);
-    if (result.data.dataLogin.role === "user") {
+    const result = await Axios.post(API_URL + "/user/login", data);
+    const { dataLogin, token } = result.data;
+    delete dataLogin.password;
+    localStorage.setItem("token", token);
+    localStorage.setItem("user_data", JSON.stringify(dataLogin));
+    dispatch({ type: "LOGIN", payload: dataLogin });
+    // console.log(dataLogin);
+    if (dataLogin.role === "user") {
       history.push("/");
     }
     // else {
-    //   history.push("/admin/dashboard");
+    //   history.push("/admin");
     // }
     dispatch({ type: "LOADING", payload: false });
   } catch (err) {
@@ -49,9 +53,37 @@ export const logout = () => {
   return async (dispatch) => {
     try {
       localStorage.removeItem("token");
+      localStorage.removeItem("user_data");
       dispatch({ type: "LOGOUT" });
     } catch (err) {
       console.log(err);
     }
+  };
+};
+
+// Aksi untuk tetap login walaupun di refresh
+export const userKeepLogin = (userData) => {
+  return (dispatch) => {
+    Axios.get(API_URL + "/user/profile", {
+      params: {
+        iduser: userData.iduser,
+      },
+    })
+      .then((result) => {
+        localStorage.setItem("user_data", JSON.stringify(result.data[0]));
+        dispatch({
+          type: "LOGIN",
+          payload: result.data[0],
+        });
+      })
+      .catch(() => {
+        alert("Gagal server");
+      });
+  };
+};
+
+export const checkStorage = () => {
+  return {
+    type: "CHECK_STORAGE",
   };
 };

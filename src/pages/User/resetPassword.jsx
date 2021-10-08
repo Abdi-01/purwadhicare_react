@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
+import { API_URL } from "../../constants/API";
 
 function ResetPassword() {
   const location = useLocation();
@@ -19,7 +20,7 @@ function ResetPassword() {
     e.preventDefault();
 
     axios
-      .post("http://localhost:2200/user/resetPassword", {
+      .post(API_URL + "/user/resetPassword", {
         token,
         password: newPassword,
       })
@@ -47,30 +48,18 @@ function ResetPassword() {
                     <div className=" p-5">
                       <div className="mx-auto mb-5">
                         <a href="index.html">
-                          <img
-                            src="https://i.ibb.co/8dp71H3/logo.png"
-                            alt=""
-                            height={90}
-                          />
+                          <img src="https://i.ibb.co/8dp71H3/logo.png" alt="" height={90} />
                         </a>
                       </div>
-                      <h6 className="h5 mb-0 mt-4">
-                        Let's Change Your Password!
-                      </h6>
-                      <p className="text-muted mt-1 mb-4">
-                        Enter Your New Password
-                      </p>
+                      <h6 className="h5 mb-0 mt-4">Let's Change Your Password!</h6>
+                      <p className="text-muted mt-1 mb-4">Enter Your New Password</p>
                       <form action="#" className="authentication-form">
                         <div className="form-group ">
                           <label className="form-control-label">Password</label>
                           <div className="input-group input-group-merge">
                             <div className="input-group-prepend">
                               <span className="input-group-text">
-                                <i
-                                  className={isOpen()}
-                                  style={styles.password}
-                                  onClick={() => setOpenPass(!openPass)}
-                                />
+                                <i className={isOpen()} style={styles.password} onClick={() => setOpenPass(!openPass)} />
                               </span>
                             </div>
                             <input
@@ -83,20 +72,12 @@ function ResetPassword() {
                             />
                           </div>
                           <small style={{ color: "grey", fontSize: 12 }}>
-                            * Password must have min 5 character, include number
-                            and symbol
+                            * Password must have min 5 character, include number and symbol
                           </small>
                         </div>
                         <div className="form-group mb-0 text-center">
-                          <button
-                            className="btn btn-primary btn-block"
-                            type="submit"
-                            onClick={onSubmitForm}
-                            disabled={isLoading}
-                          >
-                            {isLoading === true
-                              ? "Loading..."
-                              : "Change Password"}
+                          <button className="btn btn-primary btn-block" type="submit" onClick={onSubmitForm} disabled={isLoading}>
+                            {isLoading === true ? "Loading..." : "Change Password"}
                           </button>
                         </div>
                         <div className="row mt-3">
@@ -105,11 +86,7 @@ function ResetPassword() {
                               {toLogin === false ? (
                                 "Back To Login Page"
                               ) : (
-                                <a
-                                  href="/login"
-                                  className="text-primary font-weight-bold ml-1"
-                                  disabled={isLoading}
-                                >
+                                <a href="/login" className="text-primary font-weight-bold ml-1" disabled={isLoading}>
                                   Back To Login Page
                                 </a>
                               )}

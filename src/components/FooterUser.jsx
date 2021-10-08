@@ -12,16 +12,8 @@ function FooterUser() {
         <div className="container">
           <div className="row">
             <div className="col-lg-6">
-              <a
-                href="index.html"
-                className="navbar-brand mr-lg-5 font-size-22 font-weight-bold text-dark"
-              >
-                <img
-                  src="assets/images/logo.png"
-                  alt=""
-                  className="logo-dark mr-2"
-                  height={42}
-                />
+              <a href="index.html" className="navbar-brand mr-lg-5 font-size-22 font-weight-bold text-dark">
+                <img src="/assets/images/logo.png" alt="" className="logo-dark mr-2" height={42} />
               </a>
               <p className="font-size-15 mt-4">
                 Shreyu makes it easier to build better websites with
@@ -50,9 +42,7 @@ function FooterUser() {
           <div className="row">
             <div className="col-lg-12">
               <div className="mt-5">
-                <p className="mt-4 text-center mb-0">
-                  © 2019 Shreyu. Design and coded by Coderthemes
-                </p>
+                <p className="mt-4 text-center mb-0">© 2021 Purwadhicare. All right reserved</p>
               </div>
             </div>
           </div>

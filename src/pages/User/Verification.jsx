@@ -1,6 +1,8 @@
 import axios from "axios";
 import React from "react";
 import { Helmet } from "react-helmet-async";
+import { API_URL } from "../../constants/API";
+
 class Verification extends React.Component {
   constructor(props) {
     super(props);
@@ -12,7 +14,7 @@ class Verification extends React.Component {
   componentDidMount() {
     axios
       .patch(
-        `http://localhost:2200/user/verified`,
+        API_URL + `/user/verified`,
         {},
         {
           headers: {
@@ -29,12 +31,6 @@ class Verification extends React.Component {
   }
   render() {
     return (
-      // <div className="container p-5">
-      //   <h2>{this.state.message}</h2>
-      //   <h2>
-      //     <a href="/login">Back to Login Page</a>
-      //   </h2>
-      // </div>
       <div className="authentication-bg">
         <div className="account-pages my-5">
           <div className="container">
@@ -49,11 +45,7 @@ class Verification extends React.Component {
                       <div className=" p-5">
                         <div className="mx-auto mb-5">
                           <a href="index.html">
-                            <img
-                              src="https://i.ibb.co/8dp71H3/logo.png"
-                              alt=""
-                              height={90}
-                            />
+                            <img src="https://i.ibb.co/8dp71H3/logo.png" alt="" height={90} />
                           </a>
                         </div>
                         <form action="#" className="authentication-form">

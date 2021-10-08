@@ -1,11 +1,8 @@
 const INITIAL_STATE = {
-  user: {
-    iduser: null,
-    email: "",
-    username: "",
-  },
+  user: {},
   isLoading: false,
   logError: [],
+  storageIsChecked: false,
 };
 
 export const userReducer = (state = INITIAL_STATE, action) => {
@@ -24,9 +21,12 @@ export const userReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         user: action.payload,
+        storageIsChecked: true,
       };
     case "LOGOUT":
-      return INITIAL_STATE;
+      return { ...INITIAL_STATE, storageIsChecked: true };
+    case "CHECK_STORAGE":
+      return { ...state, storageIsChecked: true };
     default:
       return state;
   }

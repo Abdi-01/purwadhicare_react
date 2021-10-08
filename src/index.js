@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import { createStore, applyMiddleware } from "redux";
 import { HelmetProvider } from "react-helmet-async";
 import ReduxThunk from "redux-thunk";
-import rootReducers from "./reducers";
+import rootReducers from "./redux/reducers";
 import { BrowserRouter as Router } from "react-router-dom";
 
 const store = createStore(rootReducers, applyMiddleware(ReduxThunk));
