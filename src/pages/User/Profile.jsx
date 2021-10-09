@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Button, Modal, Form } from "react-bootstrap";
+import { Button, Modal, Form, InputGroup } from "react-bootstrap";
 import { API_URL } from "../../constants/API";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -12,15 +12,31 @@ const Profile = () => {
   const [userData, setUserData] = useState([]);
   const [uploadImg, setUploadImg] = useState({
     nameImg: "",
-    previewImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png",
+    previewImg:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png",
     addFile: "",
     id: 29,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [openPass, setOpenPass] = useState(false);
   const [show, setShow] = useState(false);
+  const [password, setPassword] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const isOpen = () => (openPass ? "fas fa-eye" : "fas fa-eye-slash");
+  const onChangePassword = (e) => {
+    const key = e.target.attributes.name.value;
+    const value = e.target.value;
+    // console.log(key, value);
+    setPassword((prevData) => ({ ...prevData, [key]: value }));
+  };
+
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+  // console.log(globalUser.user.iduser, newPassword);
+  // console.log(globalUser.user);
   useEffect(() => {
     fetchData();
     setIsLoading(false);
@@ -39,6 +55,31 @@ const Profile = () => {
       .catch((err) => {
         console.log(err);
         alert(err);
+      });
+  };
+
+  const saveNewPassword = (e) => {
+    e.preventDefault();
+    // console.log(password);
+    axios
+      .post(API_URL + "/user/changePassword", {
+        iduser: globalUser.user.iduser,
+        ...password,
+      })
+      .then((res) => {
+        Swal.fire(
+          "Your New Password is Set!",
+          "Silahkan Lanjut Berbelanja",
+          "success"
+        );
+      })
+      .catch((err) => {
+        if (err.response.data !== 1) {
+          Swal.fire("Change Password Failed!", err.response.data.msg, "error");
+        }
+        // err.response.data.forEach((e) => {
+        //   Swal.fire("Change Password Failed!", err.response.data.msg, "error");
+        // });
       });
   };
 
@@ -82,19 +123,31 @@ const Profile = () => {
           <div className="form-group">
             <label className="col-lg-3 control-label">Nama Lengkap</label>
             <div className="col-lg-8">
-              <input className="form-control" type="text" defaultValue={userData.full_name} />
+              <input
+                className="form-control"
+                type="text"
+                defaultValue={userData.full_name}
+              />
             </div>
           </div>
           <div className="form-group">
             <label className="col-lg-3 control-label">Email</label>
             <div className="col-lg-8">
-              <input className="form-control" type="text" defaultValue={userData.email} />
+              <input
+                className="form-control"
+                type="text"
+                defaultValue={userData.email}
+              />
             </div>
           </div>
           <div className="form-group">
             <label className="col-lg-3 control-label">Umur</label>
             <div className="col-lg-8">
-              <input className="form-control" type="number" defaultValue={userData.age} />
+              <input
+                className="form-control"
+                type="number"
+                defaultValue={userData.age}
+              />
             </div>
           </div>
           <div className="form-group">
@@ -154,7 +207,12 @@ const Profile = () => {
                   alt="Cinque Terre"
                 ></img>
               </div>
-              <input onChange={imageHandler} className="form-control mt-3" type="file" placeholder="input title here" />
+              <input
+                onChange={imageHandler}
+                className="form-control mt-3"
+                type="file"
+                placeholder="input title here"
+              />
               <button
                 className="btn btn-secondary btn-block mt-3"
                 disabled={!uploadImg.addFile ? "disabled" : null}
@@ -162,7 +220,10 @@ const Profile = () => {
               >
                 Ubah Foto
               </button>
-              <button className="btn btn-primary btn-block mt-3" onClick={handleShow}>
+              <button
+                className="btn btn-primary btn-block mt-3"
+                onClick={handleShow}
+              >
                 Ubah Password
               </button>
             </div>
@@ -173,13 +234,66 @@ const Profile = () => {
               </Modal.Header>
               <Modal.Body>
                 <Form>
-                  <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" />
+                  <Form.Group className="mb-3">
+                    <Form.Label>Old Password </Form.Label>
+                    <InputGroup style={{ display: "flex" }}>
+                      <InputGroup.Text>
+                        <i
+                          className={isOpen()}
+                          style={styles.password}
+                          onClick={() => setOpenPass(!openPass)}
+                        />
+                      </InputGroup.Text>
+                      <Form.Control
+                        type={openPass ? "text" : "password"}
+                        name="oldPassword"
+                        defaultValue={password.oldPassword}
+                        onChange={onChangePassword}
+                        placeholder="Current Password"
+                      />
+                    </InputGroup>
                   </Form.Group>
-                  <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                    <Form.Label>Re-Password</Form.Label>
-                    <Form.Control type="password" />
+
+                  <Form.Group className="mb-3">
+                    <Form.Label>New Password</Form.Label>
+                    <InputGroup style={{ display: "flex" }}>
+                      <InputGroup.Text>
+                        <i
+                          className={isOpen()}
+                          style={styles.password}
+                          onClick={() => setOpenPass(!openPass)}
+                        />
+                      </InputGroup.Text>
+                      <Form.Control
+                        type={openPass ? "text" : "password"}
+                        name="newPassword"
+                        placeholder="New Password"
+                        defaultValue={password.newPassword}
+                        onChange={onChangePassword}
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                  <Form.Group
+                    className="mb-3"
+                    controlId="exampleForm.ControlInput1"
+                  >
+                    <Form.Label>Confirm New Password</Form.Label>
+                    <InputGroup style={{ display: "flex" }}>
+                      <InputGroup.Text>
+                        <i
+                          className={isOpen()}
+                          style={styles.password}
+                          onClick={() => setOpenPass(!openPass)}
+                        />
+                      </InputGroup.Text>
+                      <Form.Control
+                        type={openPass ? "text" : "password"}
+                        name="confirmPassword"
+                        defaultValue={password.confirmPassword}
+                        onChange={onChangePassword}
+                        placeholder="Confirm New Password"
+                      />
+                    </InputGroup>
                   </Form.Group>
                 </Form>
               </Modal.Body>
@@ -187,7 +301,7 @@ const Profile = () => {
                 <Button variant="secondary" onClick={handleClose}>
                   Close
                 </Button>
-                <Button variant="primary" onClick={handleClose}>
+                <Button variant="primary" onClick={saveNewPassword}>
                   Save Changes
                 </Button>
               </Modal.Footer>
@@ -199,4 +313,9 @@ const Profile = () => {
   );
 };
 
+const styles = {
+  password: {
+    cursor: "pointer",
+  },
+};
 export default Profile;

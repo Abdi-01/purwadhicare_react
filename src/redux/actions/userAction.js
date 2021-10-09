@@ -1,5 +1,6 @@
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
+import Swal from "sweetalert2";
 
 // Action Untuk Fitur Register
 export const register = (data, setToLogin) => {
@@ -35,6 +36,11 @@ export const login = (data, history) => async (dispatch) => {
     dispatch({ type: "LOGIN", payload: dataLogin });
     // console.log(dataLogin);
     if (dataLogin.role === "user") {
+      Swal.fire(
+        "Log In Berhasil!",
+        "Mari Berbelanja bersama Purwadhicare 😉",
+        "success"
+      );
       history.push("/");
     }
     // else {
@@ -42,9 +48,9 @@ export const login = (data, history) => async (dispatch) => {
     // }
     dispatch({ type: "LOADING", payload: false });
   } catch (err) {
-    console.log(err.response);
-    dispatch({ type: "ERROR", payload: err.response.data });
-    dispatch({ type: "LOADING", payload: false });
+    err.response.dataLogin.forEach((e) => {
+      alert(e.msg.toString());
+    });
   }
 };
 

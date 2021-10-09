@@ -16,10 +16,15 @@ function ForgetPassword() {
     axios
       .post(API_URL + "/user/forgetPassword", { email })
       .then((res) => {
-        Swal.fire("Reset Password!", "reset Password berhasil!", "success");
+        Swal.fire("Reset Password!", "Silahkan Cek Email Anda", "success");
         console.log("success");
       })
       .catch((err) => {
+        Swal.fire(
+          "Reset Password Failed!",
+          "Email anda tidak terdaftar",
+          "error"
+        );
         console.log(err);
       });
   };
@@ -38,14 +43,25 @@ function ForgetPassword() {
                     <div className=" p-5">
                       <div className="mx-auto mb-5">
                         <a href="index.html">
-                          <img src="https://i.ibb.co/8dp71H3/logo.png" alt="" height={90} />
+                          <img
+                            src="https://i.ibb.co/8dp71H3/logo.png"
+                            alt=""
+                            height={90}
+                          />
                         </a>
                       </div>
-                      <h6 className="h5 mb-0 mt-4">Enter your registered email address.</h6>
-                      <p className="text-muted mt-1 mb-4">We'll send you an email to reset / change your old password.</p>
+                      <h6 className="h5 mb-0 mt-4">
+                        Enter your registered email address.
+                      </h6>
+                      <p className="text-muted mt-1 mb-4">
+                        We'll send you an email to reset / change your old
+                        password.
+                      </p>
                       <form action="#" className="authentication-form">
                         <div className="form-group">
-                          <label className="form-control-label">Email Address</label>
+                          <label className="form-control-label">
+                            Email Address
+                          </label>
                           <div className="input-group input-group-merge">
                             <div className="input-group-prepend">
                               <span className="input-group-text">
@@ -63,7 +79,11 @@ function ForgetPassword() {
                           </div>
                         </div>
                         <div className="form-group mb-0 text-center">
-                          <button className="btn btn-primary btn-block" type="submit" onClick={onSubmitForm}>
+                          <button
+                            className="btn btn-primary btn-block"
+                            type="submit"
+                            onClick={onSubmitForm}
+                          >
                             {" "}
                             {isLoading ? "Loading..." : "Send"}
                           </button>
