@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
-// agar yang bukan admin bisa redirect ke page bukan admin
-import { Redirect } from "react-router-dom";
-// connect dipakai agar orang yang bukan role admin ga bisa akses admin
-import { connect } from "react-redux";
-import "../assets/styles/admin.css";
+import "../../assets/styles/admin.css";
+import { FiPlus } from "react-icons/fi";
+import { Button, Modal, Form } from "react-bootstrap";
 
 function Admin() {
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   const [productList, setProductList] = useState([]);
-
   const [addProductList, setAddProductList] = useState({
     category: "",
     productName: "",
@@ -18,10 +18,8 @@ function Admin() {
     priceStock: 0,
     image: "",
   });
-
   const [editProductList, setEditProductList] = useState({
     idproduct: 0,
-
     category: "",
     productName: "",
     description: "",
@@ -56,19 +54,16 @@ function Admin() {
   };
 
   const saveBtnHandler = () => {
-    Axios.patch(
-      `http://localhost:2200/product/edit-product/${editProductList.idproduct}`,
-      {
-        //  huruf kalimat terakhir harus sama dengan input handler di bawah
-        category: editProductList.category,
-        product_name: editProductList.productName,
-        description: editProductList.description,
-        unit: editProductList.unit,
-        price_unit: editProductList.priceUnit,
-        price_stock: editProductList.priceStock,
-        image: editProductList.image,
-      }
-    )
+    Axios.patch(`http://localhost:2200/product/edit-product/${editProductList.idproduct}`, {
+      //  huruf kalimat terakhir harus sama dengan input handler di bawah
+      category: editProductList.category,
+      product_name: editProductList.productName,
+      description: editProductList.description,
+      unit: editProductList.unit,
+      price_unit: editProductList.priceUnit,
+      price_stock: editProductList.priceStock,
+      image: editProductList.image,
+    })
       .then(() => {
         fetchProducts();
         cancelEdit();
@@ -203,10 +198,7 @@ function Admin() {
             </button>
           </td>
           <td>
-            <button
-              onClick={() => deleteBtnHandler(val.idproduct)}
-              className="btn btn-dark"
-            >
+            <button onClick={() => deleteBtnHandler(val.idproduct)} className="btn btn-dark">
               Delete
             </button>
           </td>
@@ -234,7 +226,7 @@ function Admin() {
         // utk refresh
         fetchProducts();
         // agar kembali ke form sebelum di edit
-        cancelEdit();
+        handleClose();
       })
       .catch(() => {
         alert("Terjadi kesalahan server");
@@ -257,131 +249,104 @@ function Admin() {
     setEditProductList({ ...editProductList, [name]: value });
   };
 
+  const renderAddProduct = () => {
+    return (
+      <Modal show={show} onHide={handleClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Tambah Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Category</Form.Label>
+              <Form.Control type="text" onChange={inputHandler} name="category" />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Product Name</Form.Label>
+              <Form.Control type="text" onChange={inputHandler} name="productName" />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Description</Form.Label>
+              <Form.Control type="text" onChange={inputHandler} name="description" />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Unit</Form.Label>
+              <select className="form-control" onChange={inputHandler} name="unit">
+                <option disabled>Open this select menu</option>
+                <option defaultValue="ml">ml</option>
+                <option defaultValue="mg">mg</option>
+              </select>
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Price Unit</Form.Label>
+              <Form.Control type="number" onChange={inputHandler} name="priceUnit" />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Price Stock</Form.Label>
+              <Form.Control type="number" onChange={inputHandler} name="priceStock" />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Image</Form.Label>
+              <Form.Control type="text" onChange={inputHandler} name="image" />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={addNewProduct}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
+
   return (
-    <div className="p-0">
-      <div
-        id="carouselExampleSlidesOnly"
-        class="carousel slide"
-        data-ride="carousel"
-        className="mb-2 mt-0"
-      >
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img
-              class="d-block w-full"
-              src="https://png.pngtree.com/back_origin_pic/05/06/19/4664ceb6584b736cc2e7317820712934.jpg"
-              alt="First slide"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="row">
-        <div className="col-12 text-center p-5 mb-6">
-          <h2 className="text-muted m-6 ">Manage Products</h2>
-          <table className="table table-light mt-8">
-            <thead className="thead-light">
-              <tr>
-                <th>ID </th>
-                <th>Category</th>
-                <th>Product Name</th>
-                <th>Description</th>
-                <th>Unit (ml/mg)</th>
-                <th>Unit Price (IDR)</th>
-                <th>Stock Item Price (IDR)</th>
-                <th>Product Image</th>
-                <th colSpan="2">Action</th>
-              </tr>
-            </thead>
-            <tbody>{renderProducts()}</tbody>
-
-            <tfoot>
-              <tr>
-                <td></td>
-                <td>
-                  <input
-                    value={addProductList.category}
-                    onChange={inputHandler}
-                    name="category"
-                    type="text"
-                    className="form-control"
-                    placeholder="Category"
+    <div className="content-page">
+      <div className="content">
+        <div className="container-fluid ">
+          {renderAddProduct()}
+          <div className="p-0">
+            <div id="carouselExampleSlidesOnly" className="carousel slide mb-2 mt-0" data-ride="carousel">
+              <div className="carousel-inner">
+                <div className="carousel-item active">
+                  <img
+                    className="d-block w-full"
+                    src="https://png.pngtree.com/back_origin_pic/05/06/19/4664ceb6584b736cc2e7317820712934.jpg"
+                    alt="First slide"
                   />
-                </td>
-                <td>
-                  <input
-                    value={addProductList.productName}
-                    onChange={inputHandler}
-                    name="productName"
-                    type="text"
-                    className="form-control"
-                    placeholder="Product Name"
-                  />
-                </td>
-                <td>
-                  <input
-                    value={addProductList.description}
-                    onChange={inputHandler}
-                    name="description"
-                    type="text"
-                    className="form-control"
-                    placeholder="Description"
-                  />
-                </td>
-
-                <td>
-                  <select
-                    defaultValue={addProductList.unit}
-                    onChange={inputHandler}
-                    name="unit"
-                    type="text"
-                    className="form-control"
-                    id=""
-                  >
-                    <option defaultValue="ml">ml</option>
-                    <option defaultValue="mg">mg</option>
-                  </select>
-                </td>
-
-                <td>
-                  <input
-                    defaultValue={addProductList.priceUnit}
-                    onChange={inputHandler}
-                    name="priceUnit"
-                    type="number"
-                    className="form-control"
-                    placeholder="Unit Price"
-                  />
-                </td>
-                <td>
-                  <input
-                    defaultValue={addProductList.priceStock}
-                    onChange={inputHandler}
-                    name="priceStock"
-                    type="number"
-                    className="form-control"
-                    placeholder="Item Price"
-                  />
-                </td>
-                <td>
-                  <input
-                    onChange={inputHandler}
-                    defaultValue={addProductList.image}
-                    className="form-control"
-                    type="text"
-                    name="image"
-                    placeholder="Image"
-                  />
-                </td>
-
-                <td colSpan="2">
-                  <button onClick={addNewProduct} className="btn btn-success">
-                    Add Product
+                </div>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-12 text-center p-5 mb-6">
+                <div className="d-flex flex-row justify-content-between mb-4 align-items-center">
+                  <h2 className="text-muted">Manage Products</h2>
+                  <button className="btn btn-primary text-center" onClick={handleShow}>
+                    Add Product <FiPlus />
                   </button>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+                </div>
+                <table className="table table-light mt-8">
+                  <thead className="thead-light">
+                    <tr>
+                      <th>No.</th>
+                      <th>Category</th>
+                      <th>Product Name</th>
+                      <th>Description</th>
+                      <th>Unit (ml/mg)</th>
+                      <th>Unit Price (IDR)</th>
+                      <th>Stock Item Price (IDR)</th>
+                      <th>Product Image</th>
+                      <th colSpan="2">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>{renderProducts()}</tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

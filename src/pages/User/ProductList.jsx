@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from "react";
-import ProductCard from "../components/ProductCard";
+import React from "react";
+import ProductCard from "../../components/ProductCard";
 // utk global state instal redux, redux-thunk, react-redux
-import { useSelector } from "react-redux";
-
-
 
 function Home() {
   return (
@@ -20,11 +17,7 @@ function Home() {
             </div>
             <div className="card-body">
               <label htmlFor="searchProductName">Product Name</label>
-              <input
-                name="searchProductName"
-                type="text"
-                className="form-control mb-3"
-              />
+              <input name="searchProductName" type="text" className="form-control mb-3" />
               <label htmlFor="searchCategory">Product Category</label>
               <select name="searchCategory" className="form-control">
                 <option value="">All Item</option>
