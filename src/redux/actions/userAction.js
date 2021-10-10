@@ -9,6 +9,7 @@ export const register = (data, setToLogin) => {
     dispatch({ type: "ERROR", payload: [] });
     try {
       await Axios.put(API_URL + "/user/register", data);
+      // eslint-disable-next-line no-lone-blocks
       {
         setToLogin(true);
       }
@@ -33,13 +34,11 @@ export const login = (data, history) => async (dispatch) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user_data", JSON.stringify(dataLogin));
     dispatch({ type: "LOGIN", payload: dataLogin });
-    // console.log(dataLogin);
     if (dataLogin.role === "user") {
       history.push("/");
+    } else {
+      history.push("/dashboard");
     }
-    // else {
-    //   history.push("/admin");
-    // }
     dispatch({ type: "LOADING", payload: false });
   } catch (err) {
     console.log(err.response);
@@ -70,6 +69,7 @@ export const userKeepLogin = (userData) => {
       },
     })
       .then((result) => {
+        delete result.data[0].password;
         localStorage.setItem("user_data", JSON.stringify(result.data[0]));
         dispatch({
           type: "LOGIN",

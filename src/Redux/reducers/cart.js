@@ -1,7 +1,10 @@
-const init_state = {
-    cartList:["apel"]
-}
+const INITIAL_STATE = {
+  cartList: ["apel"],
+};
 
-export default (state=init_state, actions) =>{
-    return state
-}
+export const cartReducer = (state = INITIAL_STATE, action) => {
+  switch (action.type) {
+    default:
+      return state;
+  }
+};
