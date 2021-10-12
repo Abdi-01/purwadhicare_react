@@ -1,5 +1,6 @@
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
+import Swal from "sweetalert2";
 
 // Action Untuk Fitur Register
 export const register = (data, setToLogin) => {
@@ -13,7 +14,7 @@ export const register = (data, setToLogin) => {
       {
         setToLogin(true);
       }
-      alert("Register success please check your email");
+      Swal.fire("Log In Berhasil!", "Please Check Your Email 📧", "success");
     } catch (err) {
       err.response.data.forEach((e) => {
         alert(e.msg.toString());
@@ -35,13 +36,22 @@ export const login = (data, history) => async (dispatch) => {
     localStorage.setItem("user_data", JSON.stringify(dataLogin));
     dispatch({ type: "LOGIN", payload: dataLogin });
     if (dataLogin.role === "user") {
+      Swal.fire(
+        "Log In Berhasil!",
+        "Mari Berbelanja bersama Purwadhicare 😉",
+        "success"
+      );
       history.push("/");
     } else {
       history.push("/dashboard");
     }
     dispatch({ type: "LOADING", payload: false });
   } catch (err) {
-    console.log(err.response);
+    Swal.fire(
+      "Login Gagal",
+      "username / password yang anda masukkan salah",
+      "error"
+    );
     dispatch({ type: "ERROR", payload: err.response.data });
     dispatch({ type: "LOADING", payload: false });
   }
