@@ -3,8 +3,8 @@ import React from "react";
 function Cart() {
   return (
     <div className="p-5">
-      <div className="row">
-        <div className="col-12 text-center">
+      <div className="row ">
+        <div className="p-5 col-12 text-center">
           <h1>Cart</h1>
           <table className="table mt-4">
             <thead className="thead-light">
@@ -23,7 +23,7 @@ function Cart() {
             <tfoot className="bg-light">
               <tr>
                 <td colSpan="7">
-                  <button className="btn btn-success">Success</button>
+                  <button className="btn rounded-pill btn-success">Success</button>
                 </td>
               </tr>
 

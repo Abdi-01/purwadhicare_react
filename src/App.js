@@ -16,6 +16,7 @@ import Sidebar from "./components/Sidebar";
 import ProductAdmin from "./pages/Admin/Product";
 import Cart from "./pages/User/Cart";
 import OrderHistory from "./pages/User/OrderHistory";
+import ProductList from "./pages/User/ProductList"
 import ProductDetail from "./pages/User/ProductDetail";
 import Dashboard from "./pages/Admin/Dashboard";
 import NotFound from "./pages/NotFound";
@@ -62,8 +63,9 @@ function App() {
           <Route component={ForgetPassword} path="/forget-password" />
           <Route component={Verification} path="/authentication/:token" />
           <Route component={Cart} path="/cart" />
+          <Route component={ProductList} path="/productlist" />
           {/* <Route component={OrderHistory} path="/history" /> */}
-          <Route component={ProductDetail} path="/productdetail/:productId" />
+          <Route component={ProductDetail} path="/productdetail/:idproduct" />
 
           <PrivateRoute path="/history">
             <OrderHistory />
