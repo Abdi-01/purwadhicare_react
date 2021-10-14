@@ -1,22 +1,25 @@
 import React from "react";
+import { propTypes } from "react-bootstrap/esm/Image";
 import "../assets/styles/product_card.css";
+import {Link} from "react-router-dom"
+import Axios from "axios"
 
-function ProductCard() {
+function ProductCard(props) {
   return (
     <div className="card product-card">
-      <img
-        src="https://images.tokopedia.net/img/cache/700/product-1/2019/3/10/22418439/22418439_5f9f971d-04d1-45d0-b4d4-e08d50d295e8_540_540.jpg"
-        alt=""
-      />
+      <img src={props.productData.image} alt="" />
 
       <div className="mt-2">
         <div>
-          <h6>This Product Name</h6>
-          <span className="text-muted">Rp. 44.000</span>
+          <Link to={`productdetail/${props.productData.idproduct}`}> <h6>{props.productData.product_name}</h6></Link>
+          
+          <span className="text-muted">
+            Rp. {props.productData.price_stock}
+          </span>
         </div>
 
         <div className="d-flex flex-row justify-content-end">
-          <button className="btn btn-info rounded-pills mt-2">
+          <button className="btn btn-outline-info rounded-pill mt-2">
             Add To Cart
           </button>
         </div>

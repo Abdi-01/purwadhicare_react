@@ -9,6 +9,10 @@ function Admin() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [productList, setProductList] = useState([]);
+  const [page, setPage] = useState(1);
+  const [maxPage, setMaxPage] = useState(0);
+  const [itemPerPage] = useState(5);
+
   const [addProductList, setAddProductList] = useState({
     category: "",
     productName: "",
@@ -29,11 +33,14 @@ function Admin() {
     image: "",
   });
 
+  console.log("perpage", editProductList.itemPerPage);
   const fetchProducts = () => {
     // yang mau dipanggil
     Axios.get("http://localhost:2200/product/get")
       .then((result) => {
+        console.log(result.data.length);
         setProductList(result.data);
+        setMaxPage(Math.ceil(result.data.length / itemPerPage));
       })
       .catch(() => {
         alert("Terjadi kesalahan server");
@@ -54,16 +61,19 @@ function Admin() {
   };
 
   const saveBtnHandler = () => {
-    Axios.patch(`http://localhost:2200/product/edit-product/${editProductList.idproduct}`, {
-      //  huruf kalimat terakhir harus sama dengan input handler di bawah
-      category: editProductList.category,
-      product_name: editProductList.productName,
-      description: editProductList.description,
-      unit: editProductList.unit,
-      price_unit: editProductList.priceUnit,
-      price_stock: editProductList.priceStock,
-      image: editProductList.image,
-    })
+    Axios.patch(
+      `http://localhost:2200/product/edit-product/${editProductList.idproduct}`,
+      {
+        //  huruf kalimat terakhir harus sama dengan input handler di bawah
+        category: editProductList.category,
+        product_name: editProductList.productName,
+        description: editProductList.description,
+        unit: editProductList.unit,
+        price_unit: editProductList.priceUnit,
+        price_stock: editProductList.priceStock,
+        image: editProductList.image,
+      }
+    )
       .then(() => {
         fetchProducts();
         cancelEdit();
@@ -71,6 +81,18 @@ function Admin() {
       .catch(() => {
         alert("Terjadi kesalahan server");
       });
+  };
+
+  const nextPageHandler = () => {
+    if (page < maxPage) {
+      setPage(page + 1);
+    }
+  };
+
+  const prevPageHandler = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
   };
 
   const cancelEdit = () => {
@@ -96,7 +118,12 @@ function Admin() {
   };
 
   const renderProducts = () => {
-    return productList.map((val) => {
+    const beginningIndex = (page - 1) * itemPerPage;
+    const currentData = productList.slice(
+      beginningIndex,
+      beginningIndex + itemPerPage
+    );
+    return currentData.map((val) => {
       if (val.idproduct === editProductList.idproduct) {
         return (
           <tr>
@@ -198,7 +225,10 @@ function Admin() {
             </button>
           </td>
           <td>
-            <button onClick={() => deleteBtnHandler(val.idproduct)} className="btn btn-dark">
+            <button
+              onClick={() => deleteBtnHandler(val.idproduct)}
+              className="btn btn-dark"
+            >
               Delete
             </button>
           </td>
@@ -206,11 +236,6 @@ function Admin() {
       );
     });
   };
-
-  // seperti component did mount
-  useEffect(() => {
-    fetchProducts();
-  }, []);
 
   const addNewProduct = () => {
     Axios.post("http://localhost:2200/product/add-product", {
@@ -259,19 +284,35 @@ function Admin() {
           <Form>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Category</Form.Label>
-              <Form.Control type="text" onChange={inputHandler} name="category" />
+              <Form.Control
+                type="text"
+                onChange={inputHandler}
+                name="category"
+              />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Product Name</Form.Label>
-              <Form.Control type="text" onChange={inputHandler} name="productName" />
+              <Form.Control
+                type="text"
+                onChange={inputHandler}
+                name="productName"
+              />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Description</Form.Label>
-              <Form.Control type="text" onChange={inputHandler} name="description" />
+              <Form.Control
+                type="text"
+                onChange={inputHandler}
+                name="description"
+              />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Unit</Form.Label>
-              <select className="form-control" onChange={inputHandler} name="unit">
+              <select
+                className="form-control"
+                onChange={inputHandler}
+                name="unit"
+              >
                 <option disabled>Open this select menu</option>
                 <option defaultValue="ml">ml</option>
                 <option defaultValue="mg">mg</option>
@@ -279,11 +320,19 @@ function Admin() {
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Price Unit</Form.Label>
-              <Form.Control type="number" onChange={inputHandler} name="priceUnit" />
+              <Form.Control
+                type="number"
+                onChange={inputHandler}
+                name="priceUnit"
+              />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Price Stock</Form.Label>
-              <Form.Control type="number" onChange={inputHandler} name="priceStock" />
+              <Form.Control
+                type="number"
+                onChange={inputHandler}
+                name="priceStock"
+              />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Image</Form.Label>
@@ -303,13 +352,22 @@ function Admin() {
     );
   };
 
+  // seperti component did mount
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   return (
     <div className="content-page">
       <div className="content">
         <div className="container-fluid ">
           {renderAddProduct()}
           <div className="p-0">
-            <div id="carouselExampleSlidesOnly" className="carousel slide mb-2 mt-0" data-ride="carousel">
+            <div
+              id="carouselExampleSlidesOnly"
+              className="carousel slide mb-2 mt-0"
+              data-ride="carousel"
+            >
               <div className="carousel-inner">
                 <div className="carousel-item active">
                   <img
@@ -324,7 +382,10 @@ function Admin() {
               <div className="col-12 text-center p-5 mb-6">
                 <div className="d-flex flex-row justify-content-between mb-4 align-items-center">
                   <h2 className="text-muted">Manage Products</h2>
-                  <button className="btn btn-primary text-center" onClick={handleShow}>
+                  <button
+                    className="btn btn-primary text-center"
+                    onClick={handleShow}
+                  >
                     Add Product <FiPlus />
                   </button>
                 </div>
@@ -344,6 +405,27 @@ function Admin() {
                   </thead>
                   <tbody>{renderProducts()}</tbody>
                 </table>
+                <div className="mt-3">
+                  <div className="d-flex flex-row justify-content-between align-items-center">
+                    <button
+                      // disabled={paginate.page === 1}
+                      onClick={prevPageHandler}
+                      className="btn btn-info"
+                    >
+                      {"<"}
+                    </button>
+                    <div className="text-center">
+                      Page {page} of {maxPage}
+                    </div>
+                    <button
+                      // disabled={paginate.page >= paginate.maxPage}
+                      onClick={nextPageHandler}
+                      className="btn btn-info"
+                    >
+                      {">"}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

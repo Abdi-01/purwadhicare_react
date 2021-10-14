@@ -231,6 +231,7 @@ function Cart() {
               {renderShipping()}
             </div>
           </div>
+
         </div>
       </div>
     );
