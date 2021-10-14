@@ -16,10 +16,13 @@ import Sidebar from "./components/Sidebar";
 import ProductAdmin from "./pages/Admin/Product";
 import Cart from "./pages/User/Cart";
 import OrderHistory from "./pages/User/OrderHistory";
+import ProductList from "./pages/User/ProductList"
 import ProductDetail from "./pages/User/ProductDetail";
 import Dashboard from "./pages/Admin/Dashboard";
 import NotFound from "./pages/NotFound";
 import { useDispatch, useSelector } from "react-redux";
+import OrderList from "./pages/User/OrderList";
+import Recipe from "./pages/User/Recipe";
 
 function App() {
   const dispatch = useDispatch();
@@ -62,11 +65,14 @@ function App() {
           <Route component={ForgetPassword} path="/forget-password" />
           <Route component={Verification} path="/authentication/:token" />
           <Route component={Cart} path="/cart" />
-          {/* <Route component={OrderHistory} path="/history" /> */}
+          <Route component={OrderHistory} path="/order-history" />
           <Route component={ProductDetail} path="/productdetail/:productId" />
+          <Route component={Recipe} path="/recipe" />
+            <Route component={ProductList} path="/productlist" />
+              <Route component={ProductDetail} path="/productdetail/:idproduct" />
 
           <PrivateRoute path="/history">
-            <OrderHistory />
+            <OrderList />
           </PrivateRoute>
 
           <PrivateRoute path="/profile">
