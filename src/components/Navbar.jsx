@@ -41,9 +41,11 @@ function Navbar() {
                   </Link>
                 </li>
                 <li>
-                  <a href="disable" className="nav-link right-bar-toggle">
-                    <FiShoppingCart />
-                  </a>
+                  <Link to="/cart">
+                    <div className="nav-link right-bar-toggle">
+                      <FiShoppingCart />
+                    </div>
+                  </Link>
                 </li>
                 <li>
                   <Link to="/profile">
