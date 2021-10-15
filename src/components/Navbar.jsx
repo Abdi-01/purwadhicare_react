@@ -36,6 +36,11 @@ function Navbar() {
             {user.role === "admin" ? null : (
               <>
                 <li>
+                  <Link to="/productlist">
+                    <div className="nav-link right-bar-toggle">Produk</div>
+                  </Link>
+                </li>
+                <li>
                   <Link to="/history">
                     <div className="nav-link right-bar-toggle">Transaksi</div>
                   </Link>
