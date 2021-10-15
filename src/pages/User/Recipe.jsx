@@ -50,7 +50,7 @@ function Recipe() {
 
   const renderShipping = () => {
     return (
-      <div className="col-md-8 summary">
+      <div className="col-md-5 ml-5 mb-5 summary">
         <div>
           <h5>
             <b>Detail Pengiriman</b>
@@ -108,16 +108,8 @@ function Recipe() {
             <label htmlFor="exampleInputEmail1">Catatan</label>
             <input type="text" className="form-control" placeholder="Enter email" />
           </div>
-          <div className="form-group">
-            <label htmlFor="exampleInputEmail1">File Resep</label>
-            <input type="file" className="form-control" placeholder="Enter email" />
-          </div>
         </form>
-        <div className="row" style={{ borderTop: "1px solid rgba(0,0,0,.1)", padding: "2vh 0" }}>
-          <div className="col">TOTAL PRICE</div>
-          <div className="col text-right">€ 137.00</div>
-        </div>
-        <button className="btn-cart">CHECKOUT</button>
+        <button className="btn btn-primary btn-block">PESAN OBAT</button>
       </div>
     );
   };
@@ -129,7 +121,19 @@ function Recipe() {
       <div className="content-user mb-4">
         <div className="content">
           <div className="card-cart">
-            <div className="row justify-content-md-center">{renderShipping()}</div>
+            <div className="row justify-content-md-center">
+              <div className="col-5">
+                <div className="d-flex flex-column justify-content-center">
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png"
+                    className="img-fluid rounded z-depth-2 "
+                    alt="Cinque Terre"
+                  ></img>
+                </div>
+                <input className="form-control mt-3" type="file" placeholder="input title here" />
+              </div>
+              {renderShipping()}
+            </div>
           </div>
         </div>
       </div>
