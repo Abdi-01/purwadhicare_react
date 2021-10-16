@@ -12,7 +12,7 @@ function ProductDetail(props) {
     // alert(props.match.params.productId)
     Axios.get(`http://localhost:2200/product/get`, {
       params: {
-        idproduct: props.match.params.productId,
+        idproduct: props.match.params.idproduct,
       },
     })
       .then((result) => {
@@ -58,15 +58,23 @@ function ProductDetail(props) {
             <h5>{productData.price_stock}</h5>
             <p>{productData.description}</p>
             <div className="d-flex flex-row align-items-center justify-content-center my-3">
-              <button onClick={() => qtyBtnHandler("decrement")} className="mr-4 rounded-circle btn btn-info">
+              <button
+                onClick={() => qtyBtnHandler("decrement")}
+                className="mr-4 rounded-circle btn btn-info"
+              >
                 -
               </button>
               {quantity}
-              <button onClick={() => qtyBtnHandler("increment")} className="rounded-pill btn btn-info mx-4">
+              <button
+                onClick={() => qtyBtnHandler("increment")}
+                className="rounded-pill btn btn-info mx-4"
+              >
                 +
               </button>
             </div>
-            <button className="btn btn-info rounded-pill mt-4">Add To Cart</button>
+            <button className="btn btn-info rounded-pill mt-4">
+              Add To Cart
+            </button>
           </div>
         </div>
       )}
