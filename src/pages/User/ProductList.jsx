@@ -10,6 +10,7 @@ function ProductList() {
 
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(0);
+  // eslint-disable-next-line no-unused-vars
   const [itemPerPage, setItemPerPage] = useState(8);
 
   const [searchProductName, setSearchProductName] = useState("");
@@ -72,10 +73,7 @@ function ProductList() {
         break;
     }
 
-    const currentData = rawData.slice(
-      beginningIndex,
-      beginningIndex + itemPerPage
-    );
+    const currentData = rawData.slice(beginningIndex, beginningIndex + itemPerPage);
 
     // karena current data memiliki data yang sudah dipisah per page
     return currentData.map((val) => {
@@ -96,7 +94,6 @@ function ProductList() {
   };
 
   const searchProductInputHandler = (event) => {
-    const name = event.target.name;
     const value = event.target.value;
 
     // karena tipe data string jadi gaperlu ...searchProductName
@@ -104,14 +101,12 @@ function ProductList() {
   };
 
   const searchCategoryInputHandler = (event) => {
-    const name = event.target.name;
     const value = event.target.value;
 
     setSearchCategory(value);
   };
 
   const sortByInputHandler = (event) => {
-    const name = event.target.name;
     const value = event.target.value;
 
     setSortBy(value);
@@ -120,9 +115,7 @@ function ProductList() {
   const searchBtnHandler = () => {
     const filterProductList = productList.filter((val) => {
       return (
-        val.product_name
-          .toLowerCase()
-          .includes(searchProductName.toLowerCase()) &&
+        val.product_name.toLowerCase().includes(searchProductName.toLowerCase()) &&
         val.category.toLowerCase().includes(searchCategory.toLowerCase())
       );
     });
@@ -135,6 +128,7 @@ function ProductList() {
   // seperti component did mount
   useEffect(() => {
     fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -151,29 +145,16 @@ function ProductList() {
             </div>
             <div className="card-body">
               <label htmlFor="searchProductName">Product Name</label>
-              <input
-                onChange={searchProductInputHandler}
-                name="searchProductName"
-                type="text"
-                className="form-control mb-3"
-              />
+              <input onChange={searchProductInputHandler} name="searchProductName" type="text" className="form-control mb-3" />
               <label htmlFor="searchCategory">Product Category</label>
-              <select
-                onChange={searchCategoryInputHandler}
-                name="searchCategory"
-                className="form-control"
-                type="text"
-              >
+              <select onChange={searchCategoryInputHandler} name="searchCategory" className="form-control" type="text">
                 <option value="">All Item</option>
                 <option defaultValue="Sakit Kepala">Sakit Kepala</option>
                 <option defaultValue="Demam">Demam</option>
                 <option defaultValue="Batuk">Batuk</option>
                 <option defaultValue="Vitamin">Vitamin</option>
               </select>
-              <button
-                onClick={searchBtnHandler}
-                className="btn btn-block btn-info rounded-pill justify-content-center mt-4"
-              >
+              <button onClick={searchBtnHandler} className="btn btn-block btn-info rounded-pill justify-content-center mt-4">
                 Search
               </button>
             </div>
@@ -184,11 +165,7 @@ function ProductList() {
             </div>
             <div className="card-body">
               <label htmlFor="sortBy">Sort By</label>
-              <select
-                onChange={sortByInputHandler}
-                name="sortBy"
-                className="form-control"
-              >
+              <select onChange={sortByInputHandler} name="sortBy" className="form-control">
                 <option value="default">Default</option>
                 <option value="lowPrice">Lowest Price</option>
                 <option value="highPrice">Highest Price</option>
@@ -199,21 +176,13 @@ function ProductList() {
           </div>
           <div className="mt-3">
             <div className="d-flex flex-row justify-content-between align-items-center">
-              <button
-                disabled={page === 1}
-                className="btn rounded-circle btn-info"
-                onClick={prevPageHandler}
-              >
+              <button disabled={page === 1} className="btn rounded-circle btn-info" onClick={prevPageHandler}>
                 {"<"}
               </button>
               <div className="text-center">
                 Page {page} of {maxPage}{" "}
               </div>
-              <button
-                disabled={page === maxPage}
-                className="btn rounded-circle btn-info"
-                onClick={nextPageHandler}
-              >
+              <button disabled={page === maxPage} className="btn rounded-circle btn-info" onClick={nextPageHandler}>
                 {">"}
               </button>
             </div>
@@ -222,8 +191,7 @@ function ProductList() {
             <div className="card-body">
               <h5 className="card-title">Ajukan Resep Obat</h5>
               <p className="card-text">
-                Jika anda memiliki obat resep dari dokter, silahkan mengajukan
-                resep dengan menekan tombol dibawah ini.
+                Jika anda memiliki obat resep dari dokter, silahkan mengajukan resep dengan menekan tombol dibawah ini.
               </p>
               <Link to="/recipe">
                 <button className="btn btn-info btn-block">Upload Resep</button>

@@ -2,11 +2,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Axios from "axios";
 import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getCartData } from "../../redux/actions";
 
 function ProductDetail(props) {
   const [productData, setProductData] = useState({});
   const [productNotFound, setProductNotFound] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const dispatch = useDispatch();
+
+  const globalUser = useSelector((state) => state.user);
 
   const fetchProductData = () => {
     // alert(props.match.params.productId)
@@ -37,7 +42,44 @@ function ProductDetail(props) {
     }
   };
 
-  const addToCartHandler = () => {};
+  const addToCartHandler = () => {
+    // cek apa user sudah memiliki barang di cart
+    Axios.get(`http://localhost:2200/cart/get`, {
+      params: {
+        iduser: globalUser.user.iduser,
+        idproduct: productData.idproduct,
+      },
+    }).then((result) => {
+      // jika barang sudah ada di cart user, agar hanya tambah qty saja
+      console.log(result.data.length);
+      if (result.data.length) {
+        Axios.patch(`http://localhost:2200/cart/edit-cart/${result.data[0].idcart}`, {
+          quantity: quantity + result.data[0].quantity,
+        })
+          .then(() => {
+            alert("Berhasil edit");
+            dispatch(getCartData(globalUser.user.iduser));
+          })
+          .catch(() => {
+            alert("Terjadi kesalahan server");
+          });
+      } else {
+        // jika barang belum ada di cart
+        Axios.post("http://localhost:2200/cart/add-cart", {
+          iduser: globalUser.user.iduser,
+          idproduct: productData.idproduct,
+          quantity: quantity,
+        })
+          .then(() => {
+            alert("Berhasil menambahkan product");
+            dispatch(getCartData(globalUser.user.iduser));
+          })
+          .catch(() => {
+            alert("Terjadi kesalahan server");
+          });
+      }
+    });
+  };
   // seperti component did mount
   useEffect(() => {
     fetchProductData();
@@ -58,21 +100,15 @@ function ProductDetail(props) {
             <h5>{productData.price_stock}</h5>
             <p>{productData.description}</p>
             <div className="d-flex flex-row align-items-center justify-content-center my-3">
-              <button
-                onClick={() => qtyBtnHandler("decrement")}
-                className="mr-4 rounded-circle btn btn-info"
-              >
+              <button onClick={() => qtyBtnHandler("decrement")} className="mr-4 rounded-circle btn btn-info">
                 -
               </button>
               {quantity}
-              <button
-                onClick={() => qtyBtnHandler("increment")}
-                className="rounded-pill btn btn-info mx-4"
-              >
+              <button onClick={() => qtyBtnHandler("increment")} className="rounded-pill btn btn-info mx-4">
                 +
               </button>
             </div>
-            <button className="btn btn-info rounded-pill mt-4">
+            <button className="btn btn-info rounded-pill mt-4" onClick={addToCartHandler}>
               Add To Cart
             </button>
           </div>

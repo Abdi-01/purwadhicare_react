@@ -61,19 +61,16 @@ function Admin() {
   };
 
   const saveBtnHandler = () => {
-    Axios.patch(
-      `http://localhost:2200/product/edit-product/${editProductList.idproduct}`,
-      {
-        //  huruf kalimat terakhir harus sama dengan input handler di bawah
-        category: editProductList.category,
-        product_name: editProductList.productName,
-        description: editProductList.description,
-        unit: editProductList.unit,
-        price_unit: editProductList.priceUnit,
-        price_stock: editProductList.priceStock,
-        image: editProductList.image,
-      }
-    )
+    Axios.patch(`http://localhost:2200/product/edit-product/${editProductList.idproduct}`, {
+      //  huruf kalimat terakhir harus sama dengan input handler di bawah
+      category: editProductList.category,
+      product_name: editProductList.productName,
+      description: editProductList.description,
+      unit: editProductList.unit,
+      price_unit: editProductList.priceUnit,
+      price_stock: editProductList.priceStock,
+      image: editProductList.image,
+    })
       .then(() => {
         fetchProducts();
         cancelEdit();
@@ -119,10 +116,7 @@ function Admin() {
 
   const renderProducts = () => {
     const beginningIndex = (page - 1) * itemPerPage;
-    const currentData = productList.slice(
-      beginningIndex,
-      beginningIndex + itemPerPage
-    );
+    const currentData = productList.slice(beginningIndex, beginningIndex + itemPerPage);
     return currentData.map((val) => {
       if (val.idproduct === editProductList.idproduct) {
         return (
@@ -225,10 +219,7 @@ function Admin() {
             </button>
           </td>
           <td>
-            <button
-              onClick={() => deleteBtnHandler(val.idproduct)}
-              className="btn btn-dark"
-            >
+            <button onClick={() => deleteBtnHandler(val.idproduct)} className="btn btn-dark">
               Delete
             </button>
           </td>
@@ -284,35 +275,19 @@ function Admin() {
           <Form>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Category</Form.Label>
-              <Form.Control
-                type="text"
-                onChange={inputHandler}
-                name="category"
-              />
+              <Form.Control type="text" onChange={inputHandler} name="category" />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Product Name</Form.Label>
-              <Form.Control
-                type="text"
-                onChange={inputHandler}
-                name="productName"
-              />
+              <Form.Control type="text" onChange={inputHandler} name="productName" />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Description</Form.Label>
-              <Form.Control
-                type="text"
-                onChange={inputHandler}
-                name="description"
-              />
+              <Form.Control type="text" onChange={inputHandler} name="description" />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Unit</Form.Label>
-              <select
-                className="form-control"
-                onChange={inputHandler}
-                name="unit"
-              >
+              <select className="form-control" onChange={inputHandler} name="unit">
                 <option disabled>Open this select menu</option>
                 <option defaultValue="ml">ml</option>
                 <option defaultValue="mg">mg</option>
@@ -320,19 +295,11 @@ function Admin() {
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Price Unit</Form.Label>
-              <Form.Control
-                type="number"
-                onChange={inputHandler}
-                name="priceUnit"
-              />
+              <Form.Control type="number" onChange={inputHandler} name="priceUnit" />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Price Stock</Form.Label>
-              <Form.Control
-                type="number"
-                onChange={inputHandler}
-                name="priceStock"
-              />
+              <Form.Control type="number" onChange={inputHandler} name="priceStock" />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Image</Form.Label>
@@ -355,6 +322,7 @@ function Admin() {
   // seperti component did mount
   useEffect(() => {
     fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -363,11 +331,7 @@ function Admin() {
         <div className="container-fluid ">
           {renderAddProduct()}
           <div className="p-0">
-            <div
-              id="carouselExampleSlidesOnly"
-              className="carousel slide mb-2 mt-0"
-              data-ride="carousel"
-            >
+            <div id="carouselExampleSlidesOnly" className="carousel slide mb-2 mt-0" data-ride="carousel">
               <div className="carousel-inner">
                 <div className="carousel-item active">
                   <img
@@ -382,10 +346,7 @@ function Admin() {
               <div className="col-12 text-center p-5 mb-6">
                 <div className="d-flex flex-row justify-content-between mb-4 align-items-center">
                   <h2 className="text-muted">Manage Products</h2>
-                  <button
-                    className="btn btn-primary text-center"
-                    onClick={handleShow}
-                  >
+                  <button className="btn btn-primary text-center" onClick={handleShow}>
                     Add Product <FiPlus />
                   </button>
                 </div>

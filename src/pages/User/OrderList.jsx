@@ -1,19 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Button, Modal, Form, InputGroup } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import { API_URL } from "../../constants/API";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Helmet } from "react-helmet-async";
 
 function OrderList() {
   const globalUser = useSelector((state) => state.user);
   const [userData, setUserData] = useState([]);
   const [uploadImg, setUploadImg] = useState({
     nameImg: "",
-    previewImg:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png",
+    previewImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png",
     addFile: "",
   });
   const [show, setShow] = useState(false);
@@ -99,22 +97,13 @@ function OrderList() {
               alt="Cinque Terre"
             ></img>
           </div>
-          <input
-            onChange={imageHandler}
-            className="form-control mt-3"
-            type="file"
-            placeholder="input title here"
-          />
+          <input onChange={imageHandler} className="form-control mt-3" type="file" placeholder="input title here" />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button
-            variant="primary"
-            onClick={uploadBtnHandler}
-            disabled={!uploadImg.addFile ? "disabled" : null}
-          >
+          <Button variant="primary" onClick={uploadBtnHandler} disabled={!uploadImg.addFile ? "disabled" : null}>
             Upload Payment
           </Button>
         </Modal.Footer>
@@ -134,9 +123,7 @@ function OrderList() {
                 <div className="card-body">
                   <div className="row mb-1">
                     <div className="col-md-10">
-                      <h6 className="text-muted font-weight-light">
-                        Id Transaksi: 12211
-                      </h6>
+                      <h6 className="text-muted font-weight-light">Id Transaksi: 12211</h6>
                     </div>
                   </div>
                   <div className="row">
@@ -157,9 +144,7 @@ function OrderList() {
                       </div>
                     </div>
                     <div className="col-md-3">
-                      <span className="btn btn-warning btn-sm disabled text-white">
-                        Menunggu
-                      </span>
+                      <span className="btn btn-warning btn-sm disabled text-white">Menunggu</span>
                     </div>
                     <div className="col-md-2 text-center">
                       <button className="btn btn-warning" onClick={handleShow}>

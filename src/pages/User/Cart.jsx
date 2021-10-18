@@ -3,18 +3,38 @@ import "../../assets/styles/cart.css";
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import { useHistory } from "react-router-dom";
 
 function Cart() {
+  const globalUser = useSelector((state) => state.user);
+  const history = useHistory();
+  const [cart, setCart] = useState([]);
   const [cities, setCities] = useState([]);
   const [provinces, setProvinces] = useState([]);
   const [courier, setCourier] = useState([]);
   const [shipping, setShipping] = useState({
     idprovince: 0,
     idcity: 0,
+    full_name: "",
+    phone_number: "",
+    address: "",
+    districts: "",
+    postal_code: "",
+    notes: "",
+  });
+  const [totalPrice, setTotalPrice] = useState({
+    subTotal: 0,
+    ongkir: 0,
+    total: 0,
+    jasa: false,
   });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    fetchCart();
     fetchProvince();
     setIsLoading(false);
   }, []);
@@ -26,6 +46,25 @@ function Cart() {
   useEffect(() => {
     fetchOngkir();
   }, [shipping.idcity]);
+
+  useEffect(() => {
+    renderSubTotal();
+  }, [cart]);
+
+  useEffect(() => {
+    renderTotalPrice();
+  }, [totalPrice.ongkir]);
+
+  const fetchCart = () => {
+    Axios.get(`http://localhost:2200/cart/get?iduser=${globalUser.user.iduser}`)
+      .then((result) => {
+        setCart(result.data);
+      })
+      .catch((err) => {
+        alert("Terjadi kesalahan server");
+        console.log(err);
+      });
+  };
 
   const fetchProvince = () => {
     Axios.get(API_URL + "/ongkir/province")
@@ -61,41 +100,124 @@ function Cart() {
       });
   };
 
+  const renderSubTotal = () => {
+    const total = cart.reduce((result, item) => {
+      return result + item.quantity * item.price_stock;
+    }, 0);
+    setTotalPrice({ ...totalPrice, subTotal: total, total: total });
+  };
+
   const formHandler = (event) => {
     const value = event.target.value;
     const name = event.target.name;
     setShipping({ ...shipping, [name]: value });
   };
 
+  const renderTotalPrice = () => {
+    const total = totalPrice.ongkir + totalPrice.subTotal;
+    setTotalPrice({ ...totalPrice, total });
+  };
+
+  const ongkirBtnHandler = (totalOngkir, jasa) => {
+    setTotalPrice({ ...totalPrice, ongkir: totalOngkir, jasa: `JNE ${jasa}` });
+  };
+
+  const deleteCartHandler = (idcart) => {
+    Axios.delete(`http://localhost:2200/cart/delete-cart/${idcart}`)
+      .then(() => {
+        fetchCart();
+      })
+      .catch(() => {
+        alert("Gagal Delete");
+      });
+  };
+
+  const submitBtnHandler = (e) => {
+    e.preventDefault();
+    const { full_name, phone_number, address, districts, postal_code, notes, idprovince, idcity } = shipping;
+    const { total } = totalPrice;
+    let formShipping = {
+      full_name,
+      phone_number,
+      address,
+      districts,
+      postal_code,
+      notes,
+      province: idprovince,
+      city: idcity,
+    };
+    Axios.post(
+      API_URL + "/order/product",
+      {
+        formShipping,
+        cart,
+        total,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    )
+      .then(() => {
+        Axios.patch(API_URL + "/product/row", { cart })
+          .then(() => {
+            cart.forEach((val) => {
+              deleteCartHandler(val.idcart);
+            });
+            Swal.fire({
+              icon: "success",
+              title: "Berhasil Order Product",
+              text: "Silahkan lakukan pembayaran sebelum kami mengirimkan obatnya",
+            }).then((result) => {
+              history.push("/history");
+            });
+          })
+          .catch((err) => {
+            alert("gagal");
+          });
+      })
+      .catch((err) => {
+        alert("gagal");
+        console.log(err);
+      });
+  };
+
   const renderCart = () => {
-    return (
-      <div className="row border-top border-bottom">
-        <div className="row main-cart align-items-center">
-          <div className="col-2">
-            <img className="img-fluid" src="https://i.imgur.com/1GrakTl.jpg" alt="img" />
-          </div>
-          <div className="col">
-            <div className="row text-muted">Shirt</div>
-            <div className="row">Cotton T-shirt</div>
-          </div>
-          <div className="col">
-            <div>-</div>
-            <div className="border">1</div>
-            <div>+</div>
-          </div>
-          <div className="col">
-            Rp. 12.0000 <span className="close">✕</span>
+    return cart.map((val) => {
+      return (
+        <div className="row border-top border-bottom">
+          <div className="row main-cart align-items-center p-4">
+            <div className="col-2">
+              <img className="img-fluid" src={val.image} alt="img" />
+            </div>
+            <div className="col">
+              <div className="row text-muted">{val.product_name}</div>
+            </div>
+            <div className="col">
+              <div className="border">{val.quantity}</div>
+            </div>
+            <div className="col">Rp. {val.price_stock}</div>
+            {/* total price per item */}
+            <div className="col">Rp. {val.quantity * val.price_stock}</div>
+            <div className="col">
+              <button onClick={() => deleteCartHandler(val.idcart)} className="btn btn-danger">
+                Delete
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    });
   };
 
   const renderOngkir = () => {
     return (
       <div className="back-to-shop">
         <table className="table">
-          <caption>Daftar Jasa Pengiriman</caption>
+          <caption>
+            Daftar Jasa Pengiriman <b>JNE</b>
+          </caption>
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -116,10 +238,15 @@ function Cart() {
                         <th scope="row">{index + 1}</th>
                         <td>{val.service}</td>
                         <td>{val.description}</td>
-                        <td>{val.cost[0].etd}</td>
-                        <td>{val.cost[0].value}</td>
+                        <td>{val.cost[0].etd} Hari</td>
+                        <td>Rp. {val.cost[0].value}</td>
                         <td>
-                          <button className="btn btn-primary">Pilih</button>
+                          <button
+                            className="btn btn-secondary btn-sm"
+                            onClick={() => ongkirBtnHandler(val.cost[0].value, val.service)}
+                          >
+                            Pilih
+                          </button>
                         </td>
                       </tr>
                     );
@@ -141,18 +268,18 @@ function Cart() {
           </h5>
         </div>
         <hr />
-        <form>
+        <form onSubmit={submitBtnHandler}>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Nama Lengkap</label>
-            <input type="text" className="form-control" placeholder="Nama Lengkap" />
+            <input type="text" className="form-control" name="full_name" placeholder="Nama Lengkap" onChange={formHandler} />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Nomor Telepon</label>
-            <input type="text" className="form-control" placeholder="Nomor telepon" />
+            <input type="text" className="form-control" name="phone_number" placeholder="Nomor telepon" onChange={formHandler} />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Alamat</label>
-            <textarea name="" id="" className="form-control" cols="30" rows="4" />
+            <textarea name="address" className="form-control" cols="30" rows="4" onChange={formHandler} />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Provinsi</label>
@@ -182,22 +309,29 @@ function Cart() {
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Kecamatan</label>
-            <input type="text" className="form-control" placeholder="Enter email" />
+            <input type="text" className="form-control" name="districts" placeholder="Kecamatan" onChange={formHandler} />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Kode Pos</label>
-            <input type="text" className="form-control" placeholder="Enter email" />
+            <input type="text" className="form-control" name="postal_code" placeholder="Kode Pos" onChange={formHandler} />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Catatan</label>
-            <input type="text" className="form-control" placeholder="Enter email" />
+            <input type="text" className="form-control" name="notes" placeholder="Catatan" onChange={formHandler} />
           </div>
+          {totalPrice.jasa ? (
+            <div className="row" style={{ padding: "2vh 0" }}>
+              <div className="col">Jasa</div>
+              <div className="col text-right">{totalPrice.jasa}</div>
+            </div>
+          ) : null}
+
+          <div className="row" style={{ borderTop: "1px solid rgba(0,0,0,.1)", padding: "2vh 0" }}>
+            <div className="col">Total Harga</div>
+            <div className="col text-right">RP {totalPrice.total}</div>
+          </div>
+          <button className="btn btn-primary btn-block">CHECKOUT</button>
         </form>
-        <div className="row" style={{ borderTop: "1px solid rgba(0,0,0,.1)", padding: "2vh 0" }}>
-          <div className="col">TOTAL PRICE</div>
-          <div className="col text-right">€ 137.00</div>
-        </div>
-        <button className="btn-cart">CHECKOUT</button>
       </div>
     );
   };
@@ -218,20 +352,23 @@ function Cart() {
                         <b>Keranjang</b>
                       </h4>
                     </div>
-                    <div className="col align-self-center text-right text-muted">3 items</div>
+                    <div className="col align-self-center text-right text-muted">{cart.length} Produk</div>
                   </div>
                 </div>
                 {renderCart()}
                 <div className="back-to-shop">
-                  <div>←</div>
-                  <span className="text-muted">Back to shop</span>
+                  <Link to="/productlist">
+                    <span className="text-muted">
+                      ← <br />
+                      Back to shop
+                    </span>
+                  </Link>
                 </div>
                 {renderOngkir()}
               </div>
               {renderShipping()}
             </div>
           </div>
-
         </div>
       </div>
     );

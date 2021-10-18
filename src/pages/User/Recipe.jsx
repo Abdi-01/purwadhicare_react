@@ -13,13 +13,18 @@ function Recipe() {
   const [shipping, setShipping] = useState({
     idprovince: 0,
     idcity: 0,
+    full_name: "",
+    phone_number: "",
+    address: "",
+    districts: "",
+    postal_code: "",
+    notes: "",
   });
+  console.log(shipping);
   const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState([]);
   const [uploadImg, setUploadImg] = useState({
     nameImg: "",
-    previewImg:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png",
+    previewImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png",
     addFile: "",
   });
 
@@ -31,26 +36,6 @@ function Recipe() {
   useEffect(() => {
     fetchCity();
   }, [shipping.idprovince]);
-
-  useEffect(() => {
-    fetchOrder();
-    setIsLoading(false);
-  }, []);
-  const fetchOrder = () => {
-    Axios.get(API_URL + "/order/orderData", {
-      params: {
-        iduser: globalUser.user.iduser,
-      },
-    })
-      .then((res) => {
-        console.log(res.data);
-        setUserData(res.data[0]);
-      })
-      .catch((err) => {
-        console.log(err);
-        alert(err);
-      });
-  };
 
   const imageHandler = (e) => {
     if (e.target.files[0]) {
@@ -65,21 +50,25 @@ function Recipe() {
   };
 
   const uploadBtnHandler = (e) => {
-    console.log(userData.recipe_image);
+    e.preventDefault();
     if (uploadImg.addFile) {
       let formData = new FormData();
+      const { full_name, phone_number, address, districts, postal_code, notes, idprovince, idcity } = shipping;
+      let formShipping = {
+        full_name,
+        phone_number,
+        address,
+        districts,
+        postal_code,
+        notes,
+        province: idprovince,
+        city: idcity,
+      };
+
+      formData.append("data", JSON.stringify(formShipping));
       formData.append("file", uploadImg.addFile);
-      Axios.post(
-        API_URL + "/order/recipe/" + globalUser.user.iduser,
-        formData,
-        {
-          params: {
-            oldFile: userData.recipe_image,
-          },
-        }
-      )
+      Axios.post(API_URL + "/order/recipe/" + globalUser.user.iduser, formData)
         .then((res) => {
-          fetchOrder();
           Swal.fire("Upload File!", res.data.message, "success");
         })
         .catch((err) => {
@@ -127,38 +116,19 @@ function Recipe() {
         <form>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Nama Lengkap</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Nama Lengkap"
-            />
+            <input type="text" className="form-control" name="full_name" placeholder="Nama Lengkap" onChange={formHandler} />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Nomor Telepon</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Nomor telepon"
-            />
+            <input type="text" className="form-control" name="phone_number" placeholder="Nomor telepon" onChange={formHandler} />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Alamat</label>
-            <textarea
-              name=""
-              id=""
-              className="form-control"
-              cols="30"
-              rows="4"
-            />
+            <textarea name="address" className="form-control" cols="30" rows="4" onChange={formHandler} />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Provinsi</label>
-            <select
-              className="form-control"
-              defaultValue={"DEFAULT"}
-              name="idprovince"
-              onChange={formHandler}
-            >
+            <select className="form-control" defaultValue={"DEFAULT"} name="idprovince" onChange={formHandler}>
               <option disabled value="DEFAULT">
                 Nama Provinsi
               </option>
@@ -173,51 +143,35 @@ function Recipe() {
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Kota / Kabupaten</label>
-            <select
-              className="form-control"
-              defaultValue={"DEFAULT"}
-              name="idcity"
-              onChange={formHandler}
-            >
+            <select className="form-control" defaultValue={"DEFAULT"} name="idcity" onChange={formHandler}>
               <option disabled value="DEFAULT">
                 Nama Kota
               </option>
               {cities.map((value, idx) => {
-                return (
-                  <option
-                    value={value.idcity}
-                    key={idx}
-                  >{`${value.type} ${value.city_name}`}</option>
-                );
+                return <option value={value.idcity} key={idx}>{`${value.type} ${value.city_name}`}</option>;
               })}
             </select>
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Kecamatan</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter email"
-            />
+            <input type="text" className="form-control" name="districts" placeholder="Kecamatan" onChange={formHandler} />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Kode Pos</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter email"
-            />
+            <input type="text" className="form-control" name="postal_code" placeholder="Kode Pos" onChange={formHandler} />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Catatan</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter email"
-            />
+            <input type="text" className="form-control" name="notes" placeholder="Catatan" onChange={formHandler} />
           </div>
+          <button
+            className="btn btn-primary btn-block"
+            disabled={!uploadImg.addFile ? "disabled" : null}
+            onClick={uploadBtnHandler}
+          >
+            PESAN OBAT
+          </button>
         </form>
-        <button className="btn btn-primary btn-block">PESAN OBAT</button>
       </div>
     );
   };
@@ -233,29 +187,11 @@ function Recipe() {
               <div className="col-5">
                 <div className="d-flex flex-column justify-content-center">
                   <img
-                    src={
-                      !userData.recipe_image
-                        ? uploadImg.previewImg
-                        : uploadImg.addFile
-                        ? uploadImg.previewImg
-                        : API_URL + userData.recipe_image
-                    }
+                    src={uploadImg.previewImg ? uploadImg.previewImg : uploadImg.addFile}
                     className="img-fluid rounded z-depth-2 "
                     alt="Cinque Terre"
                   ></img>
-                  <input
-                    onChange={imageHandler}
-                    className="form-control mt-3"
-                    type="file"
-                    placeholder="input title here"
-                  />
-                  <button
-                    className="btn btn-secondary btn-block mt-3"
-                    disabled={!uploadImg.addFile ? "disabled" : null}
-                    onClick={uploadBtnHandler}
-                  >
-                    Upload Resep
-                  </button>
+                  <input onChange={imageHandler} className="form-control mt-3" type="file" placeholder="input title here" />
                 </div>
               </div>
               {renderShipping()}
