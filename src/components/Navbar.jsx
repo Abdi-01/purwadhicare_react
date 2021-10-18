@@ -7,6 +7,7 @@ import { logout } from "../redux/actions";
 function Navbar() {
   const dispatch = useDispatch();
   const userGlobal = useSelector((state) => state.user);
+  const cartGlobal = useSelector((state) => state.cart);
   const { user } = userGlobal;
 
   return (
@@ -48,7 +49,7 @@ function Navbar() {
                 <li>
                   <Link to="/cart">
                     <div className="nav-link right-bar-toggle">
-                      <FiShoppingCart />
+                      <FiShoppingCart /> {cartGlobal.cartList.length}
                     </div>
                   </Link>
                 </li>

@@ -36,22 +36,14 @@ export const login = (data, history) => async (dispatch) => {
     localStorage.setItem("user_data", JSON.stringify(dataLogin));
     dispatch({ type: "LOGIN", payload: dataLogin });
     if (dataLogin.role === "user") {
-      Swal.fire(
-        "Log In Berhasil!",
-        "Mari Berbelanja bersama Purwadhicare 😉",
-        "success"
-      );
+      Swal.fire("Log In Berhasil!", "Mari Berbelanja bersama Purwadhicare 😉", "success");
       history.push("/");
     } else {
       history.push("/dashboard");
     }
     dispatch({ type: "LOADING", payload: false });
   } catch (err) {
-    Swal.fire(
-      "Login Gagal",
-      "username / password yang anda masukkan salah",
-      "error"
-    );
+    Swal.fire("Login Gagal", "username / password yang anda masukkan salah", "error");
     dispatch({ type: "ERROR", payload: err.response.data });
     dispatch({ type: "LOADING", payload: false });
   }
@@ -71,11 +63,11 @@ export const logout = () => {
 };
 
 // Aksi untuk tetap login walaupun di refresh
-export const userKeepLogin = (userData) => {
+export const userKeepLogin = (jwtToken) => {
   return (dispatch) => {
     Axios.get(API_URL + "/user/profile", {
-      params: {
-        iduser: userData.iduser,
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
       },
     })
       .then((result) => {
@@ -86,8 +78,16 @@ export const userKeepLogin = (userData) => {
           payload: result.data[0],
         });
       })
-      .catch(() => {
-        alert("Gagal server");
+      .catch((err) => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user_data");
+        Swal.fire({
+          icon: "warning",
+          title: "Sesi Anda Habis",
+          text: err.response.data.message,
+        }).then((result) => {
+          window.location.reload();
+        });
       });
   };
 };
