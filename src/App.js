@@ -21,6 +21,7 @@ import ProductDetail from "./pages/User/ProductDetail";
 import Dashboard from "./pages/Admin/Dashboard";
 import NotFound from "./pages/NotFound";
 import { useDispatch, useSelector } from "react-redux";
+import { getCartData } from "./redux/actions/cart"
 
 function App() {
   const dispatch = useDispatch();
@@ -28,9 +29,15 @@ function App() {
   const { user, storageIsChecked } = userGlobal;
   useEffect(() => {
     const userLocalStorage = localStorage.getItem("user_data");
+    console.log(userLocalStorage)
     if (userLocalStorage) {
-      const userData = JSON.parse(userLocalStorage);
-      dispatch(userKeepLogin(userData));
+      const userData = JSON.parse(userLocalStorage)
+      dispatch(
+        userKeepLogin(userData)
+        // untuk ambil data cart saat ada user yang sudah login
+             
+        )
+       dispatch(getCartData(userData.iduser))
     } else {
       dispatch(checkStorage());
     }
