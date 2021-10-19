@@ -4,6 +4,7 @@ import Axios from "axios";
 import React, { useState, useEffect } from "react";
 import { propTypes } from "react-bootstrap/esm/Image";
 import { useSelector, useDispatch } from "react-redux";
+import Swal from "sweetalert2";
 import { getCartData } from "../../redux/actions";
 
 function ProductDetail(props) {
@@ -54,9 +55,12 @@ function ProductDetail(props) {
       // jika barang sudah ada di cart user, agar hanya tambah qty saja
       console.log(result.data.length);
       if (result.data.length) {
-        Axios.patch(`http://localhost:2200/cart/edit-cart/${result.data[0].idcart}`, {
-          quantity: quantity + result.data[0].quantity,
-        })
+        Axios.patch(
+          `http://localhost:2200/cart/edit-cart/${result.data[0].idcart}`,
+          {
+            quantity: quantity + result.data[0].quantity,
+          }
+        )
           .then(() => {
             alert("Berhasil edit");
             dispatch(getCartData(globalUser.user.iduser));
@@ -72,7 +76,11 @@ function ProductDetail(props) {
           quantity: quantity,
         })
           .then(() => {
-            alert("Berhasil menambahkan product");
+            Swal.fire(
+              "Berhasil Menambahkan Product",
+              "Silahkan Cek Cart Anda",
+              "success"
+            );
             dispatch(getCartData(globalUser.user.iduser));
           })
           .catch(() => {
@@ -101,15 +109,24 @@ function ProductDetail(props) {
             <h5>{productData.price_stock}</h5>
             <p>{productData.description}</p>
             <div className="d-flex flex-row align-items-center justify-content-center my-3">
-              <button onClick={() => qtyBtnHandler("decrement")} className="mr-4 rounded-circle btn btn-info">
+              <button
+                onClick={() => qtyBtnHandler("decrement")}
+                className="mr-4 rounded-circle btn btn-info"
+              >
                 -
               </button>
               {quantity}
-              <button onClick={() => qtyBtnHandler("increment")} className="rounded-pill btn btn-info mx-4">
+              <button
+                onClick={() => qtyBtnHandler("increment")}
+                className="rounded-pill btn btn-info mx-4"
+              >
                 +
               </button>
             </div>
-            <button className="btn btn-info rounded-pill mt-4" onClick={addToCartHandler}>
+            <button
+              className="btn btn-info rounded-pill mt-4"
+              onClick={addToCartHandler}
+            >
               Add To Cart
             </button>
           </div>
