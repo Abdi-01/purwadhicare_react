@@ -68,7 +68,6 @@ function App() {
           <Route component={ProductDetail} path="/productdetail/:idproduct" />
           <Route component={Recipe} path="/recipe" />
           <Route component={ProductList} path="/productlist" />
-          <Route component={ProductDetail} path="/productdetail/:idproduct" />
 
           <PrivateRoute path="/history">
             <OrderList />
