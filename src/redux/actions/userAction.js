@@ -1,6 +1,7 @@
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
 import Swal from "sweetalert2";
+import { getCartData } from ".";
 
 // Action Untuk Fitur Register
 export const register = (data, setToLogin) => {
@@ -73,6 +74,7 @@ export const userKeepLogin = (jwtToken) => {
       .then((result) => {
         delete result.data[0].password;
         localStorage.setItem("user_data", JSON.stringify(result.data[0]));
+        // dispatch(getCartData(result.data[0].iduser))
         dispatch({
           type: "LOGIN",
           payload: result.data[0],
