@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Button, Modal, Form } from "react-bootstrap";
+import { Button, Modal, Form, InputGroup } from "react-bootstrap";
 import { API_URL } from "../../constants/API";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -17,10 +17,22 @@ const Profile = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [show, setShow] = useState(false);
+  const [openPass, setOpenPass] = useState(false);
+  const [password, setPassword] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const isOpen = () => (openPass ? "fas fa-eye" : "fas fa-eye-slash");
 
-  // console.log(userData);
+  const onChangePassword = (e) => {
+    const key = e.target.attributes.name.value;
+    const value = e.target.value;
+    // console.log(key, value);
+    setPassword((prevData) => ({ ...prevData, [key]: value }));
+  };
 
   useEffect(() => {
     fetchData();
@@ -30,8 +42,8 @@ const Profile = () => {
   const fetchData = () => {
     axios
       .get(API_URL + "/user/profile", {
-        params: {
-          iduser: globalUser.user.iduser,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
       .then((res) => {
@@ -101,6 +113,27 @@ const Profile = () => {
       });
   };
 
+  const saveNewPassword = (e) => {
+    e.preventDefault();
+    // console.log(password);
+    axios
+      .post(API_URL + "/user/changePassword", {
+        iduser: globalUser.user.iduser,
+        ...password,
+      })
+      .then((res) => {
+        Swal.fire("Your New Password is Set!", "Silahkan Lanjut Berbelanja", "success");
+      })
+      .catch((err) => {
+        if (err.response.data !== 1) {
+          Swal.fire("Change Password Failed!", err.response.data.msg, "error");
+        }
+        // err.response.data.forEach((e) => {
+        //   Swal.fire("Change Password Failed!", err.response.data.msg, "error");
+        // });
+      });
+  };
+
   // Render form edit image
   const renderImage = () => {
     return (
@@ -136,13 +169,51 @@ const Profile = () => {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label>Password</Form.Label>
-              <Form.Control type="password" />
+            <Form.Group className="mb-3">
+              <Form.Label>Old Password </Form.Label>
+              <InputGroup style={{ display: "flex" }}>
+                <InputGroup.Text>
+                  <i className={isOpen()} style={styles.password} onClick={() => setOpenPass(!openPass)} />
+                </InputGroup.Text>
+                <Form.Control
+                  type={openPass ? "text" : "password"}
+                  name="oldPassword"
+                  defaultValue={password.oldPassword}
+                  onChange={onChangePassword}
+                  placeholder="Current Password"
+                />
+              </InputGroup>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>New Password</Form.Label>
+              <InputGroup style={{ display: "flex" }}>
+                <InputGroup.Text>
+                  <i className={isOpen()} style={styles.password} onClick={() => setOpenPass(!openPass)} />
+                </InputGroup.Text>
+                <Form.Control
+                  type={openPass ? "text" : "password"}
+                  name="newPassword"
+                  placeholder="New Password"
+                  defaultValue={password.newPassword}
+                  onChange={onChangePassword}
+                />
+              </InputGroup>
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label>Re-Password</Form.Label>
-              <Form.Control type="password" />
+              <Form.Label>Confirm New Password</Form.Label>
+              <InputGroup style={{ display: "flex" }}>
+                <InputGroup.Text>
+                  <i className={isOpen()} style={styles.password} onClick={() => setOpenPass(!openPass)} />
+                </InputGroup.Text>
+                <Form.Control
+                  type={openPass ? "text" : "password"}
+                  name="confirmPassword"
+                  defaultValue={password.confirmPassword}
+                  onChange={onChangePassword}
+                  placeholder="Confirm New Password"
+                />
+              </InputGroup>
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -150,7 +221,7 @@ const Profile = () => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" onClick={saveNewPassword}>
             Save Changes
           </Button>
         </Modal.Footer>
@@ -195,6 +266,7 @@ const Profile = () => {
                   <option disabled defaultValue>
                     {userData.gender}
                   </option>
+                  <option value="">Pilih</option>
                   <option value="Laki-laki">Laki-Laki</option>
                   <option value="Perempuan">Perempuan</option>
                 </select>
@@ -249,4 +321,9 @@ const Profile = () => {
   );
 };
 
+const styles = {
+  password: {
+    cursor: "pointer",
+  },
+};
 export default Profile;
