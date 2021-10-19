@@ -3,17 +3,11 @@ import "../../assets/styles/cart.css";
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import Swal from "sweetalert2";
-import { useHistory } from "react-router-dom";
 
 function Cart() {
-  const globalUser = useSelector((state) => state.user);
-  const history = useHistory();
-  const [cart, setCart] = useState([]);
   const [cities, setCities] = useState([]);
   const [provinces, setProvinces] = useState([]);
+  const [cart, setCart] = useState([]);
   const [courier, setCourier] = useState([]);
   const [shipping, setShipping] = useState({
     idprovince: 0,
@@ -39,10 +33,24 @@ function Cart() {
     setIsLoading(false);
   }, []);
 
+
+  const [isLoading, setIsLoading] = useState(true);
+  const globalCart = useSelector((state) => state.cart);
+  const globalUser = useSelector((state) => state.user);
+
+  // get data
+  useEffect(() => {
+    fetchProvince();
+    fetchCart();
+    setIsLoading(false);
+  }, []);
+
+  // get data kalo ada perubahan
   useEffect(() => {
     fetchCity();
   }, [shipping.idprovince]);
 
+  // ongkir
   useEffect(() => {
     fetchOngkir();
   }, [shipping.idcity]);
@@ -126,6 +134,7 @@ function Cart() {
     Axios.delete(`http://localhost:2200/cart/delete-cart/${idcart}`)
       .then(() => {
         fetchCart();
+        alert("Berhasil Delete Cart");
       })
       .catch(() => {
         alert("Gagal Delete");
@@ -205,19 +214,17 @@ function Cart() {
                 Delete
               </button>
             </div>
-          </div>
-        </div>
+          </div >
+        </div >
       );
     });
   };
 
   const renderOngkir = () => {
     return (
-      <div className="back-to-shop">
-        <table className="table">
-          <caption>
-            Daftar Jasa Pengiriman <b>JNE</b>
-          </caption>
+      <div className="back-to-shop p-4 mt-3">
+        <table className="table mt-5 p-4">
+          <caption>Daftar Jasa Pengiriman</caption>
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -231,31 +238,31 @@ function Cart() {
           <tbody>
             {courier.length
               ? courier.map((value) => {
-                  return value.costs.map((val, index) => {
-                    // console.log(val.service);
-                    return (
-                      <tr>
-                        <th scope="row">{index + 1}</th>
-                        <td>{val.service}</td>
-                        <td>{val.description}</td>
-                        <td>{val.cost[0].etd} Hari</td>
-                        <td>Rp. {val.cost[0].value}</td>
-                        <td>
-                          <button
-                            className="btn btn-secondary btn-sm"
-                            onClick={() => ongkirBtnHandler(val.cost[0].value, val.service)}
-                          >
-                            Pilih
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  });
-                })
+                return value.costs.map((val, index) => {
+                  // console.log(val.service);
+                  return (
+                    <tr>
+                      <th scope="row">{index + 1}</th>
+                      <td>{val.service}</td>
+                      <td>{val.description}</td>
+                      <td>{val.cost[0].etd} Hari</td>
+                      <td>Rp. {val.cost[0].value}</td>
+                      <td>
+                        <button
+                          className="btn btn-secondary btn-sm"
+                          onClick={() => ongkirBtnHandler(val.cost[0].value, val.service)}
+                        >
+                          Pilih
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                });
+              })
               : null}
-          </tbody>
-        </table>
-      </div>
+          </tbody >
+        </table >
+      </div >
     );
   };
 
@@ -310,7 +317,7 @@ function Cart() {
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Kecamatan</label>
             <input type="text" className="form-control" name="districts" placeholder="Kecamatan" onChange={formHandler} />
-          </div>
+          </div >
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Kode Pos</label>
             <input type="text" className="form-control" name="postal_code" placeholder="Kode Pos" onChange={formHandler} />
@@ -319,20 +326,22 @@ function Cart() {
             <label htmlFor="exampleInputEmail1">Catatan</label>
             <input type="text" className="form-control" name="notes" placeholder="Catatan" onChange={formHandler} />
           </div>
-          {totalPrice.jasa ? (
-            <div className="row" style={{ padding: "2vh 0" }}>
-              <div className="col">Jasa</div>
-              <div className="col text-right">{totalPrice.jasa}</div>
-            </div>
-          ) : null}
+          {
+            totalPrice.jasa ? (
+              <div className="row" style={{ padding: "2vh 0" }}>
+                <div className="col">Jasa</div>
+                <div className="col text-right">{totalPrice.jasa}</div>
+              </div>
+            ) : null
+          }
 
           <div className="row" style={{ borderTop: "1px solid rgba(0,0,0,.1)", padding: "2vh 0" }}>
             <div className="col">Total Harga</div>
             <div className="col text-right">RP {totalPrice.total}</div>
           </div>
           <button className="btn btn-primary btn-block">CHECKOUT</button>
-        </form>
-      </div>
+        </form >
+      </div >
     );
   };
 
@@ -353,24 +362,24 @@ function Cart() {
                       </h4>
                     </div>
                     <div className="col align-self-center text-right text-muted">{cart.length} Produk</div>
-                  </div>
-                </div>
+                  </div >
+                </div >
                 {renderCart()}
-                <div className="back-to-shop">
+                < div className="back-to-shop" >
                   <Link to="/productlist">
                     <span className="text-muted">
                       ← <br />
                       Back to shop
                     </span>
                   </Link>
-                </div>
+                </div >
                 {renderOngkir()}
-              </div>
+              </div >
               {renderShipping()}
-            </div>
-          </div>
-        </div>
-      </div>
+            </div >
+          </div >
+        </div >
+      </div >
     );
   }
 }
