@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 import { useDispatch, useSelector } from "react-redux";
 import OrderList from "./pages/User/OrderList";
 import Recipe from "./pages/User/Recipe";
+import { getCartData } from "./redux/actions/cart"
 
 function App() {
   const dispatch = useDispatch();
@@ -30,8 +31,11 @@ function App() {
   const { user, storageIsChecked } = userGlobal;
   useEffect(() => {
     const tokenLocalStorage = localStorage.getItem("token");
+    const userLocalStorage = localStorage.getItem("user_data");
     if (tokenLocalStorage) {
       dispatch(userKeepLogin(tokenLocalStorage));
+      const userData = JSON.parse(userLocalStorage)
+      dispatch(getCartData(userData.iduser))
     } else {
       dispatch(checkStorage());
     }

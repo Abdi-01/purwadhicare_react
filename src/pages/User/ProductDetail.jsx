@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Axios from "axios";
 import React, { useState, useEffect } from "react";
+import { propTypes } from "react-bootstrap/esm/Image";
 import { useSelector, useDispatch } from "react-redux";
 import { getCartData } from "../../redux/actions";
 
@@ -14,7 +15,7 @@ function ProductDetail(props) {
   const globalUser = useSelector((state) => state.user);
 
   const fetchProductData = () => {
-    // alert(props.match.params.productId)
+    // alert(props.match.params.idproduct)
     Axios.get(`http://localhost:2200/product/get`, {
       params: {
         idproduct: props.match.params.idproduct,
