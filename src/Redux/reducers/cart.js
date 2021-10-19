@@ -1,10 +1,16 @@
-const INITIAL_STATE = {
-  cartList: ["apel"],
+const INITIAL_STATE = { 
+  cartList: [],
 };
 
-export const cartReducer = (state = INITIAL_STATE, action) => {
+const cartReducer = (state = INITIAL_STATE, action) => {
+  console.log(state.cartList)
   switch (action.type) {
+    case "FILL_CART":
+      return { ...state, cartList : action.payload };
+
     default:
       return state;
   }
 };
+
+export default cartReducer;

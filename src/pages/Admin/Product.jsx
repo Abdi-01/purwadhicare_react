@@ -9,6 +9,10 @@ function Admin() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [productList, setProductList] = useState([]);
+  const [page, setPage] = useState(1);
+  const [maxPage, setMaxPage] = useState(0);
+  const [itemPerPage] = useState(5);
+
   const [addProductList, setAddProductList] = useState({
     category: "",
     productName: "",
@@ -29,11 +33,14 @@ function Admin() {
     image: "",
   });
 
+  console.log("perpage", editProductList.itemPerPage);
   const fetchProducts = () => {
     // yang mau dipanggil
     Axios.get("http://localhost:2200/product/get")
       .then((result) => {
+        console.log(result.data.length);
         setProductList(result.data);
+        setMaxPage(Math.ceil(result.data.length / itemPerPage));
       })
       .catch(() => {
         alert("Terjadi kesalahan server");
@@ -73,6 +80,18 @@ function Admin() {
       });
   };
 
+  const nextPageHandler = () => {
+    if (page < maxPage) {
+      setPage(page + 1);
+    }
+  };
+
+  const prevPageHandler = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  };
+
   const cancelEdit = () => {
     setEditProductList({
       ...editProductList,
@@ -96,7 +115,9 @@ function Admin() {
   };
 
   const renderProducts = () => {
-    return productList.map((val) => {
+    const beginningIndex = (page - 1) * itemPerPage;
+    const currentData = productList.slice(beginningIndex, beginningIndex + itemPerPage);
+    return currentData.map((val) => {
       if (val.idproduct === editProductList.idproduct) {
         return (
           <tr>
@@ -207,11 +228,6 @@ function Admin() {
     });
   };
 
-  // seperti component did mount
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
   const addNewProduct = () => {
     Axios.post("http://localhost:2200/product/add-product", {
       category: addProductList.category,
@@ -303,6 +319,12 @@ function Admin() {
     );
   };
 
+  // seperti component did mount
+  useEffect(() => {
+    fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="content-page">
       <div className="content">
@@ -344,6 +366,27 @@ function Admin() {
                   </thead>
                   <tbody>{renderProducts()}</tbody>
                 </table>
+                <div className="mt-3">
+                  <div className="d-flex flex-row justify-content-between align-items-center">
+                    <button
+                      // disabled={paginate.page === 1}
+                      onClick={prevPageHandler}
+                      className="btn btn-info"
+                    >
+                      {"<"}
+                    </button>
+                    <div className="text-center">
+                      Page {page} of {maxPage}
+                    </div>
+                    <button
+                      // disabled={paginate.page >= paginate.maxPage}
+                      onClick={nextPageHandler}
+                      className="btn btn-info"
+                    >
+                      {">"}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
