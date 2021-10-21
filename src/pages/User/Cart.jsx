@@ -3,11 +3,18 @@ import "../../assets/styles/cart.css";
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import { useHistory } from "react-router-dom";
 
 function Cart() {
+  const globalCart = useSelector((state) => state.cart);
+  const globalUser = useSelector((state) => state.user);
+  const history = useHistory();
+  const [cart, setCart] = useState([]);
   const [cities, setCities] = useState([]);
   const [provinces, setProvinces] = useState([]);
-  const [cart, setCart] = useState([]);
   const [courier, setCourier] = useState([]);
   const [shipping, setShipping] = useState({
     idprovince: 0,
@@ -33,10 +40,6 @@ function Cart() {
     setIsLoading(false);
   }, []);
 
-
-  const [isLoading, setIsLoading] = useState(true);
-  const globalCart = useSelector((state) => state.cart);
-  const globalUser = useSelector((state) => state.user);
 
   // get data
   useEffect(() => {
