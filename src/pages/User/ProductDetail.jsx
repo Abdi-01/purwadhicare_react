@@ -35,7 +35,7 @@ function ProductDetail(props) {
   };
 
   const qtyBtnHandler = (action) => {
-    if (action === "increment") {
+    if (action === "increment" && quantity < productData.stock_bottle) {
       setQuantity(quantity + 1);
     } else if (action === "decrement" && quantity > 1) {
       setQuantity(quantity - 1);
@@ -97,8 +97,9 @@ function ProductDetail(props) {
 
           <div className="col-6 d-flex flex-column justify-content-center">
             <h4>{productData.product_name}</h4>
-            <h5>{productData.price_stock}</h5>
+            <h5>Rp. {productData.price_stock}</h5>
             <p>{productData.description}</p>
+            <p>Stok Tersedia : {productData.stock_bottle}</p>
             <div className="d-flex flex-row align-items-center justify-content-center my-3">
               <button onClick={() => qtyBtnHandler("decrement")} className="mr-4 rounded-circle btn btn-info">
                 -

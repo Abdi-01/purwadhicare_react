@@ -23,6 +23,9 @@ import NotFound from "./pages/NotFound";
 import { useDispatch, useSelector } from "react-redux";
 import OrderList from "./pages/User/OrderList";
 import Recipe from "./pages/User/Recipe";
+import ProductInventory from "./pages/Admin/ProductInventory";
+import OrderRecipe from "./pages/Admin/OrderRecipe";
+import OrderDetailRecipe from "./pages/Admin/OrderDetailRecipe";
 
 function App() {
   const dispatch = useDispatch();
@@ -68,7 +71,6 @@ function App() {
           <Route component={ProductDetail} path="/productdetail/:idproduct" />
           <Route component={Recipe} path="/recipe" />
           <Route component={ProductList} path="/productlist" />
-          <Route component={ProductDetail} path="/productdetail/:idproduct" />
 
           <PrivateRoute path="/history">
             <OrderList />
@@ -79,9 +81,18 @@ function App() {
           </PrivateRoute>
           {user.role === "admin" ? (
             <>
+              <PrivateRoute path="/order-recipe/:idorder">
+                <OrderDetailRecipe />
+              </PrivateRoute>
               <Route component={ProductAdmin} path="/product-admin" />
               <PrivateRoute path="/dashboard">
                 <Dashboard />
+              </PrivateRoute>
+              <PrivateRoute path="/product-inventory">
+                <ProductInventory />
+              </PrivateRoute>
+              <PrivateRoute exact path="/order-recipe">
+                <OrderRecipe />
               </PrivateRoute>
             </>
           ) : null}

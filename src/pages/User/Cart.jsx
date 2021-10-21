@@ -32,6 +32,7 @@ function Cart() {
     jasa: false,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [btnDisable, setBtnDisable] = useState(true);
 
   useEffect(() => {
     fetchCart();
@@ -87,16 +88,23 @@ function Cart() {
   };
 
   const fetchOngkir = () => {
+    var weight = 0;
+    cart.forEach((val) => {
+      if (val.unit === "mg") {
+        weight += (val.netto / 1000) * val.quantity;
+      } else {
+        weight += val.netto * val.quantity;
+      }
+    });
     Axios.post(API_URL + "/ongkir/cost", {
-      params: {
-        destination: shipping.idcity,
-      },
+      destination: shipping.idcity,
+      weight,
     })
       .then((res) => {
         setCourier(res.data);
       })
       .catch((err) => {
-        alert("Kesalahan Server");
+        console.log(err);
       });
   };
 
@@ -120,6 +128,7 @@ function Cart() {
 
   const ongkirBtnHandler = (totalOngkir, jasa) => {
     setTotalPrice({ ...totalPrice, ongkir: totalOngkir, jasa: `JNE ${jasa}` });
+    setBtnDisable(false);
   };
 
   const deleteCartHandler = (idcart) => {
@@ -184,9 +193,9 @@ function Cart() {
   };
 
   const renderCart = () => {
-    return cart.map((val) => {
+    return cart.map((val, index) => {
       return (
-        <div className="row border-top border-bottom">
+        <div className="row border-top border-bottom" key={index}>
           <div className="row main-cart align-items-center p-4">
             <div className="col-2">
               <img className="img-fluid" src={val.image} alt="img" />
@@ -234,7 +243,7 @@ function Cart() {
                   return value.costs.map((val, index) => {
                     // console.log(val.service);
                     return (
-                      <tr>
+                      <tr key={index}>
                         <th scope="row">{index + 1}</th>
                         <td>{val.service}</td>
                         <td>{val.description}</td>
@@ -330,7 +339,9 @@ function Cart() {
             <div className="col">Total Harga</div>
             <div className="col text-right">RP {totalPrice.total}</div>
           </div>
-          <button className="btn btn-primary btn-block">CHECKOUT</button>
+          <button disabled={btnDisable ? "disabled" : null} className="btn btn-primary btn-block">
+            CHECKOUT
+          </button>
         </form>
       </div>
     );
