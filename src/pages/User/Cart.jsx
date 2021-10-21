@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
 
 function Cart() {
+  const globalCart = useSelector((state) => state.cart);
   const globalUser = useSelector((state) => state.user);
   const history = useHistory();
   const [cart, setCart] = useState([]);
@@ -34,12 +35,14 @@ function Cart() {
   const [isLoading, setIsLoading] = useState(true);
   const [btnDisable, setBtnDisable] = useState(true);
 
+  // get data
   useEffect(() => {
     fetchCart();
     fetchProvince();
     setIsLoading(false);
   }, []);
 
+  // get data kalo ada perubahan
   useEffect(() => {
     fetchCity();
   }, [shipping.idprovince]);
