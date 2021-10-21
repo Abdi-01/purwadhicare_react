@@ -27,14 +27,18 @@ import ProductInventory from "./pages/Admin/ProductInventory";
 import OrderRecipe from "./pages/Admin/OrderRecipe";
 import OrderDetailRecipe from "./pages/Admin/OrderDetailRecipe";
 
+
 function App() {
   const dispatch = useDispatch();
   const userGlobal = useSelector((state) => state.user);
   const { user, storageIsChecked } = userGlobal;
   useEffect(() => {
     const tokenLocalStorage = localStorage.getItem("token");
+    const userLocalStorage = localStorage.getItem("user_data");
     if (tokenLocalStorage) {
       dispatch(userKeepLogin(tokenLocalStorage));
+      const userData = JSON.parse(userLocalStorage)
+      dispatch(getCartData(userData.iduser))
     } else {
       dispatch(checkStorage());
     }

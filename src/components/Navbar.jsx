@@ -3,12 +3,15 @@ import { FiShoppingCart, FiUser, FiLogOut } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/actions";
+import { getCartData } from "../redux/actions/cart";
 
 function Navbar() {
   const dispatch = useDispatch();
   const userGlobal = useSelector((state) => state.user);
   const cartGlobal = useSelector((state) => state.cart);
   const { user } = userGlobal;
+
+  console.log(cartGlobal.cartList.length);
 
   return (
     <div>
