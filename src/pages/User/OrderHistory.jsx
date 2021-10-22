@@ -50,7 +50,7 @@ function History() {
           <span className="font-weight-bold">
             {val.product_name} ({val.quantity})
           </span>
-          <span>{val.price * val.quantity}</span>
+          <span>{val.price_stock * val.quantity}</span>
         </div>
       );
     });
