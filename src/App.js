@@ -27,6 +27,10 @@ import Revenue from "./pages/Admin/Revenue";
 import UserTransactions from "./pages/Admin/UserTransactions";
 import { getCartData } from "./redux/actions/cart";
 
+import ProductInventory from "./pages/Admin/ProductInventory";
+import OrderRecipe from "./pages/Admin/OrderRecipe";
+import OrderDetailRecipe from "./pages/Admin/OrderDetailRecipe";
+
 function App() {
   const dispatch = useDispatch();
   const userGlobal = useSelector((state) => state.user);
@@ -87,10 +91,19 @@ function App() {
           </PrivateRoute>
           {user.role === "admin" ? (
             <>
+              <PrivateRoute path="/order-recipe/:idorder">
+                <OrderDetailRecipe />
+              </PrivateRoute>
               <Route component={ProductAdmin} path="/product-admin" />
               <Route component={Revenue} path="/revenue" />
               <PrivateRoute path="/dashboard">
                 <Dashboard />
+              </PrivateRoute>
+              <PrivateRoute path="/product-inventory">
+                <ProductInventory />
+              </PrivateRoute>
+              <PrivateRoute exact path="/order-recipe">
+                <OrderRecipe />
               </PrivateRoute>
             </>
           ) : null}
