@@ -106,7 +106,7 @@ function ProductDetail(props) {
 
           <div className="col-6 d-flex flex-column justify-content-center">
             <h4>{productData.product_name}</h4>
-            <h5>{productData.price_stock}</h5>
+            <h5>Rp. {productData.price_stock}</h5>
             <p>{productData.description}</p>
             <div className="d-flex flex-row align-items-center justify-content-center my-3">
               <button
