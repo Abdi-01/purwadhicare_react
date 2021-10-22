@@ -23,10 +23,13 @@ import NotFound from "./pages/NotFound";
 import { useDispatch, useSelector } from "react-redux";
 import OrderList from "./pages/User/OrderList";
 import Recipe from "./pages/User/Recipe";
+import Revenue from "./pages/Admin/Revenue";
+import UserTransactions from "./pages/Admin/UserTransactions";
+import { getCartData } from "./redux/actions/cart";
+
 import ProductInventory from "./pages/Admin/ProductInventory";
 import OrderRecipe from "./pages/Admin/OrderRecipe";
 import OrderDetailRecipe from "./pages/Admin/OrderDetailRecipe";
-
 
 function App() {
   const dispatch = useDispatch();
@@ -37,10 +40,11 @@ function App() {
     const userLocalStorage = localStorage.getItem("user_data");
     if (tokenLocalStorage) {
       dispatch(userKeepLogin(tokenLocalStorage));
-      const userData = JSON.parse(userLocalStorage)
-      dispatch(getCartData(userData.iduser))
+      const userData = JSON.parse(userLocalStorage);
+      dispatch(getCartData(userData.iduser));
     } else {
       dispatch(checkStorage());
+      
     }
   }, []);
 
@@ -75,6 +79,8 @@ function App() {
           <Route component={ProductDetail} path="/productdetail/:idproduct" />
           <Route component={Recipe} path="/recipe" />
           <Route component={ProductList} path="/productlist" />
+          <Route component={UserTransactions} path="/user-transactions" />
+
 
           <PrivateRoute path="/history">
             <OrderList />
@@ -89,6 +95,7 @@ function App() {
                 <OrderDetailRecipe />
               </PrivateRoute>
               <Route component={ProductAdmin} path="/product-admin" />
+              <Route component={Revenue} path="/revenue" />
               <PrivateRoute path="/dashboard">
                 <Dashboard />
               </PrivateRoute>

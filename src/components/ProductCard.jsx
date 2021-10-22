@@ -16,7 +16,7 @@ function ProductCard(props) {
           </Link>
 
           <span className="text-muted">
-            Rp. {props.productData.price_stock}
+            Rp. {props.productData.price_stock.toLocaleString()}
           </span>
         </div>
         {/* <button className="btn btn-outline-info rounded-pill mt-2">Add To Cart</button> */}

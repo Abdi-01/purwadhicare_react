@@ -7,8 +7,12 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
+import {  useDispatch } from "react-redux";
+
+import { getCartData } from "../../redux/actions";
 
 function Cart() {
+  const dispatch = useDispatch();
   const globalCart = useSelector((state) => state.cart);
   const globalUser = useSelector((state) => state.user);
   const history = useHistory();
@@ -138,6 +142,8 @@ function Cart() {
     Axios.delete(`http://localhost:2200/cart/delete-cart/${idcart}`)
       .then(() => {
         fetchCart();
+        alert("Berhasil Delete Cart");
+        dispatch(getCartData(globalUser.user.iduser))
       })
       .catch(() => {
         alert("Gagal Delete");
@@ -209,9 +215,9 @@ function Cart() {
             <div className="col">
               <div className="border">{val.quantity}</div>
             </div>
-            <div className="col">Rp. {val.price_stock}</div>
+            <div className="col">Rp. {val.price_stock.toLocaleString()}</div>
             {/* total price per item */}
-            <div className="col">Rp. {val.quantity * val.price_stock}</div>
+            <div className="col">Rp. {(val.quantity * val.price_stock).toLocaleString()}</div>
             <div className="col">
               <button onClick={() => deleteCartHandler(val.idcart)} className="btn btn-danger">
                 Delete
