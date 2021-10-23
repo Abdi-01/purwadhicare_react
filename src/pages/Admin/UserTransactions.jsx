@@ -46,45 +46,7 @@ const UserTransactions = () => {
       });
   };
 
-  const cancelQuantity = (cancelqty, idproduct) => {
-    Axios.patch(
-      `http://localhost:2200/transaction/cancel-quantity?cancelqty=${cancelqty}&idproduct=${idproduct}`
-    )
-      .then(() => alert("stok berhasil dikembalikan"))
-      .catch(() => {
-        alert("Stok belum terupdate");
-      });
-  };
-
-  const rejectTransactionBtnHandler = (idorder) => {
-    Axios.patch(
-      `http://localhost:2200/transaction/reject-transaction/${idorder}`
-    )
-      .then(() => {
-        fetchProduct();
-        fetchDetailTransaction();
-        editToggle();
-        cancelQuantity();
-      })
-      .catch(() => {
-        alert("Transaksi belum dibatalkan");
-      });
-  };
-
-  const confirmTransactionBtnHandler = (idorder) => {
-    Axios.patch(
-      `http://localhost:2200/transaction/confirm-transaction/${idorder}`
-    )
-      .then(() => {
-        fetchDetailTransaction();
-        fetchProduct();
-        alert("Transaksi berhasil");
-      })
-      .catch(() => {
-        alert("Transaksi belum dikonfirmasi");
-      });
-  };
-
+  
   const nextPageHandler = () => {
     if (page < maxPage) {
       setPage(page + 1);
@@ -146,13 +108,13 @@ const UserTransactions = () => {
           </td>
           <td>
             <button
-              onClick={() => confirmTransactionBtnHandler(val.idorder)}
+             
               className="btn btn-light btn-sm mr-1"
             >
               Confirm
             </button>
             <button
-              onClick={() => rejectTransactionBtnHandler(val.idorder)}
+             
               className="btn btn-dark btn-sm ml-1"
             >
               Reject
