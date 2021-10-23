@@ -10,11 +10,17 @@ const UserTransactions = () => {
   const [itemPerPage, setItemPerPage] = useState(7);
   const [show, setShow] = useState(false);
   const [detailOrder, setDetailOrder] = useState([]);
+  const [editProductList, setEditProductList] = useState({
+    idorder: 0,
+    idproduct: 0,
+    quantity: 0,
+  });
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   useEffect(() => {
     fetchProduct();
+    fetchDetailTransaction();
   }, []);
 
   const fetchProduct = () => {
@@ -28,8 +34,8 @@ const UserTransactions = () => {
       });
   };
 
-  const fetchDetailTransaction = (idorder) => {
-    Axios.get(`http://localhost:2200/transaction/get-detail?idorder=${idorder}`)
+  const fetchDetailTransaction = () => {
+    Axios.get(`http://localhost:2200/transaction/get-detail`)
       .then((result) => {
         console.log(result.data);
         setDetailOrder(result.data);
@@ -44,7 +50,7 @@ const UserTransactions = () => {
     Axios.patch(
       `http://localhost:2200/transaction/cancel-quantity?cancelqty=${cancelqty}&idproduct=${idproduct}`
     )
-      .then(() => fetchDetailTransaction())
+      .then(() => alert("stok berhasil dikembalikan"))
       .catch(() => {
         alert("Stok belum terupdate");
       });
@@ -55,8 +61,10 @@ const UserTransactions = () => {
       `http://localhost:2200/transaction/reject-transaction/${idorder}`
     )
       .then(() => {
-        cancelQuantity();
+        fetchProduct();
         fetchDetailTransaction();
+        editToggle();
+        cancelQuantity();
       })
       .catch(() => {
         alert("Transaksi belum dibatalkan");
@@ -69,9 +77,11 @@ const UserTransactions = () => {
     )
       .then(() => {
         fetchDetailTransaction();
+        fetchProduct();
+        alert("Transaksi berhasil");
       })
       .catch(() => {
-        alert("Transaksi belum dibatalkan");
+        alert("Transaksi belum dikonfirmasi");
       });
   };
 
@@ -85,6 +95,16 @@ const UserTransactions = () => {
     if (page > 1) {
       setPage(page - 1);
     }
+  };
+
+  const editToggle = (editData) => {
+    setEditProductList({
+      idproduct: editData.idproduct,
+      idorder: editData.total_netto,
+      quantity: editData.stock_bottle,
+    });
+
+    console.log(editProductList);
   };
 
   const renderProduct = () => {
@@ -125,9 +145,14 @@ const UserTransactions = () => {
             {/* {renderDetailProduct(val)} */}
           </td>
           <td>
-            <button className="btn btn-light btn-sm mr-1">Confirm</button>
             <button
-              onClick={() => rejectTransactionBtnHandler(detailOrder.idorder)}
+              onClick={() => confirmTransactionBtnHandler(val.idorder)}
+              className="btn btn-light btn-sm mr-1"
+            >
+              Confirm
+            </button>
+            <button
+              onClick={() => rejectTransactionBtnHandler(val.idorder)}
               className="btn btn-dark btn-sm ml-1"
             >
               Reject
