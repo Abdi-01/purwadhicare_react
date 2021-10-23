@@ -9,6 +9,7 @@ const UserTransactions = () => {
   const [maxPage, setMaxPage] = useState(0);
   const [itemPerPage, setItemPerPage] = useState(7);
   const [show, setShow] = useState(false);
+  const [detailOrder, setDetailOrder] = useState([]);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -24,6 +25,53 @@ const UserTransactions = () => {
       })
       .catch((err) => {
         console.log(err);
+      });
+  };
+
+  const fetchDetailTransaction = (idorder) => {
+    Axios.get(`http://localhost:2200/transaction/get-detail?idorder=${idorder}`)
+      .then((result) => {
+        console.log(result.data);
+        setDetailOrder(result.data);
+      })
+      .catch((err) => {
+        alert("Terjadi kesalahan di server transaction");
+        console.log(err);
+      });
+  };
+
+  const cancelQuantity = (cancelqty, idproduct) => {
+    Axios.patch(
+      `http://localhost:2200/transaction/cancel-quantity?cancelqty=${cancelqty}&idproduct=${idproduct}`
+    )
+      .then(() => fetchDetailTransaction())
+      .catch(() => {
+        alert("Stok belum terupdate");
+      });
+  };
+
+  const rejectTransactionBtnHandler = (idorder) => {
+    Axios.patch(
+      `http://localhost:2200/transaction/reject-transaction/${idorder}`
+    )
+      .then(() => {
+        cancelQuantity();
+        fetchDetailTransaction();
+      })
+      .catch(() => {
+        alert("Transaksi belum dibatalkan");
+      });
+  };
+
+  const confirmTransactionBtnHandler = (idorder) => {
+    Axios.patch(
+      `http://localhost:2200/transaction/confirm-transaction/${idorder}`
+    )
+      .then(() => {
+        fetchDetailTransaction();
+      })
+      .catch(() => {
+        alert("Transaksi belum dibatalkan");
       });
   };
 
@@ -78,7 +126,12 @@ const UserTransactions = () => {
           </td>
           <td>
             <button className="btn btn-light btn-sm mr-1">Confirm</button>
-            <button className="btn btn-dark btn-sm ml-1">Reject</button>
+            <button
+              onClick={() => rejectTransactionBtnHandler(detailOrder.idorder)}
+              className="btn btn-dark btn-sm ml-1"
+            >
+              Reject
+            </button>
           </td>
         </tr>
       );
