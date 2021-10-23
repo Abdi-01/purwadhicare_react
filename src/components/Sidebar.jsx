@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FiHome, FiPackage, FiClipboard } from "react-icons/fi";
+import { FiHome, FiPackage, FiClipboard, FiFileText } from "react-icons/fi";
 
 function Sidebar() {
   return (
@@ -35,6 +35,12 @@ function Sidebar() {
                 <Link to="/order-recipe">
                   <FiClipboard />
                   <span> Order Recipe</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/user-transactions">
+                  <FiFileText />
+                  <span> User Transactions</span>
                 </Link>
               </li>
             </ul>

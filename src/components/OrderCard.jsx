@@ -136,6 +136,9 @@ function OrderCard(props) {
                 <p className="text-secondary">{price}</p>
               </div>
             </div>
+            <div className="row pl-2 text-center">
+              <button className="btn btn-info">Lihat Detail</button>
+            </div>
           </div>
           <div className="col-md-4">
             <div className="row">
