@@ -37,9 +37,10 @@ function App() {
   const { user, storageIsChecked } = userGlobal;
   useEffect(() => {
     const tokenLocalStorage = localStorage.getItem("token");
+    const userLocalStorage = localStorage.getItem("user_data");
     if (tokenLocalStorage) {
       dispatch(userKeepLogin(tokenLocalStorage));
-      const userData = JSON.parse(tokenLocalStorage);
+      const userData = JSON.parse(userLocalStorage);
       dispatch(getCartData(userData.iduser));
     } else {
       dispatch(checkStorage());
