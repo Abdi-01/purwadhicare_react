@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
-import { Button, Modal, Form, ModalDialog } from "react-bootstrap";
+import { Button, Modal, Col } from "react-bootstrap";
 
 const UserTransactions = () => {
   const [transList, setTransList] = useState([]);
@@ -13,7 +13,7 @@ const UserTransactions = () => {
   const [searchCostumer, setSearchCostumer] = useState("");
   const [searchStatus, setSearchStatus] = useState("");
   const [sortBy, setSortBy] = useState("");
-  const [detailTrans, setDetailTrans] = useState({});
+  const [detailTrans, setDetailTrans] = useState([]);
   const handleClose = () => setShow(false);
   const handleShow = (idorder) => {
     fetchTransaction(idorder);
@@ -23,6 +23,7 @@ const UserTransactions = () => {
   const fetchTransaction = (idorder) => {
     Axios.get(API_URL + "/transaction/detail-transaction/" + idorder)
       .then((res) => {
+        console.log(res.data);
         setDetailTrans(res.data);
       })
       .catch((err) => {
@@ -58,18 +59,6 @@ const UserTransactions = () => {
     const beginningIndex = (page - 1) * itemPerPage;
     let rawData = [...filterTransList];
 
-    // untuk fungsi sort by alphabethical (az, za)
-    const compareString = (a, b) => {
-      if (a.full_name < b.full_name) {
-        return -1;
-      }
-      // agar tukar posisi
-      if (a.full_name > b.full_name) {
-        return 1;
-      }
-      return 0;
-    };
-
     const compareDate = (a, b) => {
       if (a.order_date < b.order_date) {
         return -1;
@@ -98,6 +87,7 @@ const UserTransactions = () => {
       case "New Transaction":
         rawData.sort((a, b) => compareDate(b, a));
         break;
+
       case "Old Transaction":
         rawData.sort(compareDate);
         break;
@@ -153,33 +143,106 @@ const UserTransactions = () => {
             >
               Lihat Detail
             </button>
-            {RenderDetailProduct(detailTrans)}
           </td>
         </tr>
       );
     });
   };
 
-  const RenderDetailProduct = (detailTrans) => {
-    console.log(detailTrans);
-    return (
-      <Modal show={show} onHide={handleClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Detail Transaksi</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <h6>Status:</h6>
-          <span>{detailTrans.order_status}</span>
-          <h6>Tanggal Transaksi:</h6>
-          {/* <span>{date}</span> */}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
+  const RenderDetailProduct = () => {
+    if (detailTrans.length > 0) {
+      console.log(detailTrans);
+      let date = detailTrans[0].order_date
+        .slice(0, 10)
+        .split("-")
+        .reverse()
+        .join("/");
+      let totalPrice;
+      for (let i = 0; i < detailTrans.length; i++) {
+        totalPrice = detailTrans[0].price + detailTrans[i].price;
+      }
+      return (
+        <Modal show={show} onHide={handleClose} centered>
+          <Modal.Header closeButton></Modal.Header>
+
+          <Modal.Body>
+            <Col xs={12}>
+              <h5 className="text-success text-center">
+                <strong>STATUS PRODUK</strong>
+              </h5>
+              <hr />
+              <h6>Status:</h6>
+              <span>
+                {detailTrans[0].order_status === "Menunggu Pengiriman" ? (
+                  <span className="badge badge-soft-primary">
+                    {detailTrans[0].order_status}
+                  </span>
+                ) : detailTrans[0].order_status === "Validasi Resep" ? (
+                  <span className="badge badge-soft-warning">
+                    {detailTrans[0].order_status}
+                  </span>
+                ) : detailTrans[0].order_status === "Order Selesai" ? (
+                  <span className="badge badge-soft-success">
+                    {detailTrans[0].order_status}
+                  </span>
+                ) : (
+                  <span className="badge badge-soft-danger">
+                    {detailTrans[0].order_status}
+                  </span>
+                )}
+              </span>
+              <h6>Nama Costumer:</h6>
+              <span>{detailTrans[0].full_name}</span>
+              <h6>Tanggal Transaksi:</h6>
+              <span>{date}</span>
+              <h6>Nomor Pengiriman:</h6>
+              <span>{detailTrans[0].idshipping}</span>
+              <h6>Alamat Pengiriman:</h6>
+              <span>{detailTrans[0].address}</span>
+            </Col>
+            <Col xs={12}>
+              <br />
+              <h5 className="text-success text-center">
+                <strong>DETAIL PRODUK</strong>
+              </h5>
+              <hr />
+              <h6>Nama Produk:</h6>
+              {detailTrans.map((item, i) => (
+                <div key={i}>
+                  {item.product_name} x {item.quantity} : Rp
+                  {item.price * item.quantity}
+                </div>
+              ))}
+
+              <div>Ongkir: Rp.{detailTrans[0].order_price - totalPrice}</div>
+              <div>
+                <strong>Total Harga: Rp.{detailTrans[0].order_price}</strong>
+              </div>
+              <br />
+            </Col>
+            <Col xs={12}>
+              <h5 className="text-success text-center">
+                <strong>BUKTI PEMBAYARAN</strong>
+              </h5>
+              <hr />
+              <div className="d-flex flex-column justify-content-center">
+                <img
+                  src={detailTrans[0].payment_image}
+                  className="img-fluid rounded z-depth-2 "
+                  alt="Bukti Pembayaran"
+                ></img>
+              </div>
+            </Col>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      );
+    }
+    return null;
   };
 
   const searchCostumerHandler = (event) => {
@@ -221,11 +284,24 @@ const UserTransactions = () => {
             <div className="col-lg-12">
               <div className="card">
                 <div className="card-body">
-                  <h4 className="header-title mt-0 mb-1">User Transactions</h4>
-                  <p className="sub-header">
-                    Menampilkan seluruh transaksi users beserta statusnya
-                  </p>
-
+                  <span>
+                    <h4 className="header-title mt-0 mb-1">
+                      User Transactions
+                    </h4>
+                    <div className="sub-header">
+                      <p>
+                        {" "}
+                        Menampilkan seluruh transaksi users beserta statusnya
+                      </p>
+                      <label htmlFor="searchCostumerName">Costumer Name</label>
+                      <input
+                        onChange={searchCostumerHandler}
+                        name="searchCostumerName"
+                        type="text"
+                        className="form-control mb-3"
+                      />
+                    </div>
+                  </span>
                   <div className="table-responsive">
                     <table className="table m-0">
                       <thead>
@@ -241,6 +317,7 @@ const UserTransactions = () => {
                         </tr>
                       </thead>
                       <tbody>{renderProduct()}</tbody>
+                      {RenderDetailProduct()}
                     </table>
                     <ul className="pagination pagination-rounded">
                       <li

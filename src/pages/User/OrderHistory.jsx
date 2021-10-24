@@ -1,5 +1,5 @@
 import Axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import React, { useState, useEffect } from "react";
 
 function History() {
@@ -10,7 +10,8 @@ function History() {
 
   const fetchTransactions = () => {
     Axios.get(
-      `http://localhost:2200/transaction/get-history?iduser=${globalUser.user.iduser}`)
+      `http://localhost:2200/transaction/get-history?iduser=${globalUser.user.iduser}`
+    )
       .then((result) => {
         console.log(result.data);
         setTransactionList(result.data);
@@ -19,7 +20,6 @@ function History() {
         alert("Terjadi kesalahan di server transaction");
       });
   };
- 
 
   const renderTransactions = () => {
     return transactionList.map((val) => {
@@ -42,7 +42,6 @@ function History() {
     });
   };
 
-   
   const renderTransactionDetailItem = () => {
     return transactionDetail.map((val) => {
       return (
@@ -57,17 +56,16 @@ function History() {
   };
 
   const seeDetailsBtnHandler = (idorder) => {
-    Axios.get(
-      `http://localhost:2200/transaction/get-detail?idorder=${idorder}`)
+    Axios.get(`http://localhost:2200/transaction/get-detail?idorder=${idorder}`)
       .then((result) => {
         console.log(result.data);
         setTransactionDetail(result.data);
       })
       .catch((err) => {
         alert("Terjadi kesalahan di server transaction");
-        console.log(err)
+        console.log(err);
       });
-      };
+  };
 
   // seperti component did mount
   useEffect(() => {
@@ -91,19 +89,15 @@ function History() {
           </table>
         </div>
         <div className="col-4">
-          {
-          transactionDetail.length ?
-          <div className="card">
-            <div className="card-header">
-              <strong>Transaction Details</strong>
+          {transactionDetail.length ? (
+            <div className="card">
+              <div className="card-header">
+                <strong>Transaction Details</strong>
+              </div>
+              <div className="card-body">{renderTransactionDetailItem()}</div>
             </div>
-            <div className="card-body">
-              {renderTransactionDetailItem()}
-            </div>
-          </div>
-          : null
-          }
-          </div>
+          ) : null}
+        </div>
       </div>
     </div>
   );
