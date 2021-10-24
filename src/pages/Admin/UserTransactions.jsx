@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
-
-import { Button, Modal, Col, Form, ModalDialog } from "react-bootstrap";
+import { Button, Modal, Col } from "react-bootstrap";
 
 const UserTransactions = () => {
   const [transList, setTransList] = useState([]);
   const [filterTransList, setFilterTransList] = useState([]);
-  const [filterProductList, setFilterProductList] = useState([]);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(0);
   const [itemPerPage, setItemPerPage] = useState(7);
@@ -16,45 +14,39 @@ const UserTransactions = () => {
   const [searchStatus, setSearchStatus] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [detailTrans, setDetailTrans] = useState([]);
-  const handleClose = () => setShow(false);
-  const handleShow = (idorder) => {
-    fetchTransaction(idorder);
-    setShow(true);
-  };
-  
-   const [detailOrder, setDetailOrder] = useState([]);
-
-  const [editProductList, setEditProductList] = useState({
-    idorder: 0,
-    idproduct: 0,
-    quantity: 0,
+  const [uploadImg, setUploadImg] = useState({
+    nameImg: "",
+    previewImg:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png",
   });
-  const [btnDisabled, setBtnDisabled] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = (idorder) => {
     fetchTransaction(idorder);
     setShow(true);
   };
-
 
   const fetchTransaction = (idorder) => {
     Axios.get(API_URL + "/transaction/detail-transaction/" + idorder)
       .then((res) => {
         console.log(res.data);
         setDetailTrans(res.data);
-
       })
       .catch((err) => {
         console.log(err);
       });
   };
-      
-useEffect(() => {
-    fetchProduct();
-    fetchTransaction();
-  }, []);
-      
 
+  const imageHandler = (e) => {
+    if (e.target.files[0]) {
+      setUploadImg({
+        ...uploadImg,
+        nameImg: e.target.files[0].name,
+        previewImg: URL.createObjectURL(e.target.files[0]),
+        addFile: e.target.files[0],
+      });
+      console.log(uploadImg.nameImg);
+    }
+  };
   const fetchProduct = () => {
     Axios.get(API_URL + "/transaction/get-transaction")
       .then((res) => {
@@ -66,74 +58,6 @@ useEffect(() => {
         console.log(err);
       });
   };
-
-  const fetchTransaction = (idorder) => {
-    Axios.get(API_URL + "/transaction/detail-transaction/" + idorder)
-      .then((res) => {
-        console.log(res.data);
-        setDetailTrans(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  
-  const fetchDetailTransaction = () => {
-    Axios.get(`http://localhost:2200/transaction/get-detail`)
-      .then((result) => {
-        console.log(result.data);
-        setDetailOrder(result.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-
-  const rejectTransactionBtnHandler = (e, idorder) => {
-    e.preventDefault();
-    Axios.patch(
-      `http://localhost:2200/transaction/reject-transaction/${idorder}`
-    )
-      .then(() => {
-        //editToggle(val);
-        // cancelQuantity();
-        fetchProduct();
-        fetchTransaction(idorder);
-
-        Axios.patch(`http://localhost:2200/transaction/cancel-quantity`, {
-          detailTrans,
-        })
-          .then(() =>
-            alert(
-              "Transaksi dibatalkan & produk berhasil dikembalikan ke stock"
-            )
-          )
-          .catch(() => {
-            alert("Stok belum terupdate");
-          });
-      })
-      .catch(() => {
-        alert("Transaksi belum dibatalkan");
-      });
-  };
-
-  const confirmTransactionBtnHandler = (idorder) => {
-    Axios.patch(
-      `http://localhost:2200/transaction/confirm-transaction/${idorder}`
-    )
-      .then(() => {
-        fetchProduct();
-        fetchTransaction(idorder);
-        alert("Transaksi berhasil");
-        setBtnDisabled(true);
-      })
-      .catch(() => {
-        alert("Transaksi belum dikonfirmasi");
-      });
-  };
-
 
   const nextPageHandler = () => {
     if (page < maxPage) {
@@ -249,9 +173,14 @@ useEffect(() => {
         .split("-")
         .reverse()
         .join("/");
-      let totalPrice;
+      let totalPrice = 0;
+      let totalRecipe = 0;
       for (let i = 0; i < detailTrans.length; i++) {
-        totalPrice = detailTrans[0].price + detailTrans[i].price;
+        totalPrice += detailTrans[i].price_stock * detailTrans[i].quantity;
+      }
+
+      for (let i = 0; i < detailTrans.length; i++) {
+        totalRecipe += detailTrans[i].price_unit;
       }
       return (
         <Modal show={show} onHide={handleClose} centered>
@@ -292,54 +221,65 @@ useEffect(() => {
               <h6>Alamat Pengiriman:</h6>
               <span>{detailTrans[0].address}</span>
             </Col>
+            {detailTrans[0].recipe_image === null ? (
+              <Col xs={12}>
+                <br />
+                <h5 className="text-success text-center">
+                  <strong>DETAIL PRODUK</strong>
+                </h5>
+                <hr />
+                <h6>Nama Produk:</h6>
+                {detailTrans.map((item, i) => (
+                  <div key={i}>
+                    {item.product_name} x {item.quantity} : Rp
+                    {item.price_stock * item.quantity}
+                  </div>
+                ))}
+
+                <div>Ongkir: Rp.{detailTrans[0].order_price - totalPrice}</div>
+                <div>
+                  <strong>Total Harga: Rp.{detailTrans[0].order_price}</strong>
+                </div>
+                <br />
+              </Col>
+            ) : (
+              <Col xs={12}>
+                <br />
+                <h5 className="text-success text-center">
+                  <strong>DETAIL PRODUK</strong>
+                </h5>
+                <hr />
+                <h6>Nama Produk:</h6>
+                {detailTrans.map((item, i) => (
+                  <div key={i}>
+                    {item.product_name} : Rp
+                    {item.price_unit}
+                  </div>
+                ))}
+
+                <div>Ongkir: Rp.{detailTrans[0].order_price - totalRecipe}</div>
+                <div>
+                  <strong>Total Harga: Rp.{detailTrans[0].order_price}</strong>
+                </div>
+                <br />
+              </Col>
+            )}
+
             <Col xs={12}>
-              <br />
               <h5 className="text-success text-center">
-                <strong>DETAIL PRODUK</strong>
+                <strong>BUKTI PEMBAYARAN</strong>
               </h5>
               <hr />
-              <h6>Nama Produk:</h6>
-              {detailTrans.map((item, i) => (
-                <div key={i}>
-                  {item.product_name} x {item.quantity} : Rp
-                  {item.price * item.quantity}
-                </div>
-              ))}
-
-              <div>Ongkir: Rp.{detailTrans[0].order_price - totalPrice}</div>
-              <div>
-                <strong>Total Harga: Rp.{detailTrans[0].order_price}</strong>
+              <div className="d-flex flex-column justify-content-center">
+                <img
+                  className="img-fluid rounded z-depth-2 "
+                  src={API_URL + detailTrans[0].payment_image}
+                  alt="Bukti Pembayaran"
+                />
               </div>
-              <br />
             </Col>
-            </Modal.Body>
+          </Modal.Body>
           <Modal.Footer>
-            {detailTrans[0].order_status === "Order Selesai" ||
-            detailTrans[0].order_status === "Transaksi Dibatalkan" ? null : (
-              <Button
-                className="btn btn-success"
-                variant="secondary"
-                onClick={() =>
-                  confirmTransactionBtnHandler(detailTrans[0].idorder)
-                }
-              >
-                Confirm
-              </Button>
-            )}
-
-            {detailTrans[0].order_status === "Transaksi Dibatalkan" ||
-            detailTrans[0].order_status === "Order Selesai" ? null : (
-              <Button
-                className="btn btn-danger"
-                variant="secondary"
-                onClick={(e) =>
-                  rejectTransactionBtnHandler(e, detailTrans[0].idorder)
-                }
-              >
-                {" "}
-                Reject
-              </Button>
-            )}
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
@@ -381,7 +321,6 @@ useEffect(() => {
   useEffect(() => {
     fetchProduct();
   }, []);
-
   return (
     <div className="content-page">
       <div className="content">

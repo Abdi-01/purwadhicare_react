@@ -35,13 +35,6 @@ export const login = (data, history) => async (dispatch) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user_data", JSON.stringify(dataLogin));
     dispatch({ type: "LOGIN", payload: dataLogin });
-    const resultCart = await Axios.get(`http://localhost:2200/cart/get?iduser=${dataLogin.iduser}`);
-    dispatch({
-        type: "FILL_CART",
-        payload: resultCart.data,
-      });
-
-
     if (dataLogin.role === "user") {
       Swal.fire(
         "Log In Berhasil!",
@@ -71,7 +64,6 @@ export const logout = () => {
       localStorage.removeItem("token");
       localStorage.removeItem("user_data");
       dispatch({ type: "LOGOUT" });
-      dispatch({ type: "DELETE_CART"});
     } catch (err) {
       console.log(err);
     }

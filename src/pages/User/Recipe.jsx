@@ -21,7 +21,7 @@ function Recipe() {
     notes: "",
   });
   console.log(shipping);
-  const [setUserData] = useState([]);
+  const [userData, setUserData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [uploadImg, setUploadImg] = useState({
     nameImg: "",

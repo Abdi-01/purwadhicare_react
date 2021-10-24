@@ -1,9 +1,6 @@
 import Axios from "axios";
 import { useSelector } from "react-redux";
 import React, { useState, useEffect } from "react";
-import moment from "moment";
-import "moment/locale/id";
-
 
 function History() {
   const globalUser = useSelector((state) => state.user);
@@ -29,7 +26,7 @@ function History() {
       return (
         <tr>
           {/* val.nama field di sql , CEK LAGI*/}
-          <td>{moment(val.order_date).format("LL")}</td>
+          <td>{val.order_date}</td>
           <td>{val.total_item} Item(s)</td>
           <td>Rp. {val.order_price}</td>
           <td>
@@ -52,7 +49,7 @@ function History() {
           <span className="font-weight-bold">
             {val.product_name} ({val.quantity})
           </span>
-          <span>{val.price_stock * val.quantity}</span>
+          <span>{val.price * val.quantity}</span>
         </div>
       );
     });

@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FiBookOpen, FiPackage, FiClipboard, FiFileText, FiMonitor, FiDivide } from "react-icons/fi";
 
-
 function Sidebar() {
   return (
     <div>
@@ -24,13 +23,6 @@ function Sidebar() {
                   <span> Product </span>
                 </Link>
               </li>
-              <li>
-                <Link to="/revenue">
-                  <FiMonitor />
-                  <span> Revenue </span>
-                </Link>
-              </li>
-
               <li className="menu-title">Admin Inventory</li>
               <li>
                 <Link to="/product-inventory">

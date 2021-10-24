@@ -24,9 +24,6 @@ import { useDispatch, useSelector } from "react-redux";
 import OrderList from "./pages/User/OrderList";
 import Recipe from "./pages/User/Recipe";
 import Revenue from "./pages/Admin/Revenue";
-import UserTransactions from "./pages/Admin/UserTransactions";
-import ProductInventory from "./pages/Admin/ProductInventory";
-import { getCartData } from "./redux/actions/cart";
 import ProductInventory from "./pages/Admin/ProductInventory";
 import OrderRecipe from "./pages/Admin/OrderRecipe";
 import OrderDetailRecipe from "./pages/Admin/OrderDetailRecipe";
@@ -46,7 +43,6 @@ function App() {
       dispatch(getCartData(userData.iduser));
     } else {
       dispatch(checkStorage());
-      
     }
   }, []);
 
@@ -76,20 +72,16 @@ function App() {
           <Route component={ResetPassword} path="/reset-password/:token" />
           <Route component={ForgetPassword} path="/forget-password" />
           <Route component={Verification} path="/authentication/:token" />
+          <Route component={Cart} path="/cart" />
           <Route component={OrderHistory} path="/order-history" />
           <Route component={ProductDetail} path="/productdetail/:idproduct" />
           <Route component={Recipe} path="/recipe" />
           <Route component={ProductList} path="/productlist" />
+//           <Route component={UserTransactions} path="/user-transactions" />
+//           <Route component={ProductInventory} path="/product-inventory" />
 
-          <Route component={UserTransactions} path="/user-transactions" />
-          <Route component={ProductInventory} path="/product-inventory" />
-
-          <PrivateRoute path="/order-history">
+          <PrivateRoute path="/history">
             <OrderList />
-          </PrivateRoute>
-
-          <PrivateRoute path="/cart">
-            <Cart />
           </PrivateRoute>
 
           <PrivateRoute path="/profile">
@@ -101,7 +93,6 @@ function App() {
                 <OrderDetailRecipe />
               </PrivateRoute>
               <Route component={ProductAdmin} path="/product-admin" />
-              <Route component={Revenue} path="/revenue" />
               <PrivateRoute path="/dashboard">
                 <Dashboard />
               </PrivateRoute>
