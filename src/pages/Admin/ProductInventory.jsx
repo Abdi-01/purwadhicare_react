@@ -18,6 +18,7 @@ const ProductInventory = () => {
     stock_bottle: 0,
     netto: 0,
   });
+  
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -106,6 +107,7 @@ const ProductInventory = () => {
       beginningIndex + itemPerPage
     );
 
+
     return currentData.map((val) => {
       return (
         <tr key={val.row_number}>
@@ -118,6 +120,7 @@ const ProductInventory = () => {
               ? `${val.total_netto} ${val.unit}`
               : "Stok Kosong"}
           </td>
+
           <td>{`${val.sisa_netto} ${val.unit}`}</td>
           <td>
             {val.stock_bottle > 4 ? (
@@ -150,12 +153,14 @@ const ProductInventory = () => {
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+
               <Form.Label>Edit Jumlah Botol</Form.Label>
               <Form.Control
                 onChange={inputHandlerEdit}
                 type="text"
                 name="stock_bottle"
               />
+
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -187,6 +192,7 @@ const ProductInventory = () => {
                     Menampilkan secara detail daftar jumlah produk yang tersedia
                     di gudang saat ini.
                   </p>
+
                   <div className="table-responsive">
                     <table className="table m-0">
                       <thead>
@@ -208,6 +214,7 @@ const ProductInventory = () => {
                         className="paginate_button page-item previous"
                         id="basic-datatable_previous"
                       >
+
                         <button
                           disabled={page === 1}
                           aria-controls="basic-datatable"
@@ -222,6 +229,7 @@ const ProductInventory = () => {
                           Page {page} of {maxPage}{" "}
                         </span>
                       </li>
+
                       <li
                         className="paginate_button page-item next"
                         id="basic-datatable_next"
