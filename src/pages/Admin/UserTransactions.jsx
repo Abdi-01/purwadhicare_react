@@ -8,7 +8,6 @@ const UserTransactions = () => {
   const [transList, setTransList] = useState([]);
   const [filterTransList, setFilterTransList] = useState([]);
   const [filterProductList, setFilterProductList] = useState([]);
-
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(0);
   const [itemPerPage, setItemPerPage] = useState(7);
@@ -24,12 +23,19 @@ const UserTransactions = () => {
   };
   
    const [detailOrder, setDetailOrder] = useState([]);
+
   const [editProductList, setEditProductList] = useState({
     idorder: 0,
     idproduct: 0,
     quantity: 0,
   });
+  const [btnDisabled, setBtnDisabled] = useState(false);
   const handleClose = () => setShow(false);
+  const handleShow = (idorder) => {
+    fetchTransaction(idorder);
+    setShow(true);
+  };
+
 
   const fetchTransaction = (idorder) => {
     Axios.get(API_URL + "/transaction/detail-transaction/" + idorder)
@@ -45,7 +51,7 @@ const UserTransactions = () => {
       
 useEffect(() => {
     fetchProduct();
-    fetchDetailTransaction();
+    fetchTransaction();
   }, []);
       
 
@@ -60,18 +66,74 @@ useEffect(() => {
         console.log(err);
       });
   };
+
+  const fetchTransaction = (idorder) => {
+    Axios.get(API_URL + "/transaction/detail-transaction/" + idorder)
+      .then((res) => {
+        console.log(res.data);
+        setDetailTrans(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   
-const fetchDetailTransaction = () => {
+  const fetchDetailTransaction = () => {
     Axios.get(`http://localhost:2200/transaction/get-detail`)
       .then((result) => {
         console.log(result.data);
         setDetailOrder(result.data);
       })
       .catch((err) => {
-        alert("Terjadi kesalahan di server transaction");
         console.log(err);
       });
   };
+
+
+  const rejectTransactionBtnHandler = (e, idorder) => {
+    e.preventDefault();
+    Axios.patch(
+      `http://localhost:2200/transaction/reject-transaction/${idorder}`
+    )
+      .then(() => {
+        //editToggle(val);
+        // cancelQuantity();
+        fetchProduct();
+        fetchTransaction(idorder);
+
+        Axios.patch(`http://localhost:2200/transaction/cancel-quantity`, {
+          detailTrans,
+        })
+          .then(() =>
+            alert(
+              "Transaksi dibatalkan & produk berhasil dikembalikan ke stock"
+            )
+          )
+          .catch(() => {
+            alert("Stok belum terupdate");
+          });
+      })
+      .catch(() => {
+        alert("Transaksi belum dibatalkan");
+      });
+  };
+
+  const confirmTransactionBtnHandler = (idorder) => {
+    Axios.patch(
+      `http://localhost:2200/transaction/confirm-transaction/${idorder}`
+    )
+      .then(() => {
+        fetchProduct();
+        fetchTransaction(idorder);
+        alert("Transaksi berhasil");
+        setBtnDisabled(true);
+      })
+      .catch(() => {
+        alert("Transaksi belum dikonfirmasi");
+      });
+  };
+
 
   const nextPageHandler = () => {
     if (page < maxPage) {
@@ -133,7 +195,6 @@ const fetchDetailTransaction = () => {
     );
 
     return currentData.map((val) => {
-
       const date = val.order_date.slice(0, 10).split("-").reverse().join("/");
       const price = new Intl.NumberFormat("en-US", {
         style: "currency",
@@ -144,7 +205,6 @@ const fetchDetailTransaction = () => {
         <tr>
           <th scope="row">{val.idorder}</th>
           <td>{val.full_name}</td>
-
           <td>{val.address.slice(0, 30)}</td>
           <td>{date}</td>
           <td>{val.total_item}</td>
@@ -154,7 +214,6 @@ const fetchDetailTransaction = () => {
                 {val.order_status}
               </span>
             ) : val.order_status === "Validasi Resep" ? (
-
               <span className="badge badge-soft-warning">
                 {val.order_status}
               </span>
@@ -191,7 +250,6 @@ const fetchDetailTransaction = () => {
         .reverse()
         .join("/");
       let totalPrice;
-      console.log(detailTrans[0].payment_image);
       for (let i = 0; i < detailTrans.length; i++) {
         totalPrice = detailTrans[0].price + detailTrans[i].price;
       }
@@ -254,8 +312,34 @@ const fetchDetailTransaction = () => {
               </div>
               <br />
             </Col>
-          </Modal.Body>
+            </Modal.Body>
           <Modal.Footer>
+            {detailTrans[0].order_status === "Order Selesai" ||
+            detailTrans[0].order_status === "Transaksi Dibatalkan" ? null : (
+              <Button
+                className="btn btn-success"
+                variant="secondary"
+                onClick={() =>
+                  confirmTransactionBtnHandler(detailTrans[0].idorder)
+                }
+              >
+                Confirm
+              </Button>
+            )}
+
+            {detailTrans[0].order_status === "Transaksi Dibatalkan" ||
+            detailTrans[0].order_status === "Order Selesai" ? null : (
+              <Button
+                className="btn btn-danger"
+                variant="secondary"
+                onClick={(e) =>
+                  rejectTransactionBtnHandler(e, detailTrans[0].idorder)
+                }
+              >
+                {" "}
+                Reject
+              </Button>
+            )}
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
