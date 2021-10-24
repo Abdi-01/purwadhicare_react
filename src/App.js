@@ -39,7 +39,7 @@ function App() {
     const tokenLocalStorage = localStorage.getItem("token");
     if (tokenLocalStorage) {
       dispatch(userKeepLogin(tokenLocalStorage));
-      const userData = JSON.parse(userLocalStorage);
+      const userData = JSON.parse(tokenLocalStorage);
       dispatch(getCartData(userData.iduser));
     } else {
       dispatch(checkStorage());
@@ -77,13 +77,11 @@ function App() {
           <Route component={ProductDetail} path="/productdetail/:idproduct" />
           <Route component={Recipe} path="/recipe" />
           <Route component={ProductList} path="/productlist" />
-//           <Route component={UserTransactions} path="/user-transactions" />
-//           <Route component={ProductInventory} path="/product-inventory" />
-
+          // <Route component={UserTransactions} path="/user-transactions" />
+          // <Route component={ProductInventory} path="/product-inventory" />
           <PrivateRoute path="/history">
             <OrderList />
           </PrivateRoute>
-
           <PrivateRoute path="/profile">
             <Profile />
           </PrivateRoute>
