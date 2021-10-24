@@ -31,6 +31,9 @@ import { getCartData } from "./redux/actions/cart";
 import ProductInventory from "./pages/Admin/ProductInventory";
 import OrderRecipe from "./pages/Admin/OrderRecipe";
 import OrderDetailRecipe from "./pages/Admin/OrderDetailRecipe";
+import { getCartData } from "./redux/actions/cart";
+import UserTransactions from "./pages/Admin/UserTransactions";
+
 
 function App() {
   const dispatch = useDispatch();
@@ -105,6 +108,9 @@ function App() {
               </PrivateRoute>
               <PrivateRoute exact path="/order-recipe">
                 <OrderRecipe />
+              </PrivateRoute>
+              <PrivateRoute exact path="/user-transactions">
+                <UserTransactions />
               </PrivateRoute>
             </>
           ) : null}

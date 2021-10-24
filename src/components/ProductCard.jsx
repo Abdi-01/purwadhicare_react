@@ -1,7 +1,6 @@
 import React from "react";
 import "../assets/styles/product_card.css";
 import { Link } from "react-router-dom";
-import Axios from "axios";
 
 function ProductCard(props) {
   return (

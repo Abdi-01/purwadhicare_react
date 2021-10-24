@@ -1,21 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { Button, Modal } from "react-bootstrap";
+
 import { API_URL } from "../../constants/API";
 import axios from "axios";
-import Swal from "sweetalert2";
+
 import OrderCard from "../../components/OrderCard";
 
 function OrderList() {
-  const globalUser = useSelector((state) => state.user);
   const [orderList, setOrderList] = useState([]);
-  const [show, setShow] = useState(false);
-  const handleClose = () => {
-    setShow(false);
-  };
-
-  const handleShow = () => setShow(true);
 
   useEffect(() => {
     fetchData();

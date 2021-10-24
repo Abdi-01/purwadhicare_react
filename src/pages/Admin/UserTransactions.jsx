@@ -1,40 +1,67 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
-import { Button, Modal, Form, ModalDialog } from "react-bootstrap";
+
+import { Button, Modal, Col, Form, ModalDialog } from "react-bootstrap";
 
 const UserTransactions = () => {
+  const [transList, setTransList] = useState([]);
+  const [filterTransList, setFilterTransList] = useState([]);
   const [filterProductList, setFilterProductList] = useState([]);
+
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(0);
   const [itemPerPage, setItemPerPage] = useState(7);
   const [show, setShow] = useState(false);
-  const [detailOrder, setDetailOrder] = useState([]);
+  const [searchCostumer, setSearchCostumer] = useState("");
+  const [searchStatus, setSearchStatus] = useState("");
+  const [sortBy, setSortBy] = useState("");
+  const [detailTrans, setDetailTrans] = useState([]);
+  const handleClose = () => setShow(false);
+  const handleShow = (idorder) => {
+    fetchTransaction(idorder);
+    setShow(true);
+  };
+  
+   const [detailOrder, setDetailOrder] = useState([]);
   const [editProductList, setEditProductList] = useState({
     idorder: 0,
     idproduct: 0,
     quantity: 0,
   });
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
-  useEffect(() => {
+  const fetchTransaction = (idorder) => {
+    Axios.get(API_URL + "/transaction/detail-transaction/" + idorder)
+      .then((res) => {
+        console.log(res.data);
+        setDetailTrans(res.data);
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+      
+useEffect(() => {
     fetchProduct();
     fetchDetailTransaction();
   }, []);
+      
 
   const fetchProduct = () => {
     Axios.get(API_URL + "/transaction/get-transaction")
       .then((res) => {
-        setFilterProductList(res.data);
+        setTransList(res.data);
+        setFilterTransList(res.data);
         setMaxPage(Math.ceil(res.data.length / itemPerPage));
       })
       .catch((err) => {
         console.log(err);
       });
   };
-
-  const fetchDetailTransaction = () => {
+  
+const fetchDetailTransaction = () => {
     Axios.get(`http://localhost:2200/transaction/get-detail`)
       .then((result) => {
         console.log(result.data);
@@ -46,7 +73,6 @@ const UserTransactions = () => {
       });
   };
 
-  
   const nextPageHandler = () => {
     if (page < maxPage) {
       setPage(page + 1);
@@ -59,30 +85,68 @@ const UserTransactions = () => {
     }
   };
 
-  const editToggle = (editData) => {
-    setEditProductList({
-      idproduct: editData.idproduct,
-      idorder: editData.total_netto,
-      quantity: editData.stock_bottle,
-    });
-
-    console.log(editProductList);
-  };
-
   const renderProduct = () => {
     const beginningIndex = (page - 1) * itemPerPage;
-    let rawData = [...filterProductList];
+    let rawData = [...filterTransList];
+
+    const compareDate = (a, b) => {
+      if (a.order_date < b.order_date) {
+        return -1;
+      }
+      // agar tukar posisi
+      if (a.order_date > b.order_date) {
+        return 1;
+      }
+      return 0;
+    };
+
+    switch (sortBy) {
+      case "lowPrice":
+        // a,b merupakan product di database
+        rawData.sort((a, b) => a.order_price - b.order_price);
+        break;
+
+      case "highPrice":
+        rawData.sort((a, b) => b.order_price - a.order_price);
+        break;
+
+      case "Old Transaction":
+        rawData.sort(compareDate);
+        break;
+
+      case "New Transaction":
+        rawData.sort((a, b) => compareDate(b, a));
+        break;
+
+      case "Old Transaction":
+        rawData.sort(compareDate);
+        break;
+
+      default:
+        rawData = [...filterTransList];
+        break;
+    }
+
     const currentData = rawData.slice(
       beginningIndex,
       beginningIndex + itemPerPage
     );
 
     return currentData.map((val) => {
+
+      const date = val.order_date.slice(0, 10).split("-").reverse().join("/");
+      const price = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "IDR",
+      }).format(val.order_price);
+
       return (
         <tr>
           <th scope="row">{val.idorder}</th>
           <td>{val.full_name}</td>
-          <td>{val.address}</td>
+
+          <td>{val.address.slice(0, 30)}</td>
+          <td>{date}</td>
           <td>{val.total_item}</td>
           <td>
             {val.order_status === "Menunggu Pengiriman" ? (
@@ -90,34 +154,27 @@ const UserTransactions = () => {
                 {val.order_status}
               </span>
             ) : val.order_status === "Validasi Resep" ? (
-              <span className="badge badge-soft-danger">
+
+              <span className="badge badge-soft-warning">
+                {val.order_status}
+              </span>
+            ) : val.order_status === "Order Selesai" ? (
+              <span className="badge badge-soft-success">
                 {val.order_status}
               </span>
             ) : (
-              <span className="badge badge-soft-warning">
+              <span className="badge badge-soft-danger">
                 {val.order_status}
               </span>
             )}
           </td>
-          <td>{val.order_price}</td>
+          <td>{price}</td>
           <td>
-            <button className="btn btn-primary btn-sm" onClick={handleShow}>
+            <button
+              className="btn btn-primary btn-sm"
+              onClick={() => handleShow(val.idorder)}
+            >
               Lihat Detail
-            </button>
-            {/* {renderDetailProduct(val)} */}
-          </td>
-          <td>
-            <button
-             
-              className="btn btn-light btn-sm mr-1"
-            >
-              Confirm
-            </button>
-            <button
-             
-              className="btn btn-dark btn-sm ml-1"
-            >
-              Reject
             </button>
           </td>
         </tr>
@@ -125,28 +182,121 @@ const UserTransactions = () => {
     });
   };
 
-  //   const renderDetailProduct = (val) => {
-  //     const date = val.order_date.slice(0, 10).split("-").reverse().join("/");
+  const RenderDetailProduct = () => {
+    if (detailTrans.length > 0) {
+      console.log(detailTrans);
+      let date = detailTrans[0].order_date
+        .slice(0, 10)
+        .split("-")
+        .reverse()
+        .join("/");
+      let totalPrice;
+      console.log(detailTrans[0].payment_image);
+      for (let i = 0; i < detailTrans.length; i++) {
+        totalPrice = detailTrans[0].price + detailTrans[i].price;
+      }
+      return (
+        <Modal show={show} onHide={handleClose} centered>
+          <Modal.Header closeButton></Modal.Header>
 
-  //     return (
-  //       <Modal show={show} onHide={handleClose} centered>
-  //         <Modal.Header closeButton>
-  //           <Modal.Title>Detail Transaksi</Modal.Title>
-  //         </Modal.Header>
-  //         <Modal.Body>
-  //           <h6>Status:</h6>
-  //           <span>{val.order_status}</span>
-  //           <h6>Tanggal Transaksi:</h6>
-  //           <span>{date}</span>
-  //         </Modal.Body>
-  //         <Modal.Footer>
-  //           <Button variant="secondary" onClick={handleClose}>
-  //             Close
-  //           </Button>
-  //         </Modal.Footer>
-  //       </Modal>
-  //     );
-  //   };
+          <Modal.Body>
+            <Col xs={12}>
+              <h5 className="text-success text-center">
+                <strong>STATUS PRODUK</strong>
+              </h5>
+              <hr />
+              <h6>Status:</h6>
+              <span>
+                {detailTrans[0].order_status === "Menunggu Pengiriman" ? (
+                  <span className="badge badge-soft-primary">
+                    {detailTrans[0].order_status}
+                  </span>
+                ) : detailTrans[0].order_status === "Validasi Resep" ? (
+                  <span className="badge badge-soft-warning">
+                    {detailTrans[0].order_status}
+                  </span>
+                ) : detailTrans[0].order_status === "Order Selesai" ? (
+                  <span className="badge badge-soft-success">
+                    {detailTrans[0].order_status}
+                  </span>
+                ) : (
+                  <span className="badge badge-soft-danger">
+                    {detailTrans[0].order_status}
+                  </span>
+                )}
+              </span>
+              <h6>Nama Costumer:</h6>
+              <span>{detailTrans[0].full_name}</span>
+              <h6>Tanggal Transaksi:</h6>
+              <span>{date}</span>
+              <h6>Nomor Pengiriman:</h6>
+              <span>{detailTrans[0].idshipping}</span>
+              <h6>Alamat Pengiriman:</h6>
+              <span>{detailTrans[0].address}</span>
+            </Col>
+            <Col xs={12}>
+              <br />
+              <h5 className="text-success text-center">
+                <strong>DETAIL PRODUK</strong>
+              </h5>
+              <hr />
+              <h6>Nama Produk:</h6>
+              {detailTrans.map((item, i) => (
+                <div key={i}>
+                  {item.product_name} x {item.quantity} : Rp
+                  {item.price * item.quantity}
+                </div>
+              ))}
+
+              <div>Ongkir: Rp.{detailTrans[0].order_price - totalPrice}</div>
+              <div>
+                <strong>Total Harga: Rp.{detailTrans[0].order_price}</strong>
+              </div>
+              <br />
+            </Col>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      );
+    }
+    return null;
+  };
+
+  const searchCostumerHandler = (event) => {
+    const value = event.target.value;
+    setSearchCostumer(value);
+  };
+  const searchStatusHandler = (event) => {
+    const value = event.target.value;
+    setSearchStatus(value);
+  };
+
+  const sortByInputHandler = (event) => {
+    const value = event.target.value;
+
+    setSortBy(value);
+  };
+
+  const searchBtnHandler = () => {
+    const filterTransList = transList.filter((val) => {
+      return (
+        val.full_name.toLowerCase().includes(searchCostumer.toLowerCase()) &&
+        val.order_status.toLowerCase().includes(searchStatus.toLowerCase())
+      );
+    });
+
+    setFilterTransList(filterTransList);
+    setMaxPage(Math.ceil(filterTransList.length / itemPerPage));
+    setPage(page);
+  };
+
+  useEffect(() => {
+    fetchProduct();
+  }, []);
 
   return (
     <div className="content-page">
@@ -156,25 +306,98 @@ const UserTransactions = () => {
             <div className="col-lg-12">
               <div className="card">
                 <div className="card-body">
-                  <h4 className="header-title mt-0 mb-1">User Transactions</h4>
-                  <p className="sub-header">
-                    Menampilkan seluruh transaksi users beserta statusnya
-                  </p>
+                  <div className="sub-header">
+                    <div className="row g-3">
+                      <div className="col-md-3">
+                        <h4 className="header-title mt-0 mb-1">
+                          User Transactions
+                        </h4>
+                        <p>
+                          Menampilkan Seluruh transaksi Users di Purwadhicare
+                        </p>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="sortBy">Sort By</label>
+                        <select
+                          onChange={sortByInputHandler}
+                          name="sortBy"
+                          className="form-control"
+                        >
+                          <option value="default">Default</option>
+                          <option value="lowPrice">Lowest Price</option>
+                          <option value="highPrice">Highest Price</option>
+                          <option value="Old Transaction">
+                            Old Transaction
+                          </option>
+                          <option value="New Transaction">
+                            New Transaction
+                          </option>
+                        </select>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="searchCostumerName">
+                          Costumer Name
+                        </label>
+                        <input
+                          onChange={searchCostumerHandler}
+                          name="searchCostumerName"
+                          type="text"
+                          className="form-control mb-3"
+                        />
+                      </div>
+                      <div className="col-md-3">
+                        <label htmlFor="searchStatus">Product Status</label>
+                        <select
+                          onChange={searchStatusHandler}
+                          name="searchStatus"
+                          className="form-control"
+                          type="text"
+                        >
+                          <option value="">All Status</option>
+                          <option defaultValue="Menunggu Pembayaran">
+                            Menunggu Pembayaran
+                          </option>
+                          <option defaultValue="Validasi Resep">
+                            Validasi Resep
+                          </option>
+                          <option defaultValue="Menunggu Pengiriman">
+                            Menunggu Pengiriman
+                          </option>
+                          <option defaultValue="Order Selesai">
+                            Order Selesai
+                          </option>
+                          <option defaultValue="Transaksi Dibatalkan">
+                            Transaksi Dibatalkan
+                          </option>
+                        </select>
+                      </div>
+                      <div className="col-md-2">
+                        <button
+                          onClick={searchBtnHandler}
+                          className="btn btn-block btn-info rounded-pill justify-content-center mt-4"
+                        >
+                          Search
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="table-responsive">
                     <table className="table m-0">
                       <thead>
-                        <tr>
+                        <tr className="text-center">
                           <th>Id Order</th>
                           <th>Costumers</th>
                           <th>Alamat</th>
+                          <th>Tanggal Order</th>
                           <th>Jumlah Obat</th>
                           <th>Status</th>
                           <th>Total Harga</th>
-                          <th>Detail</th>
-                          <th colSpan="2">Action</th>
+                          <th>Aksi</th>
                         </tr>
                       </thead>
                       <tbody>{renderProduct()}</tbody>
+                      {RenderDetailProduct()}
                     </table>
                     <ul className="pagination pagination-rounded">
                       <li

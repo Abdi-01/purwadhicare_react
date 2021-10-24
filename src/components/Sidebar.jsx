@@ -1,8 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FiHome, FiPackage, FiClipboard, FiFileText } from "react-icons/fi";
-import { FiMonitor } from "react-icons/fi/index.esm";
-
+import { FiHome, FiPackage, FiClipboard, FiFileText, FiMonitor } from "react-icons/fi";
 
 function Sidebar() {
   return (
