@@ -205,19 +205,6 @@ function OrderCard(props) {
               </div>
               <br />
             </Col>
-            <Col xs={12}>
-              <h5 className="text-success text-center">
-                <strong>BUKTI PEMBAYARAN</strong>
-              </h5>
-              <hr />
-              <div className="d-flex flex-column justify-content-center">
-                <img
-                  src={detailTrans[0].payment_image}
-                  className="img-fluid rounded z-depth-2 "
-                  alt="Bukti Pembayaran"
-                ></img>
-              </div>
-            </Col>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>

@@ -158,6 +158,7 @@ const UserTransactions = () => {
         .reverse()
         .join("/");
       let totalPrice;
+      console.log(detailTrans[0].payment_image);
       for (let i = 0; i < detailTrans.length; i++) {
         totalPrice = detailTrans[0].price + detailTrans[i].price;
       }
@@ -220,19 +221,6 @@ const UserTransactions = () => {
               </div>
               <br />
             </Col>
-            <Col xs={12}>
-              <h5 className="text-success text-center">
-                <strong>BUKTI PEMBAYARAN</strong>
-              </h5>
-              <hr />
-              <div className="d-flex flex-column justify-content-center">
-                <img
-                  src={detailTrans[0].payment_image}
-                  className="img-fluid rounded z-depth-2 "
-                  alt="Bukti Pembayaran"
-                ></img>
-              </div>
-            </Col>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
@@ -284,24 +272,82 @@ const UserTransactions = () => {
             <div className="col-lg-12">
               <div className="card">
                 <div className="card-body">
-                  <span>
-                    <h4 className="header-title mt-0 mb-1">
-                      User Transactions
-                    </h4>
-                    <div className="sub-header">
-                      <p>
-                        {" "}
-                        Menampilkan seluruh transaksi users beserta statusnya
-                      </p>
-                      <label htmlFor="searchCostumerName">Costumer Name</label>
-                      <input
-                        onChange={searchCostumerHandler}
-                        name="searchCostumerName"
-                        type="text"
-                        className="form-control mb-3"
-                      />
+                  <div className="sub-header">
+                    <div className="row g-3">
+                      <div className="col-md-3">
+                        <h4 className="header-title mt-0 mb-1">
+                          User Transactions
+                        </h4>
+                        <p>
+                          Menampilkan Seluruh transaksi Users di Purwadhicare
+                        </p>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="sortBy">Sort By</label>
+                        <select
+                          onChange={sortByInputHandler}
+                          name="sortBy"
+                          className="form-control"
+                        >
+                          <option value="default">Default</option>
+                          <option value="lowPrice">Lowest Price</option>
+                          <option value="highPrice">Highest Price</option>
+                          <option value="Old Transaction">
+                            Old Transaction
+                          </option>
+                          <option value="New Transaction">
+                            New Transaction
+                          </option>
+                        </select>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="searchCostumerName">
+                          Costumer Name
+                        </label>
+                        <input
+                          onChange={searchCostumerHandler}
+                          name="searchCostumerName"
+                          type="text"
+                          className="form-control mb-3"
+                        />
+                      </div>
+                      <div className="col-md-3">
+                        <label htmlFor="searchStatus">Product Status</label>
+                        <select
+                          onChange={searchStatusHandler}
+                          name="searchStatus"
+                          className="form-control"
+                          type="text"
+                        >
+                          <option value="">All Status</option>
+                          <option defaultValue="Menunggu Pembayaran">
+                            Menunggu Pembayaran
+                          </option>
+                          <option defaultValue="Validasi Resep">
+                            Validasi Resep
+                          </option>
+                          <option defaultValue="Menunggu Pengiriman">
+                            Menunggu Pengiriman
+                          </option>
+                          <option defaultValue="Order Selesai">
+                            Order Selesai
+                          </option>
+                          <option defaultValue="Transaksi Dibatalkan">
+                            Transaksi Dibatalkan
+                          </option>
+                        </select>
+                      </div>
+                      <div className="col-md-2">
+                        <button
+                          onClick={searchBtnHandler}
+                          className="btn btn-block btn-info rounded-pill justify-content-center mt-4"
+                        >
+                          Search
+                        </button>
+                      </div>
                     </div>
-                  </span>
+                  </div>
+
                   <div className="table-responsive">
                     <table className="table m-0">
                       <thead>
@@ -352,79 +398,6 @@ const UserTransactions = () => {
                         </button>
                       </li>
                     </ul>
-                    <div className="row m-3">
-                      <div className="col-3">
-                        <div className="card">
-                          <div className="card-header">
-                            <strong>Filter Transaction</strong>
-                          </div>
-                          <div className="card-body">
-                            <label htmlFor="searchCostumerName">
-                              Costumer Name
-                            </label>
-                            <input
-                              onChange={searchCostumerHandler}
-                              name="searchCostumerName"
-                              type="text"
-                              className="form-control mb-3"
-                            />
-                            <label htmlFor="searchStatus">Product Status</label>
-                            <select
-                              onChange={searchStatusHandler}
-                              name="searchStatus"
-                              className="form-control"
-                              type="text"
-                            >
-                              <option value="">All Status</option>
-                              <option defaultValue="Menunggu Pembayaran">
-                                Menunggu Pembayaran
-                              </option>
-                              <option defaultValue="Validasi Resep">
-                                Validasi Resep
-                              </option>
-                              <option defaultValue="Menunggu Pengiriman">
-                                Menunggu Pengiriman
-                              </option>
-                              <option defaultValue="Order Selesai">
-                                Order Selesai
-                              </option>
-                              <option defaultValue="Transaksi Dibatalkan">
-                                Transaksi Dibatalkan
-                              </option>
-                            </select>
-                            <button
-                              onClick={searchBtnHandler}
-                              className="btn btn-block btn-info rounded-pill justify-content-center mt-4"
-                            >
-                              Search
-                            </button>
-                          </div>
-                        </div>
-                        <div className="card mt-4">
-                          <div className="card-header">
-                            <strong>Sort Products</strong>
-                          </div>
-                          <div className="card-body">
-                            <label htmlFor="sortBy">Sort By</label>
-                            <select
-                              onChange={sortByInputHandler}
-                              name="sortBy"
-                              className="form-control"
-                            >
-                              <option value="default">Default</option>
-                              <option value="lowPrice">Lowest Price</option>
-                              <option value="highPrice">Highest Price</option>
-                              <option value="Old Transaction">
-                                Old Transaction
-                              </option>
-                              <option value="New Transaction">
-                                New Transaction
-                              </option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
