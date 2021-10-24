@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
+
 import { Button, Modal, Col, Form, ModalDialog } from "react-bootstrap";
 
 const UserTransactions = () => {
-  const [filterProductList, setFilterProductList] = useState([]);
   const [transList, setTransList] = useState([]);
   const [filterTransList, setFilterTransList] = useState([]);
+  const [filterProductList, setFilterProductList] = useState([]);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(0);
   const [itemPerPage, setItemPerPage] = useState(7);
@@ -15,6 +16,14 @@ const UserTransactions = () => {
   const [searchStatus, setSearchStatus] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [detailTrans, setDetailTrans] = useState([]);
+  const handleClose = () => setShow(false);
+  const handleShow = (idorder) => {
+    fetchTransaction(idorder);
+    setShow(true);
+  };
+  
+   const [detailOrder, setDetailOrder] = useState([]);
+
   const [editProductList, setEditProductList] = useState({
     idorder: 0,
     idproduct: 0,
@@ -27,10 +36,24 @@ const UserTransactions = () => {
     setShow(true);
   };
 
-  useEffect(() => {
+
+  const fetchTransaction = (idorder) => {
+    Axios.get(API_URL + "/transaction/detail-transaction/" + idorder)
+      .then((res) => {
+        console.log(res.data);
+        setDetailTrans(res.data);
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+      
+useEffect(() => {
     fetchProduct();
     fetchTransaction();
   }, []);
+      
 
   const fetchProduct = () => {
     Axios.get(API_URL + "/transaction/get-transaction")
@@ -54,6 +77,19 @@ const UserTransactions = () => {
         console.log(err);
       });
   };
+
+  
+  const fetchDetailTransaction = () => {
+    Axios.get(`http://localhost:2200/transaction/get-detail`)
+      .then((result) => {
+        console.log(result.data);
+        setDetailOrder(result.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
 
   const rejectTransactionBtnHandler = (e, idorder) => {
     e.preventDefault();
@@ -97,6 +133,7 @@ const UserTransactions = () => {
         alert("Transaksi belum dikonfirmasi");
       });
   };
+
 
   const nextPageHandler = () => {
     if (page < maxPage) {
@@ -303,7 +340,6 @@ const UserTransactions = () => {
                 Reject
               </Button>
             )}
-
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
@@ -354,22 +390,94 @@ const UserTransactions = () => {
             <div className="col-lg-12">
               <div className="card">
                 <div className="card-body">
-                  <h4 className="header-title mt-0 mb-1">User Transactions</h4>
-                  <p className="sub-header">
-                    Menampilkan seluruh transaksi users beserta statusnya
-                  </p>
+                  <div className="sub-header">
+                    <div className="row g-3">
+                      <div className="col-md-3">
+                        <h4 className="header-title mt-0 mb-1">
+                          User Transactions
+                        </h4>
+                        <p>
+                          Menampilkan Seluruh transaksi Users di Purwadhicare
+                        </p>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="sortBy">Sort By</label>
+                        <select
+                          onChange={sortByInputHandler}
+                          name="sortBy"
+                          className="form-control"
+                        >
+                          <option value="default">Default</option>
+                          <option value="lowPrice">Lowest Price</option>
+                          <option value="highPrice">Highest Price</option>
+                          <option value="Old Transaction">
+                            Old Transaction
+                          </option>
+                          <option value="New Transaction">
+                            New Transaction
+                          </option>
+                        </select>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="searchCostumerName">
+                          Costumer Name
+                        </label>
+                        <input
+                          onChange={searchCostumerHandler}
+                          name="searchCostumerName"
+                          type="text"
+                          className="form-control mb-3"
+                        />
+                      </div>
+                      <div className="col-md-3">
+                        <label htmlFor="searchStatus">Product Status</label>
+                        <select
+                          onChange={searchStatusHandler}
+                          name="searchStatus"
+                          className="form-control"
+                          type="text"
+                        >
+                          <option value="">All Status</option>
+                          <option defaultValue="Menunggu Pembayaran">
+                            Menunggu Pembayaran
+                          </option>
+                          <option defaultValue="Validasi Resep">
+                            Validasi Resep
+                          </option>
+                          <option defaultValue="Menunggu Pengiriman">
+                            Menunggu Pengiriman
+                          </option>
+                          <option defaultValue="Order Selesai">
+                            Order Selesai
+                          </option>
+                          <option defaultValue="Transaksi Dibatalkan">
+                            Transaksi Dibatalkan
+                          </option>
+                        </select>
+                      </div>
+                      <div className="col-md-2">
+                        <button
+                          onClick={searchBtnHandler}
+                          className="btn btn-block btn-info rounded-pill justify-content-center mt-4"
+                        >
+                          Search
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="table-responsive">
                     <table className="table m-0">
                       <thead>
-                        <tr>
+                        <tr className="text-center">
                           <th>Id Order</th>
                           <th>Costumers</th>
                           <th>Alamat</th>
+                          <th>Tanggal Order</th>
                           <th>Jumlah Obat</th>
                           <th>Status</th>
                           <th>Total Harga</th>
-                          <th>Detail</th>
-                          <th colSpan="2">Action</th>
+                          <th>Aksi</th>
                         </tr>
                       </thead>
                       <tbody>{renderProduct()}</tbody>

@@ -3,7 +3,6 @@ const INITIAL_STATE = {
 };
 
 const cartReducer = (state = INITIAL_STATE, action) => {
-  console.log(state.cartList);
   switch (action.type) {
     case "FILL_CART":
       return { ...state, cartList: action.payload };
