@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiShoppingCart, FiUser, FiLogOut } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";

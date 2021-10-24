@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
-import { Button, Modal, Col } from "react-bootstrap";
+
+import { Button, Modal, Col, Form, ModalDialog } from "react-bootstrap";
 
 const UserTransactions = () => {
   const [transList, setTransList] = useState([]);
   const [filterTransList, setFilterTransList] = useState([]);
+  const [filterProductList, setFilterProductList] = useState([]);
+
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(0);
   const [itemPerPage, setItemPerPage] = useState(7);
@@ -19,17 +22,32 @@ const UserTransactions = () => {
     fetchTransaction(idorder);
     setShow(true);
   };
+  
+   const [detailOrder, setDetailOrder] = useState([]);
+  const [editProductList, setEditProductList] = useState({
+    idorder: 0,
+    idproduct: 0,
+    quantity: 0,
+  });
+  const handleClose = () => setShow(false);
 
   const fetchTransaction = (idorder) => {
     Axios.get(API_URL + "/transaction/detail-transaction/" + idorder)
       .then((res) => {
         console.log(res.data);
         setDetailTrans(res.data);
+
       })
       .catch((err) => {
         console.log(err);
       });
   };
+      
+useEffect(() => {
+    fetchProduct();
+    fetchDetailTransaction();
+  }, []);
+      
 
   const fetchProduct = () => {
     Axios.get(API_URL + "/transaction/get-transaction")
@@ -39,6 +57,18 @@ const UserTransactions = () => {
         setMaxPage(Math.ceil(res.data.length / itemPerPage));
       })
       .catch((err) => {
+        console.log(err);
+      });
+  };
+  
+const fetchDetailTransaction = () => {
+    Axios.get(`http://localhost:2200/transaction/get-detail`)
+      .then((result) => {
+        console.log(result.data);
+        setDetailOrder(result.data);
+      })
+      .catch((err) => {
+        alert("Terjadi kesalahan di server transaction");
         console.log(err);
       });
   };
@@ -103,6 +133,7 @@ const UserTransactions = () => {
     );
 
     return currentData.map((val) => {
+
       const date = val.order_date.slice(0, 10).split("-").reverse().join("/");
       const price = new Intl.NumberFormat("en-US", {
         style: "currency",
@@ -113,6 +144,7 @@ const UserTransactions = () => {
         <tr>
           <th scope="row">{val.idorder}</th>
           <td>{val.full_name}</td>
+
           <td>{val.address.slice(0, 30)}</td>
           <td>{date}</td>
           <td>{val.total_item}</td>
@@ -122,6 +154,7 @@ const UserTransactions = () => {
                 {val.order_status}
               </span>
             ) : val.order_status === "Validasi Resep" ? (
+
               <span className="badge badge-soft-warning">
                 {val.order_status}
               </span>
@@ -264,6 +297,7 @@ const UserTransactions = () => {
   useEffect(() => {
     fetchProduct();
   }, []);
+
   return (
     <div className="content-page">
       <div className="content">
