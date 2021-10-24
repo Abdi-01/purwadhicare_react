@@ -71,7 +71,6 @@ function App() {
           <Route component={ResetPassword} path="/reset-password/:token" />
           <Route component={ForgetPassword} path="/forget-password" />
           <Route component={Verification} path="/authentication/:token" />
-          <Route component={Cart} path="/cart" />
           <Route component={OrderHistory} path="/order-history" />
           <Route component={ProductDetail} path="/productdetail/:idproduct" />
           <Route component={Recipe} path="/recipe" />
@@ -79,8 +78,12 @@ function App() {
           <Route component={UserTransactions} path="/user-transactions" />
           <Route component={ProductInventory} path="/product-inventory" />
 
-          <PrivateRoute path="/history">
+          <PrivateRoute path="/order-history">
             <OrderList />
+          </PrivateRoute>
+
+          <PrivateRoute path="/cart">
+            <Cart />
           </PrivateRoute>
 
           <PrivateRoute path="/profile">

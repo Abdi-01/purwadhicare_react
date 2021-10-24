@@ -45,7 +45,7 @@ function Navbar() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/history">
+                  <Link to="/order-history">
                     <div className="nav-link right-bar-toggle">Transaksi</div>
                   </Link>
                 </li>

@@ -1,32 +1,42 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
-import { Button, Modal, Form, ModalDialog } from "react-bootstrap";
+import { Button, Modal, Col, Form, ModalDialog } from "react-bootstrap";
 
 const UserTransactions = () => {
   const [filterProductList, setFilterProductList] = useState([]);
+  const [transList, setTransList] = useState([]);
+  const [filterTransList, setFilterTransList] = useState([]);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(0);
   const [itemPerPage, setItemPerPage] = useState(7);
   const [show, setShow] = useState(false);
-  const [detailOrder, setDetailOrder] = useState([]);
+  const [searchCostumer, setSearchCostumer] = useState("");
+  const [searchStatus, setSearchStatus] = useState("");
+  const [sortBy, setSortBy] = useState("");
+  const [detailTrans, setDetailTrans] = useState([]);
   const [editProductList, setEditProductList] = useState({
     idorder: 0,
     idproduct: 0,
     quantity: 0,
   });
+  const [btnDisabled, setBtnDisabled] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = (idorder) => {
+    fetchTransaction(idorder);
+    setShow(true);
+  };
 
   useEffect(() => {
     fetchProduct();
-    fetchDetailTransaction();
+    fetchTransaction();
   }, []);
 
   const fetchProduct = () => {
     Axios.get(API_URL + "/transaction/get-transaction")
       .then((res) => {
-        setFilterProductList(res.data);
+        setTransList(res.data);
+        setFilterTransList(res.data);
         setMaxPage(Math.ceil(res.data.length / itemPerPage));
       })
       .catch((err) => {
@@ -34,37 +44,39 @@ const UserTransactions = () => {
       });
   };
 
-  const fetchDetailTransaction = () => {
-    Axios.get(`http://localhost:2200/transaction/get-detail`)
-      .then((result) => {
-        console.log(result.data);
-        setDetailOrder(result.data);
+  const fetchTransaction = (idorder) => {
+    Axios.get(API_URL + "/transaction/detail-transaction/" + idorder)
+      .then((res) => {
+        console.log(res.data);
+        setDetailTrans(res.data);
       })
       .catch((err) => {
-        alert("Terjadi kesalahan di server transaction");
         console.log(err);
       });
   };
 
-  const cancelQuantity = (cancelqty, idproduct) => {
-    Axios.patch(
-      `http://localhost:2200/transaction/cancel-quantity?cancelqty=${cancelqty}&idproduct=${idproduct}`
-    )
-      .then(() => alert("stok berhasil dikembalikan"))
-      .catch(() => {
-        alert("Stok belum terupdate");
-      });
-  };
-
-  const rejectTransactionBtnHandler = (idorder) => {
+  const rejectTransactionBtnHandler = (e, idorder) => {
+    e.preventDefault();
     Axios.patch(
       `http://localhost:2200/transaction/reject-transaction/${idorder}`
     )
       .then(() => {
+        //editToggle(val);
+        // cancelQuantity();
         fetchProduct();
-        fetchDetailTransaction();
-        editToggle();
-        cancelQuantity();
+        fetchTransaction(idorder);
+
+        Axios.patch(`http://localhost:2200/transaction/cancel-quantity`, {
+          detailTrans,
+        })
+          .then(() =>
+            alert(
+              "Transaksi dibatalkan & produk berhasil dikembalikan ke stock"
+            )
+          )
+          .catch(() => {
+            alert("Stok belum terupdate");
+          });
       })
       .catch(() => {
         alert("Transaksi belum dibatalkan");
@@ -76,9 +88,10 @@ const UserTransactions = () => {
       `http://localhost:2200/transaction/confirm-transaction/${idorder}`
     )
       .then(() => {
-        fetchDetailTransaction();
         fetchProduct();
+        fetchTransaction(idorder);
         alert("Transaksi berhasil");
+        setBtnDisabled(true);
       })
       .catch(() => {
         alert("Transaksi belum dikonfirmasi");
@@ -97,30 +110,66 @@ const UserTransactions = () => {
     }
   };
 
-  const editToggle = (editData) => {
-    setEditProductList({
-      idproduct: editData.idproduct,
-      idorder: editData.total_netto,
-      quantity: editData.stock_bottle,
-    });
-
-    console.log(editProductList);
-  };
-
   const renderProduct = () => {
     const beginningIndex = (page - 1) * itemPerPage;
-    let rawData = [...filterProductList];
+    let rawData = [...filterTransList];
+
+    const compareDate = (a, b) => {
+      if (a.order_date < b.order_date) {
+        return -1;
+      }
+      // agar tukar posisi
+      if (a.order_date > b.order_date) {
+        return 1;
+      }
+      return 0;
+    };
+
+    switch (sortBy) {
+      case "lowPrice":
+        // a,b merupakan product di database
+        rawData.sort((a, b) => a.order_price - b.order_price);
+        break;
+
+      case "highPrice":
+        rawData.sort((a, b) => b.order_price - a.order_price);
+        break;
+
+      case "Old Transaction":
+        rawData.sort(compareDate);
+        break;
+
+      case "New Transaction":
+        rawData.sort((a, b) => compareDate(b, a));
+        break;
+
+      case "Old Transaction":
+        rawData.sort(compareDate);
+        break;
+
+      default:
+        rawData = [...filterTransList];
+        break;
+    }
+
     const currentData = rawData.slice(
       beginningIndex,
       beginningIndex + itemPerPage
     );
 
     return currentData.map((val) => {
+      const date = val.order_date.slice(0, 10).split("-").reverse().join("/");
+      const price = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "IDR",
+      }).format(val.order_price);
+
       return (
         <tr>
           <th scope="row">{val.idorder}</th>
           <td>{val.full_name}</td>
-          <td>{val.address}</td>
+          <td>{val.address.slice(0, 30)}</td>
+          <td>{date}</td>
           <td>{val.total_item}</td>
           <td>
             {val.order_status === "Menunggu Pengiriman" ? (
@@ -128,34 +177,26 @@ const UserTransactions = () => {
                 {val.order_status}
               </span>
             ) : val.order_status === "Validasi Resep" ? (
-              <span className="badge badge-soft-danger">
+              <span className="badge badge-soft-warning">
+                {val.order_status}
+              </span>
+            ) : val.order_status === "Order Selesai" ? (
+              <span className="badge badge-soft-success">
                 {val.order_status}
               </span>
             ) : (
-              <span className="badge badge-soft-warning">
+              <span className="badge badge-soft-danger">
                 {val.order_status}
               </span>
             )}
           </td>
-          <td>{val.order_price}</td>
+          <td>{price}</td>
           <td>
-            <button className="btn btn-primary btn-sm" onClick={handleShow}>
+            <button
+              className="btn btn-primary btn-sm"
+              onClick={() => handleShow(val.idorder)}
+            >
               Lihat Detail
-            </button>
-            {/* {renderDetailProduct(val)} */}
-          </td>
-          <td>
-            <button
-              onClick={() => confirmTransactionBtnHandler(val.idorder)}
-              className="btn btn-light btn-sm mr-1"
-            >
-              Confirm
-            </button>
-            <button
-              onClick={() => rejectTransactionBtnHandler(val.idorder)}
-              className="btn btn-dark btn-sm ml-1"
-            >
-              Reject
             </button>
           </td>
         </tr>
@@ -163,28 +204,147 @@ const UserTransactions = () => {
     });
   };
 
-  //   const renderDetailProduct = (val) => {
-  //     const date = val.order_date.slice(0, 10).split("-").reverse().join("/");
+  const RenderDetailProduct = () => {
+    if (detailTrans.length > 0) {
+      console.log(detailTrans);
+      let date = detailTrans[0].order_date
+        .slice(0, 10)
+        .split("-")
+        .reverse()
+        .join("/");
+      let totalPrice;
+      for (let i = 0; i < detailTrans.length; i++) {
+        totalPrice = detailTrans[0].price + detailTrans[i].price;
+      }
+      return (
+        <Modal show={show} onHide={handleClose} centered>
+          <Modal.Header closeButton></Modal.Header>
 
-  //     return (
-  //       <Modal show={show} onHide={handleClose} centered>
-  //         <Modal.Header closeButton>
-  //           <Modal.Title>Detail Transaksi</Modal.Title>
-  //         </Modal.Header>
-  //         <Modal.Body>
-  //           <h6>Status:</h6>
-  //           <span>{val.order_status}</span>
-  //           <h6>Tanggal Transaksi:</h6>
-  //           <span>{date}</span>
-  //         </Modal.Body>
-  //         <Modal.Footer>
-  //           <Button variant="secondary" onClick={handleClose}>
-  //             Close
-  //           </Button>
-  //         </Modal.Footer>
-  //       </Modal>
-  //     );
-  //   };
+          <Modal.Body>
+            <Col xs={12}>
+              <h5 className="text-success text-center">
+                <strong>STATUS PRODUK</strong>
+              </h5>
+              <hr />
+              <h6>Status:</h6>
+              <span>
+                {detailTrans[0].order_status === "Menunggu Pengiriman" ? (
+                  <span className="badge badge-soft-primary">
+                    {detailTrans[0].order_status}
+                  </span>
+                ) : detailTrans[0].order_status === "Validasi Resep" ? (
+                  <span className="badge badge-soft-warning">
+                    {detailTrans[0].order_status}
+                  </span>
+                ) : detailTrans[0].order_status === "Order Selesai" ? (
+                  <span className="badge badge-soft-success">
+                    {detailTrans[0].order_status}
+                  </span>
+                ) : (
+                  <span className="badge badge-soft-danger">
+                    {detailTrans[0].order_status}
+                  </span>
+                )}
+              </span>
+              <h6>Nama Costumer:</h6>
+              <span>{detailTrans[0].full_name}</span>
+              <h6>Tanggal Transaksi:</h6>
+              <span>{date}</span>
+              <h6>Nomor Pengiriman:</h6>
+              <span>{detailTrans[0].idshipping}</span>
+              <h6>Alamat Pengiriman:</h6>
+              <span>{detailTrans[0].address}</span>
+            </Col>
+            <Col xs={12}>
+              <br />
+              <h5 className="text-success text-center">
+                <strong>DETAIL PRODUK</strong>
+              </h5>
+              <hr />
+              <h6>Nama Produk:</h6>
+              {detailTrans.map((item, i) => (
+                <div key={i}>
+                  {item.product_name} x {item.quantity} : Rp
+                  {item.price * item.quantity}
+                </div>
+              ))}
+
+              <div>Ongkir: Rp.{detailTrans[0].order_price - totalPrice}</div>
+              <div>
+                <strong>Total Harga: Rp.{detailTrans[0].order_price}</strong>
+              </div>
+              <br />
+            </Col>
+            </Modal.Body>
+          <Modal.Footer>
+            {detailTrans[0].order_status === "Order Selesai" ||
+            detailTrans[0].order_status === "Transaksi Dibatalkan" ? null : (
+              <Button
+                className="btn btn-success"
+                variant="secondary"
+                onClick={() =>
+                  confirmTransactionBtnHandler(detailTrans[0].idorder)
+                }
+              >
+                Confirm
+              </Button>
+            )}
+
+            {detailTrans[0].order_status === "Transaksi Dibatalkan" ||
+            detailTrans[0].order_status === "Order Selesai" ? null : (
+              <Button
+                className="btn btn-danger"
+                variant="secondary"
+                onClick={(e) =>
+                  rejectTransactionBtnHandler(e, detailTrans[0].idorder)
+                }
+              >
+                {" "}
+                Reject
+              </Button>
+            )}
+
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      );
+    }
+    return null;
+  };
+
+  const searchCostumerHandler = (event) => {
+    const value = event.target.value;
+    setSearchCostumer(value);
+  };
+  const searchStatusHandler = (event) => {
+    const value = event.target.value;
+    setSearchStatus(value);
+  };
+
+  const sortByInputHandler = (event) => {
+    const value = event.target.value;
+
+    setSortBy(value);
+  };
+
+  const searchBtnHandler = () => {
+    const filterTransList = transList.filter((val) => {
+      return (
+        val.full_name.toLowerCase().includes(searchCostumer.toLowerCase()) &&
+        val.order_status.toLowerCase().includes(searchStatus.toLowerCase())
+      );
+    });
+
+    setFilterTransList(filterTransList);
+    setMaxPage(Math.ceil(filterTransList.length / itemPerPage));
+    setPage(page);
+  };
+
+  useEffect(() => {
+    fetchProduct();
+  }, []);
 
   return (
     <div className="content-page">
@@ -213,6 +373,7 @@ const UserTransactions = () => {
                         </tr>
                       </thead>
                       <tbody>{renderProduct()}</tbody>
+                      {RenderDetailProduct()}
                     </table>
                     <ul className="pagination pagination-rounded">
                       <li
