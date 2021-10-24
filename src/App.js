@@ -25,6 +25,7 @@ import OrderList from "./pages/User/OrderList";
 import Recipe from "./pages/User/Recipe";
 import Revenue from "./pages/Admin/Revenue";
 import UserTransactions from "./pages/Admin/UserTransactions";
+import ProductInventory from "./pages/Admin/ProductInventory";
 import { getCartData } from "./redux/actions/cart";
 
 import ProductInventory from "./pages/Admin/ProductInventory";
@@ -80,7 +81,7 @@ function App() {
           <Route component={Recipe} path="/recipe" />
           <Route component={ProductList} path="/productlist" />
           <Route component={UserTransactions} path="/user-transactions" />
-
+          <Route component={ProductInventory} path="/product-inventory" />
 
           <PrivateRoute path="/history">
             <OrderList />
