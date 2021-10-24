@@ -11,14 +11,6 @@ const ProductInventory = () => {
   const [maxPage, setMaxPage] = useState(0);
   const [itemPerPage, setItemPerPage] = useState(7);
   const [show, setShow] = useState(false);
-  
-  const [editProductList, setEditProductList] = useState({
-    idproduct: 0,
-    total_netto: 0,
-    stock_bottle: 0,
-    netto: 0,
-  });
-  
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -29,7 +21,6 @@ const ProductInventory = () => {
   const fetchProduct = () => {
     Axios.get(API_URL + "/product/inventory")
       .then((res) => {
-        console.log(res.data[0]);
         setFilterProductList(res.data[0]);
         setMaxPage(Math.ceil(res.data[0].length / itemPerPage));
       })
@@ -50,63 +41,10 @@ const ProductInventory = () => {
     }
   };
 
-  const editToggle = (editData) => {
-    setEditProductList({
-      idproduct: editData.idproduct,
-      total_netto: editData.total_netto,
-      stock_bottle: editData.stock_bottle,
-      netto: editData.netto,
-    });
-    handleShow();
-    console.log(editProductList);
-  };
-
-  const cancelEdit = () => {
-    setEditProductList({
-      ...editProductList,
-      idproduct: 0,
-    });
-    handleClose();
-  };
-
-  // const bottleToTotalNetto = (idproduct) => {
-  //   editProductList.jumlah_botol*editProductList.netto
-  // };
-
-  const saveStockBtnHandler = () => {
-    Axios.patch(
-      `http://localhost:2200/product/edit-product/${editProductList.idproduct}`,
-      {
-        //  huruf kalimat terakhir harus sama dengan input handler di bawah
-        total_netto: editProductList.stock_bottle * editProductList.netto,
-      }
-    )
-      .then(() => {
-        alert(`Berhasil update stok`);
-        handleClose();
-        fetchProduct();
-      })
-      .catch(() => {
-        alert("Terjadi kesalahan server");
-      });
-  };
-
-  const inputHandlerEdit = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    console.log(name, value);
-    // const { name, value } = event.target;
-    setEditProductList({ ...editProductList, [name]: value });
-  };
-
   const renderProduct = () => {
     const beginningIndex = (page - 1) * itemPerPage;
     let rawData = [...filterProductList];
-    const currentData = rawData.slice(
-      beginningIndex,
-      beginningIndex + itemPerPage
-    );
-
+    const currentData = rawData.slice(beginningIndex, beginningIndex + itemPerPage);
 
     return currentData.map((val) => {
       return (
@@ -115,12 +53,7 @@ const ProductInventory = () => {
           <td>{val.product_name}</td>
           <td>{val.stock_bottle} Botol</td>
           <td>{val.netto > 0 ? `${val.netto} ${val.unit}` : "Stok Kosong"}</td>
-          <td>
-            {val.total_netto > 0
-              ? `${val.total_netto} ${val.unit}`
-              : "Stok Kosong"}
-          </td>
-
+          <td>{val.total_netto > 0 ? `${val.total_netto} ${val.unit}` : "Stok Kosong"}</td>
           <td>{`${val.sisa_netto} ${val.unit}`}</td>
           <td>
             {val.stock_bottle > 4 ? (
@@ -132,10 +65,7 @@ const ProductInventory = () => {
             )}
           </td>
           <td>
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => editToggle(val)}
-            >
+            <button className="btn btn-primary btn-sm" onClick={handleShow}>
               Edit Stok
             </button>
           </td>
@@ -153,24 +83,16 @@ const ProductInventory = () => {
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-
-              <Form.Label>Edit Jumlah Botol</Form.Label>
-              <Form.Control
-                onChange={inputHandlerEdit}
-                type="text"
-                name="stock_bottle"
-              />
-
+              <Form.Label>Input Netto</Form.Label>
+              <Form.Control type="text" name="productName" />
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={cancelEdit}>
+          <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button onClick={saveStockBtnHandler} variant="primary">
-            Save Changes
-          </Button>
+          <Button variant="primary">Save Changes</Button>
         </Modal.Footer>
       </Modal>
     );
@@ -185,14 +107,8 @@ const ProductInventory = () => {
             <div className="col-lg-12">
               <div className="card">
                 <div className="card-body">
-                  <h4 className="header-title mt-0 mb-1">
-                    Admin Product Inventory
-                  </h4>
-                  <p className="sub-header">
-                    Menampilkan secara detail daftar jumlah produk yang tersedia
-                    di gudang saat ini.
-                  </p>
-
+                  <h4 className="header-title mt-0 mb-1">Admin Product Inventory</h4>
+                  <p className="sub-header">Menampilkan secara detail daftar jumlah produk yang tersedia di gudang saat ini.</p>
                   <div className="table-responsive">
                     <table className="table m-0">
                       <thead>
@@ -210,11 +126,7 @@ const ProductInventory = () => {
                       <tbody>{renderProduct()}</tbody>
                     </table>
                     <ul className="pagination pagination-rounded">
-                      <li
-                        className="paginate_button page-item previous"
-                        id="basic-datatable_previous"
-                      >
-
+                      <li className="paginate_button page-item previous" id="basic-datatable_previous">
                         <button
                           disabled={page === 1}
                           aria-controls="basic-datatable"
@@ -229,11 +141,7 @@ const ProductInventory = () => {
                           Page {page} of {maxPage}{" "}
                         </span>
                       </li>
-
-                      <li
-                        className="paginate_button page-item next"
-                        id="basic-datatable_next"
-                      >
+                      <li className="paginate_button page-item next" id="basic-datatable_next">
                         <button
                           disabled={page === maxPage}
                           aria-controls="basic-datatable"
