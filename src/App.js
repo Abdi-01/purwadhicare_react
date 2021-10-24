@@ -26,7 +26,7 @@ import Recipe from "./pages/User/Recipe";
 import ProductInventory from "./pages/Admin/ProductInventory";
 import OrderRecipe from "./pages/Admin/OrderRecipe";
 import OrderDetailRecipe from "./pages/Admin/OrderDetailRecipe";
-
+import RecipeList from "./pages/Admin/RecipeList";
 
 function App() {
   const dispatch = useDispatch();
@@ -34,11 +34,8 @@ function App() {
   const { user, storageIsChecked } = userGlobal;
   useEffect(() => {
     const tokenLocalStorage = localStorage.getItem("token");
-    const userLocalStorage = localStorage.getItem("user_data");
     if (tokenLocalStorage) {
       dispatch(userKeepLogin(tokenLocalStorage));
-      const userData = JSON.parse(userLocalStorage)
-      dispatch(getCartData(userData.iduser))
     } else {
       dispatch(checkStorage());
     }
@@ -70,16 +67,16 @@ function App() {
           <Route component={ResetPassword} path="/reset-password/:token" />
           <Route component={ForgetPassword} path="/forget-password" />
           <Route component={Verification} path="/authentication/:token" />
-          <Route component={Cart} path="/cart" />
           <Route component={OrderHistory} path="/order-history" />
           <Route component={ProductDetail} path="/productdetail/:idproduct" />
           <Route component={Recipe} path="/recipe" />
           <Route component={ProductList} path="/productlist" />
-
+          <PrivateRoute path="/cart">
+            <Cart />
+          </PrivateRoute>
           <PrivateRoute path="/history">
             <OrderList />
           </PrivateRoute>
-
           <PrivateRoute path="/profile">
             <Profile />
           </PrivateRoute>
@@ -97,6 +94,9 @@ function App() {
               </PrivateRoute>
               <PrivateRoute exact path="/order-recipe">
                 <OrderRecipe />
+              </PrivateRoute>
+              <PrivateRoute exact path="/recipe-list">
+                <RecipeList />
               </PrivateRoute>
             </>
           ) : null}

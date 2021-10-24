@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FiHome, FiPackage, FiClipboard } from "react-icons/fi";
+import { FiBookOpen, FiPackage, FiClipboard, FiDivide } from "react-icons/fi";
 
 function Sidebar() {
   return (
@@ -13,9 +13,8 @@ function Sidebar() {
               <li className="menu-title">Admin</li>
               <li>
                 <Link to="/dashboard">
-                  <FiHome />
-                  <span className="badge badge-success float-right">1</span>
-                  <span> Dashboard </span>
+                  <FiBookOpen />
+                  <span> Sales Report </span>
                 </Link>
               </li>
               <li>
@@ -35,6 +34,12 @@ function Sidebar() {
                 <Link to="/order-recipe">
                   <FiClipboard />
                   <span> Order Recipe</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/recipe-list">
+                  <FiDivide />
+                  <span> Costum Order List</span>
                 </Link>
               </li>
             </ul>
