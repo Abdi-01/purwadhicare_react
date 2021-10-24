@@ -12,7 +12,8 @@ const Profile = () => {
   const [userData, setUserData] = useState([]);
   const [uploadImg, setUploadImg] = useState({
     nameImg: "",
-    previewImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png",
+    previewImg:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png",
     addFile: "",
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -122,7 +123,11 @@ const Profile = () => {
         ...password,
       })
       .then((res) => {
-        Swal.fire("Your New Password is Set!", "Silahkan Lanjut Berbelanja", "success");
+        Swal.fire(
+          "Your New Password is Set!",
+          "Silahkan Lanjut Berbelanja",
+          "success"
+        );
       })
       .catch((err) => {
         if (err.response.data !== 1) {
@@ -140,12 +145,23 @@ const Profile = () => {
       <div className="col-3 px-5">
         <div className="d-flex flex-column justify-content-center">
           <img
-            src={!userData.picture ? uploadImg.previewImg : uploadImg.addFile ? uploadImg.previewImg : API_URL + userData.picture}
+            src={
+              !userData.picture
+                ? uploadImg.previewImg
+                : uploadImg.addFile
+                ? uploadImg.previewImg
+                : API_URL + userData.picture
+            }
             className="img-fluid rounded z-depth-2 "
             alt="Cinque Terre"
           ></img>
         </div>
-        <input onChange={imageHandler} className="form-control mt-3" type="file" placeholder="input title here" />
+        <input
+          onChange={imageHandler}
+          className="form-control mt-3"
+          type="file"
+          placeholder="input title here"
+        />
         <button
           className="btn btn-secondary btn-block mt-3"
           disabled={!uploadImg.addFile ? "disabled" : null}
@@ -173,7 +189,11 @@ const Profile = () => {
               <Form.Label>Old Password </Form.Label>
               <InputGroup style={{ display: "flex" }}>
                 <InputGroup.Text>
-                  <i className={isOpen()} style={styles.password} onClick={() => setOpenPass(!openPass)} />
+                  <i
+                    className={isOpen()}
+                    style={styles.password}
+                    onClick={() => setOpenPass(!openPass)}
+                  />
                 </InputGroup.Text>
                 <Form.Control
                   type={openPass ? "text" : "password"}
@@ -189,7 +209,11 @@ const Profile = () => {
               <Form.Label>New Password</Form.Label>
               <InputGroup style={{ display: "flex" }}>
                 <InputGroup.Text>
-                  <i className={isOpen()} style={styles.password} onClick={() => setOpenPass(!openPass)} />
+                  <i
+                    className={isOpen()}
+                    style={styles.password}
+                    onClick={() => setOpenPass(!openPass)}
+                  />
                 </InputGroup.Text>
                 <Form.Control
                   type={openPass ? "text" : "password"}
@@ -204,7 +228,11 @@ const Profile = () => {
               <Form.Label>Confirm New Password</Form.Label>
               <InputGroup style={{ display: "flex" }}>
                 <InputGroup.Text>
-                  <i className={isOpen()} style={styles.password} onClick={() => setOpenPass(!openPass)} />
+                  <i
+                    className={isOpen()}
+                    style={styles.password}
+                    onClick={() => setOpenPass(!openPass)}
+                  />
                 </InputGroup.Text>
                 <Form.Control
                   type={openPass ? "text" : "password"}
@@ -249,20 +277,37 @@ const Profile = () => {
           <div className="form-group">
             <label className="col-lg-3 control-label">Email</label>
             <div className="col-lg-8">
-              <input className="form-control" type="text" onChange={inputHandler} name="email" defaultValue={userData.email} />
+              <input
+                className="form-control"
+                type="text"
+                onChange={inputHandler}
+                name="email"
+                defaultValue={userData.email}
+              />
             </div>
           </div>
           <div className="form-group">
             <label className="col-lg-3 control-label">Umur</label>
             <div className="col-lg-8">
-              <input className="form-control" type="number" defaultValue={userData.age} onChange={inputHandler} name="age" />
+              <input
+                className="form-control"
+                type="number"
+                defaultValue={userData.age}
+                onChange={inputHandler}
+                name="age"
+              />
             </div>
           </div>
           <div className="form-group">
             <label className="col-lg-3 control-label">Jenis Kelamin</label>
             <div className="col-lg-8">
               <div className="ui-select">
-                <select name="gender" defaultValue={userData.gender} onChange={inputHandler} className="form-control">
+                <select
+                  name="gender"
+                  defaultValue={userData.gender}
+                  onChange={inputHandler}
+                  className="form-control"
+                >
                   <option disabled defaultValue>
                     {userData.gender}
                   </option>

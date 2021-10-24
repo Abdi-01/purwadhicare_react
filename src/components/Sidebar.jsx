@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FiBookOpen, FiPackage, FiClipboard, FiDivide } from "react-icons/fi";
+import { FiBookOpen, FiPackage, FiClipboard, FiFileText, FiMonitor, FiDivide } from "react-icons/fi";
+
 
 function Sidebar() {
   return (
@@ -23,6 +24,13 @@ function Sidebar() {
                   <span> Product </span>
                 </Link>
               </li>
+              <li>
+                <Link to="/revenue">
+                  <FiMonitor />
+                  <span> Revenue </span>
+                </Link>
+              </li>
+
               <li className="menu-title">Admin Inventory</li>
               <li>
                 <Link to="/product-inventory">
@@ -37,9 +45,9 @@ function Sidebar() {
                 </Link>
               </li>
               <li>
-                <Link to="/recipe-list">
-                  <FiDivide />
-                  <span> Costum Order List</span>
+                <Link to="/user-transactions">
+                  <FiFileText />
+                  <span> User Transactions</span>
                 </Link>
               </li>
             </ul>

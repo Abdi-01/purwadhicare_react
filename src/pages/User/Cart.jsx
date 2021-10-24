@@ -7,8 +7,14 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
+import {  useDispatch } from "react-redux";
+
+import { getCartData } from "../../redux/actions";
 
 function Cart() {
+  const dispatch = useDispatch();
+  const globalCart = useSelector((state) => state.cart);
+
   const globalUser = useSelector((state) => state.user);
   const history = useHistory();
   const [cart, setCart] = useState([]);
@@ -82,6 +88,7 @@ function Cart() {
   const fetchCity = () => {
     Axios.get(API_URL + "/ongkir/city/" + shipping.idprovince)
       .then((res) => {
+        console.log(res.data);
         setCities(res.data);
       })
       .catch(() => {
@@ -137,6 +144,8 @@ function Cart() {
     Axios.delete(`http://localhost:2200/cart/delete-cart/${idcart}`)
       .then(() => {
         fetchCart();
+        alert("Berhasil Delete Cart");
+        dispatch(getCartData(globalUser.user.iduser))
       })
       .catch(() => {
         alert("Gagal Delete");
@@ -145,7 +154,16 @@ function Cart() {
 
   const submitBtnHandler = (e) => {
     e.preventDefault();
-    const { full_name, phone_number, address, districts, postal_code, notes, idprovince, idcity } = shipping;
+    const {
+      full_name,
+      phone_number,
+      address,
+      districts,
+      postal_code,
+      notes,
+      idprovince,
+      idcity,
+    } = shipping;
     const { total } = totalPrice;
     let formShipping = {
       full_name,
@@ -208,11 +226,14 @@ function Cart() {
             <div className="col">
               <div className="border">{val.quantity}</div>
             </div>
-            <div className="col">Rp. {val.price_stock}</div>
+            <div className="col">Rp. {val.price_stock.toLocaleString()}</div>
             {/* total price per item */}
-            <div className="col">Rp. {val.quantity * val.price_stock}</div>
+            <div className="col">Rp. {(val.quantity * val.price_stock).toLocaleString()}</div>
             <div className="col">
-              <button onClick={() => deleteCartHandler(val.idcart)} className="btn btn-danger">
+              <button
+                onClick={() => deleteCartHandler(val.idcart)}
+                className="btn btn-danger"
+              >
                 Delete
               </button>
             </div>
@@ -254,7 +275,9 @@ function Cart() {
                         <td>
                           <button
                             className="btn btn-secondary btn-sm"
-                            onClick={() => ongkirBtnHandler(val.cost[0].value, val.service)}
+                            onClick={() =>
+                              ongkirBtnHandler(val.cost[0].value, val.service)
+                            }
                           >
                             Pilih
                           </button>
@@ -282,19 +305,42 @@ function Cart() {
         <form onSubmit={submitBtnHandler}>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Nama Lengkap</label>
-            <input type="text" className="form-control" name="full_name" placeholder="Nama Lengkap" onChange={formHandler} />
+            <input
+              type="text"
+              className="form-control"
+              name="full_name"
+              placeholder="Nama Lengkap"
+              onChange={formHandler}
+            />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Nomor Telepon</label>
-            <input type="text" className="form-control" name="phone_number" placeholder="Nomor telepon" onChange={formHandler} />
+            <input
+              type="text"
+              className="form-control"
+              name="phone_number"
+              placeholder="Nomor telepon"
+              onChange={formHandler}
+            />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Alamat</label>
-            <textarea name="address" className="form-control" cols="30" rows="4" onChange={formHandler} />
+            <textarea
+              name="address"
+              className="form-control"
+              cols="30"
+              rows="4"
+              onChange={formHandler}
+            />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Provinsi</label>
-            <select className="form-control" defaultValue={"DEFAULT"} name="idprovince" onChange={formHandler}>
+            <select
+              className="form-control"
+              defaultValue={"DEFAULT"}
+              name="idprovince"
+              onChange={formHandler}
+            >
               <option disabled value="DEFAULT">
                 Nama Provinsi
               </option>
@@ -309,26 +355,54 @@ function Cart() {
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Kota / Kabupaten</label>
-            <select className="form-control" defaultValue={"DEFAULT"} name="idcity" onChange={formHandler}>
+            <select
+              className="form-control"
+              defaultValue={"DEFAULT"}
+              name="idcity"
+              onChange={formHandler}
+            >
               <option disabled value="DEFAULT">
                 Nama Kota
               </option>
               {cities.map((value, idx) => {
-                return <option value={value.idcity} key={idx}>{`${value.type} ${value.city_name}`}</option>;
+                return (
+                  <option
+                    value={value.idcity}
+                    key={idx}
+                  >{`${value.type} ${value.city_name}`}</option>
+                );
               })}
             </select>
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Kecamatan</label>
-            <input type="text" className="form-control" name="districts" placeholder="Kecamatan" onChange={formHandler} />
+            <input
+              type="text"
+              className="form-control"
+              name="districts"
+              placeholder="Kecamatan"
+              onChange={formHandler}
+            />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Kode Pos</label>
-            <input type="text" className="form-control" name="postal_code" placeholder="Kode Pos" onChange={formHandler} />
+            <input
+              type="text"
+              className="form-control"
+              name="postal_code"
+              placeholder="Kode Pos"
+              onChange={formHandler}
+            />
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputEmail1">Catatan</label>
-            <input type="text" className="form-control" name="notes" placeholder="Catatan" onChange={formHandler} />
+            <input
+              type="text"
+              className="form-control"
+              name="notes"
+              placeholder="Catatan"
+              onChange={formHandler}
+            />
           </div>
           {totalPrice.jasa ? (
             <div className="row" style={{ padding: "2vh 0" }}>
@@ -337,11 +411,17 @@ function Cart() {
             </div>
           ) : null}
 
-          <div className="row" style={{ borderTop: "1px solid rgba(0,0,0,.1)", padding: "2vh 0" }}>
+          <div
+            className="row"
+            style={{ borderTop: "1px solid rgba(0,0,0,.1)", padding: "2vh 0" }}
+          >
             <div className="col">Total Harga</div>
             <div className="col text-right">RP {totalPrice.total}</div>
           </div>
-          <button disabled={btnDisable ? "disabled" : null} className="btn btn-primary btn-block">
+          <button
+            disabled={btnDisable ? "disabled" : null}
+            className="btn btn-primary btn-block"
+          >
             CHECKOUT
           </button>
         </form>
@@ -365,7 +445,9 @@ function Cart() {
                         <b>Keranjang</b>
                       </h4>
                     </div>
-                    <div className="col align-self-center text-right text-muted">{cart.length} Produk</div>
+                    <div className="col align-self-center text-right text-muted">
+                      {cart.length} Produk
+                    </div>
                   </div>
                 </div>
                 {renderCart()}

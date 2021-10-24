@@ -208,8 +208,8 @@ function Admin() {
           <td>{val.product_name}</td>
           <td>{val.description}</td>
           <td>{val.unit}</td>
-          <td>{val.price_unit}</td>
-          <td>{val.price_stock}</td>
+          <td>{val.price_unit.toLocaleString()}</td>
+          <td>{val.price_stock.toLocaleString()}</td>
           <td>
             <img className="admin-product-image" src={val.image} alt="" />
           </td>
