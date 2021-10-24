@@ -10,6 +10,7 @@ import { useHistory } from "react-router-dom";
 
 function Cart() {
   const globalCart = useSelector((state) => state.cart);
+
   const globalUser = useSelector((state) => state.user);
   const history = useHistory();
   const [cart, setCart] = useState([]);
@@ -95,9 +96,9 @@ function Cart() {
     var weight = 0;
     cart.forEach((val) => {
       if (val.unit === "mg") {
-        weight += (val.netto / 1000) * val.quantity;
+        weight += parseInt((val.netto / 1000) * val.quantity);
       } else {
-        weight += val.netto * val.quantity;
+        weight += parseInt(val.netto * val.quantity);
       }
     });
     Axios.post(API_URL + "/ongkir/cost", {

@@ -23,9 +23,11 @@ import NotFound from "./pages/NotFound";
 import { useDispatch, useSelector } from "react-redux";
 import OrderList from "./pages/User/OrderList";
 import Recipe from "./pages/User/Recipe";
+import Revenue from "./pages/Admin/Revenue";
 import ProductInventory from "./pages/Admin/ProductInventory";
 import OrderRecipe from "./pages/Admin/OrderRecipe";
 import OrderDetailRecipe from "./pages/Admin/OrderDetailRecipe";
+import RecipeList from "./pages/Admin/RecipeList";
 import { getCartData } from "./redux/actions/cart";
 import UserTransactions from "./pages/Admin/UserTransactions";
 
@@ -35,7 +37,6 @@ function App() {
   const { user, storageIsChecked } = userGlobal;
   useEffect(() => {
     const tokenLocalStorage = localStorage.getItem("token");
-    const userLocalStorage = localStorage.getItem("user_data");
     if (tokenLocalStorage) {
       dispatch(userKeepLogin(tokenLocalStorage));
       const userData = JSON.parse(userLocalStorage);
@@ -76,6 +77,8 @@ function App() {
           <Route component={ProductDetail} path="/productdetail/:idproduct" />
           <Route component={Recipe} path="/recipe" />
           <Route component={ProductList} path="/productlist" />
+//           <Route component={UserTransactions} path="/user-transactions" />
+//           <Route component={ProductInventory} path="/product-inventory" />
 
           <PrivateRoute path="/history">
             <OrderList />
@@ -99,6 +102,7 @@ function App() {
               <PrivateRoute exact path="/order-recipe">
                 <OrderRecipe />
               </PrivateRoute>
+
               <PrivateRoute exact path="/user-transactions">
                 <UserTransactions />
               </PrivateRoute>
