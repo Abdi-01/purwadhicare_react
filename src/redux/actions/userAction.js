@@ -1,7 +1,6 @@
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
 import Swal from "sweetalert2";
-import { getCartData } from ".";
 
 // Action Untuk Fitur Register
 export const register = (data, setToLogin) => {
@@ -36,22 +35,23 @@ export const login = (data, history) => async (dispatch) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user_data", JSON.stringify(dataLogin));
     dispatch({ type: "LOGIN", payload: dataLogin });
-    const resultCart = await Axios.get(`http://localhost:2200/cart/get?iduser=${dataLogin.iduser}`);
-    dispatch({
-        type: "FILL_CART",
-        payload: resultCart.data,
-      });
-
-
     if (dataLogin.role === "user") {
-      Swal.fire("Log In Berhasil!", "Mari Berbelanja bersama Purwadhicare 😉", "success");
+      Swal.fire(
+        "Log In Berhasil!",
+        "Mari Berbelanja bersama Purwadhicare 😉",
+        "success"
+      );
       history.push("/");
     } else {
       history.push("/dashboard");
     }
     dispatch({ type: "LOADING", payload: false });
   } catch (err) {
-    Swal.fire("Login Gagal", "username / password yang anda masukkan salah", "error");
+    Swal.fire(
+      "Login Gagal",
+      "username / password yang anda masukkan salah",
+      "error"
+    );
     dispatch({ type: "ERROR", payload: err.response.data });
     dispatch({ type: "LOADING", payload: false });
   }
@@ -64,7 +64,6 @@ export const logout = () => {
       localStorage.removeItem("token");
       localStorage.removeItem("user_data");
       dispatch({ type: "LOGOUT" });
-      dispatch({ type: "DELETE_CART"});
     } catch (err) {
       console.log(err);
     }

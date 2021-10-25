@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
-import { Button, Modal, Col, Form, ModalDialog } from "react-bootstrap";
+import { Button, Modal, Col } from "react-bootstrap";
 
 const UserTransactions = () => {
-  const [filterProductList, setFilterProductList] = useState([]);
   const [transList, setTransList] = useState([]);
   const [filterTransList, setFilterTransList] = useState([]);
   const [page, setPage] = useState(1);
@@ -15,10 +14,10 @@ const UserTransactions = () => {
   const [searchStatus, setSearchStatus] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [detailTrans, setDetailTrans] = useState([]);
-  const [editProductList, setEditProductList] = useState({
-    idorder: 0,
-    idproduct: 0,
-    quantity: 0,
+  const [uploadImg, setUploadImg] = useState({
+    nameImg: "",
+    previewImg:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png",
   });
   const [btnDisabled, setBtnDisabled] = useState(false);
   const handleClose = () => setShow(false);
@@ -26,11 +25,34 @@ const UserTransactions = () => {
     fetchTransaction(idorder);
     setShow(true);
   };
-
+  
   useEffect(() => {
     fetchProduct();
     fetchTransaction();
   }, []);
+
+  const fetchTransaction = (idorder) => {
+    Axios.get(API_URL + "/transaction/detail-transaction/" + idorder)
+      .then((res) => {
+        console.log(res.data);
+        setDetailTrans(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const imageHandler = (e) => {
+    if (e.target.files[0]) {
+      setUploadImg({
+        ...uploadImg,
+        nameImg: e.target.files[0].name,
+        previewImg: URL.createObjectURL(e.target.files[0]),
+        addFile: e.target.files[0],
+      });
+      console.log(uploadImg.nameImg);
+    }
+  };
 
   const fetchProduct = () => {
     Axios.get(API_URL + "/transaction/get-transaction")
@@ -38,17 +60,6 @@ const UserTransactions = () => {
         setTransList(res.data);
         setFilterTransList(res.data);
         setMaxPage(Math.ceil(res.data.length / itemPerPage));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const fetchTransaction = (idorder) => {
-    Axios.get(API_URL + "/transaction/detail-transaction/" + idorder)
-      .then((res) => {
-        console.log(res.data);
-        setDetailTrans(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -212,9 +223,14 @@ const UserTransactions = () => {
         .split("-")
         .reverse()
         .join("/");
-      let totalPrice;
+      let totalPrice = 0;
+      let totalRecipe = 0;
       for (let i = 0; i < detailTrans.length; i++) {
-        totalPrice = detailTrans[0].price + detailTrans[i].price;
+        totalPrice += detailTrans[i].price_stock * detailTrans[i].quantity;
+      }
+
+      for (let i = 0; i < detailTrans.length; i++) {
+        totalRecipe += detailTrans[i].price_unit;
       }
       return (
         <Modal show={show} onHide={handleClose} centered>
@@ -255,29 +271,66 @@ const UserTransactions = () => {
               <h6>Alamat Pengiriman:</h6>
               <span>{detailTrans[0].address}</span>
             </Col>
+            {detailTrans[0].recipe_image === null ? (
+              <Col xs={12}>
+                <br />
+                <h5 className="text-success text-center">
+                  <strong>DETAIL PRODUK</strong>
+                </h5>
+                <hr />
+                <h6>Nama Produk:</h6>
+                {detailTrans.map((item, i) => (
+                  <div key={i}>
+                    {item.product_name} x {item.quantity} : Rp
+                    {item.price_stock * item.quantity}
+                  </div>
+                ))}
+
+                <div>Ongkir: Rp.{detailTrans[0].order_price - totalPrice}</div>
+                <div>
+                  <strong>Total Harga: Rp.{detailTrans[0].order_price}</strong>
+                </div>
+                <br />
+              </Col>
+            ) : (
+              <Col xs={12}>
+                <br />
+                <h5 className="text-success text-center">
+                  <strong>DETAIL PRODUK</strong>
+                </h5>
+                <hr />
+                <h6>Nama Produk:</h6>
+                {detailTrans.map((item, i) => (
+                  <div key={i}>
+                    {item.product_name} : Rp
+                    {item.price_unit}
+                  </div>
+                ))}
+
+                <div>Ongkir: Rp.{detailTrans[0].order_price - totalRecipe}</div>
+                <div>
+                  <strong>Total Harga: Rp.{detailTrans[0].order_price}</strong>
+                </div>
+                <br />
+              </Col>
+            )}
+
             <Col xs={12}>
-              <br />
               <h5 className="text-success text-center">
-                <strong>DETAIL PRODUK</strong>
+                <strong>BUKTI PEMBAYARAN</strong>
               </h5>
               <hr />
-              <h6>Nama Produk:</h6>
-              {detailTrans.map((item, i) => (
-                <div key={i}>
-                  {item.product_name} x {item.quantity} : Rp
-                  {item.price * item.quantity}
-                </div>
-              ))}
-
-              <div>Ongkir: Rp.{detailTrans[0].order_price - totalPrice}</div>
-              <div>
-                <strong>Total Harga: Rp.{detailTrans[0].order_price}</strong>
+              <div className="d-flex flex-column justify-content-center">
+                <img
+                  className="img-fluid rounded z-depth-2 "
+                  src={API_URL + detailTrans[0].payment_image}
+                  alt="Bukti Pembayaran"
+                />
               </div>
-              <br />
             </Col>
-            </Modal.Body>
+          </Modal.Body>
           <Modal.Footer>
-            {detailTrans[0].order_status === "Order Selesai" ||
+          {detailTrans[0].order_status === "Order Selesai" ||
             detailTrans[0].order_status === "Transaksi Dibatalkan" ? null : (
               <Button
                 className="btn btn-success"
@@ -345,7 +398,6 @@ const UserTransactions = () => {
   useEffect(() => {
     fetchProduct();
   }, []);
-
   return (
     <div className="content-page">
       <div className="content">
@@ -354,22 +406,94 @@ const UserTransactions = () => {
             <div className="col-lg-12">
               <div className="card">
                 <div className="card-body">
-                  <h4 className="header-title mt-0 mb-1">User Transactions</h4>
-                  <p className="sub-header">
-                    Menampilkan seluruh transaksi users beserta statusnya
-                  </p>
+                  <div className="sub-header">
+                    <div className="row g-3">
+                      <div className="col-md-3">
+                        <h4 className="header-title mt-0 mb-1">
+                          User Transactions
+                        </h4>
+                        <p>
+                          Menampilkan Seluruh transaksi Users di Purwadhicare
+                        </p>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="sortBy">Sort By</label>
+                        <select
+                          onChange={sortByInputHandler}
+                          name="sortBy"
+                          className="form-control"
+                        >
+                          <option value="default">Default</option>
+                          <option value="lowPrice">Lowest Price</option>
+                          <option value="highPrice">Highest Price</option>
+                          <option value="Old Transaction">
+                            Old Transaction
+                          </option>
+                          <option value="New Transaction">
+                            New Transaction
+                          </option>
+                        </select>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="searchCostumerName">
+                          Costumer Name
+                        </label>
+                        <input
+                          onChange={searchCostumerHandler}
+                          name="searchCostumerName"
+                          type="text"
+                          className="form-control mb-3"
+                        />
+                      </div>
+                      <div className="col-md-3">
+                        <label htmlFor="searchStatus">Product Status</label>
+                        <select
+                          onChange={searchStatusHandler}
+                          name="searchStatus"
+                          className="form-control"
+                          type="text"
+                        >
+                          <option value="">All Status</option>
+                          <option defaultValue="Menunggu Pembayaran">
+                            Menunggu Pembayaran
+                          </option>
+                          <option defaultValue="Validasi Resep">
+                            Validasi Resep
+                          </option>
+                          <option defaultValue="Menunggu Pengiriman">
+                            Menunggu Pengiriman
+                          </option>
+                          <option defaultValue="Order Selesai">
+                            Order Selesai
+                          </option>
+                          <option defaultValue="Transaksi Dibatalkan">
+                            Transaksi Dibatalkan
+                          </option>
+                        </select>
+                      </div>
+                      <div className="col-md-2">
+                        <button
+                          onClick={searchBtnHandler}
+                          className="btn btn-block btn-info rounded-pill justify-content-center mt-4"
+                        >
+                          Search
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="table-responsive">
                     <table className="table m-0">
                       <thead>
-                        <tr>
+                        <tr className="text-center">
                           <th>Id Order</th>
                           <th>Costumers</th>
                           <th>Alamat</th>
+                          <th>Tanggal Order</th>
                           <th>Jumlah Obat</th>
                           <th>Status</th>
                           <th>Total Harga</th>
-                          <th>Detail</th>
-                          <th colSpan="2">Action</th>
+                          <th>Aksi</th>
                         </tr>
                       </thead>
                       <tbody>{renderProduct()}</tbody>

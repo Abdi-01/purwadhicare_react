@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { FiShoppingCart, FiUser, FiLogOut } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -45,7 +45,7 @@ function Navbar() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/order-history">
+                  <Link to="/history">
                     <div className="nav-link right-bar-toggle">Transaksi</div>
                   </Link>
                 </li>

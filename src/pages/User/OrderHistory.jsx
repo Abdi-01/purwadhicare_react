@@ -1,9 +1,6 @@
 import Axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import React, { useState, useEffect } from "react";
-import moment from "moment";
-import "moment/locale/id";
-
 
 function History() {
   const globalUser = useSelector((state) => state.user);
@@ -13,7 +10,8 @@ function History() {
 
   const fetchTransactions = () => {
     Axios.get(
-      `http://localhost:2200/transaction/get-history?iduser=${globalUser.user.iduser}`)
+      `http://localhost:2200/transaction/get-history?iduser=${globalUser.user.iduser}`
+    )
       .then((result) => {
         console.log(result.data);
         setTransactionList(result.data);
@@ -22,14 +20,13 @@ function History() {
         alert("Terjadi kesalahan di server transaction");
       });
   };
- 
 
   const renderTransactions = () => {
     return transactionList.map((val) => {
       return (
         <tr>
           {/* val.nama field di sql , CEK LAGI*/}
-          <td>{moment(val.order_date).format("LL")}</td>
+          <td>{val.order_date}</td>
           <td>{val.total_item} Item(s)</td>
           <td>Rp. {val.order_price}</td>
           <td>
@@ -45,7 +42,6 @@ function History() {
     });
   };
 
-   
   const renderTransactionDetailItem = () => {
     return transactionDetail.map((val) => {
       return (
@@ -53,24 +49,23 @@ function History() {
           <span className="font-weight-bold">
             {val.product_name} ({val.quantity})
           </span>
-          <span>{val.price_stock * val.quantity}</span>
+          <span>{val.price * val.quantity}</span>
         </div>
       );
     });
   };
 
   const seeDetailsBtnHandler = (idorder) => {
-    Axios.get(
-      `http://localhost:2200/transaction/get-detail?idorder=${idorder}`)
+    Axios.get(`http://localhost:2200/transaction/get-detail?idorder=${idorder}`)
       .then((result) => {
         console.log(result.data);
         setTransactionDetail(result.data);
       })
       .catch((err) => {
         alert("Terjadi kesalahan di server transaction");
-        console.log(err)
+        console.log(err);
       });
-      };
+  };
 
   // seperti component did mount
   useEffect(() => {
@@ -94,19 +89,15 @@ function History() {
           </table>
         </div>
         <div className="col-4">
-          {
-          transactionDetail.length ?
-          <div className="card">
-            <div className="card-header">
-              <strong>Transaction Details</strong>
+          {transactionDetail.length ? (
+            <div className="card">
+              <div className="card-header">
+                <strong>Transaction Details</strong>
+              </div>
+              <div className="card-body">{renderTransactionDetailItem()}</div>
             </div>
-            <div className="card-body">
-              {renderTransactionDetailItem()}
-            </div>
-          </div>
-          : null
-          }
-          </div>
+          ) : null}
+        </div>
       </div>
     </div>
   );

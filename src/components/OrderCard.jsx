@@ -124,7 +124,7 @@ function OrderCard(props) {
         <div className="row mb-1">
           <div className="col-md-10">
             <h6 className="text-muted font-weight-light">
-              Id Transaksi: {props.orderData.idorder}
+              Id Order: {props.orderData.idorder}
             </h6>
           </div>
         </div>
@@ -146,6 +146,20 @@ function OrderCard(props) {
             </div>
           </div>
           {props.orderData.order_status == "Menunggu Pembayaran" ? (
+            <>
+              <div className="col-md-3">
+                <span className="btn btn-warning btn-sm disabled text-white">
+                  {props.orderData.order_status}
+                </span>
+              </div>
+              <div className="col-md-2 text-center">
+                <button className="btn btn-warning" onClick={handleShow}>
+                  Bayar Sekarang
+                </button>
+                {paymentBtn()}
+              </div>
+            </>
+          ) : props.orderData.order_status == "Validasi Resep" ? (
             <>
               <div className="col-md-3">
                 <span className="btn btn-warning btn-sm disabled text-white">
