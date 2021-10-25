@@ -25,6 +25,12 @@ function Sidebar() {
               </li>
               <li className="menu-title">Admin Inventory</li>
               <li>
+                 <Link to="/revenue">
+                  <FiMonitor />
+                  <span> Revenue </span>
+                </Link>
+              </li>
+              <li>
                 <Link to="/product-inventory">
                   <FiPackage />
                   <span> Product Inventory</span>
