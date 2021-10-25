@@ -25,7 +25,7 @@ const UserTransactions = () => {
     fetchTransaction(idorder);
     setShow(true);
   };
-  
+
   useEffect(() => {
     fetchProduct();
     fetchTransaction();
@@ -181,7 +181,11 @@ const UserTransactions = () => {
           <td>{val.full_name}</td>
           <td>{val.address.slice(0, 30)}</td>
           <td>{date}</td>
-          <td>{val.total_item}</td>
+          {val.total_item === null ? (
+            <td>Obat Racik</td>
+          ) : (
+            <td>{val.total_item} Buah</td>
+          )}
           <td>
             {val.order_status === "Menunggu Pengiriman" ? (
               <span className="badge badge-soft-primary">
@@ -302,7 +306,7 @@ const UserTransactions = () => {
                 <h6>Nama Produk:</h6>
                 {detailTrans.map((item, i) => (
                   <div key={i}>
-                    {item.product_name} : Rp
+                    {item.product_name} x {item.total_netto} {item.unit} : Rp
                     {item.price_unit}
                   </div>
                 ))}
@@ -321,16 +325,20 @@ const UserTransactions = () => {
               </h5>
               <hr />
               <div className="d-flex flex-column justify-content-center">
-                <img
-                  className="img-fluid rounded z-depth-2 "
-                  src={API_URL + detailTrans[0].payment_image}
-                  alt="Bukti Pembayaran"
-                />
+                {detailTrans[0].payment_image === null ? (
+                  <h6 className="text-center">User Belum Membayar</h6>
+                ) : (
+                  <img
+                    className="img-fluid rounded z-depth-2 "
+                    src={API_URL + detailTrans[0].payment_image}
+                    alt="Bukti Pembayaran"
+                  />
+                )}
               </div>
             </Col>
           </Modal.Body>
           <Modal.Footer>
-          {detailTrans[0].order_status === "Order Selesai" ||
+            {detailTrans[0].order_status === "Order Selesai" ||
             detailTrans[0].order_status === "Transaksi Dibatalkan" ? null : (
               <Button
                 className="btn btn-success"
