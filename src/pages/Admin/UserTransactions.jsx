@@ -19,11 +19,17 @@ const UserTransactions = () => {
     previewImg:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png",
   });
+  const [btnDisabled, setBtnDisabled] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = (idorder) => {
     fetchTransaction(idorder);
     setShow(true);
   };
+  
+  useEffect(() => {
+    fetchProduct();
+    fetchTransaction();
+  }, []);
 
   const fetchTransaction = (idorder) => {
     Axios.get(API_URL + "/transaction/detail-transaction/" + idorder)
@@ -47,6 +53,7 @@ const UserTransactions = () => {
       console.log(uploadImg.nameImg);
     }
   };
+
   const fetchProduct = () => {
     Axios.get(API_URL + "/transaction/get-transaction")
       .then((res) => {
@@ -56,6 +63,49 @@ const UserTransactions = () => {
       })
       .catch((err) => {
         console.log(err);
+      });
+  };
+
+  const rejectTransactionBtnHandler = (e, idorder) => {
+    e.preventDefault();
+    Axios.patch(
+      `http://localhost:2200/transaction/reject-transaction/${idorder}`
+    )
+      .then(() => {
+        //editToggle(val);
+        // cancelQuantity();
+        fetchProduct();
+        fetchTransaction(idorder);
+
+        Axios.patch(`http://localhost:2200/transaction/cancel-quantity`, {
+          detailTrans,
+        })
+          .then(() =>
+            alert(
+              "Transaksi dibatalkan & produk berhasil dikembalikan ke stock"
+            )
+          )
+          .catch(() => {
+            alert("Stok belum terupdate");
+          });
+      })
+      .catch(() => {
+        alert("Transaksi belum dibatalkan");
+      });
+  };
+
+  const confirmTransactionBtnHandler = (idorder) => {
+    Axios.patch(
+      `http://localhost:2200/transaction/confirm-transaction/${idorder}`
+    )
+      .then(() => {
+        fetchProduct();
+        fetchTransaction(idorder);
+        alert("Transaksi berhasil");
+        setBtnDisabled(true);
+      })
+      .catch(() => {
+        alert("Transaksi belum dikonfirmasi");
       });
   };
 
@@ -280,6 +330,33 @@ const UserTransactions = () => {
             </Col>
           </Modal.Body>
           <Modal.Footer>
+          {detailTrans[0].order_status === "Order Selesai" ||
+            detailTrans[0].order_status === "Transaksi Dibatalkan" ? null : (
+              <Button
+                className="btn btn-success"
+                variant="secondary"
+                onClick={() =>
+                  confirmTransactionBtnHandler(detailTrans[0].idorder)
+                }
+              >
+                Confirm
+              </Button>
+            )}
+
+            {detailTrans[0].order_status === "Transaksi Dibatalkan" ||
+            detailTrans[0].order_status === "Order Selesai" ? null : (
+              <Button
+                className="btn btn-danger"
+                variant="secondary"
+                onClick={(e) =>
+                  rejectTransactionBtnHandler(e, detailTrans[0].idorder)
+                }
+              >
+                {" "}
+                Reject
+              </Button>
+            )}
+
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
