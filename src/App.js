@@ -37,6 +37,7 @@ function App() {
   const { user, storageIsChecked } = userGlobal;
   useEffect(() => {
     const tokenLocalStorage = localStorage.getItem("token");
+    const userLocalStorage = localStorage.getItem("user_data");
     if (tokenLocalStorage) {
       dispatch(userKeepLogin(tokenLocalStorage));
       const userData = JSON.parse(userLocalStorage);
@@ -77,13 +78,11 @@ function App() {
           <Route component={ProductDetail} path="/productdetail/:idproduct" />
           <Route component={Recipe} path="/recipe" />
           <Route component={ProductList} path="/productlist" />
-//           <Route component={UserTransactions} path="/user-transactions" />
-//           <Route component={ProductInventory} path="/product-inventory" />
-
+          // <Route component={UserTransactions} path="/user-transactions" />
+          // <Route component={ProductInventory} path="/product-inventory" />
           <PrivateRoute path="/history">
             <OrderList />
           </PrivateRoute>
-
           <PrivateRoute path="/profile">
             <Profile />
           </PrivateRoute>
