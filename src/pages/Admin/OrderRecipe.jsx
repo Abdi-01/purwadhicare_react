@@ -54,19 +54,23 @@ const OrderRecipe = () => {
                     Menampilkan kesulurhan daftar order product berdasarkan resep racikan dokter yang belum diproses oleh admin.
                   </p>
                   <div className="table-responsive">
-                    <table className="table m-0">
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Nama Lengkap</th>
-                          <th>Email</th>
-                          <th>Umur</th>
-                          <th>Tanggal Order</th>
-                          <th>Aksi</th>
-                        </tr>
-                      </thead>
-                      <tbody>{renderRecipe()}</tbody>
-                    </table>
+                    {!orderData.length ? (
+                      <h2>Belum ada order resep</h2>
+                    ) : (
+                      <table className="table m-0">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Nama Lengkap</th>
+                            <th>Email</th>
+                            <th>Umur</th>
+                            <th>Tanggal Order</th>
+                            <th>Aksi</th>
+                          </tr>
+                        </thead>
+                        <tbody>{renderRecipe()}</tbody>
+                      </table>
+                    )}
                   </div>
                 </div>
               </div>

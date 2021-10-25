@@ -46,7 +46,7 @@ const RecipeList = () => {
               <div className="card">
                 <div className="card-body">
                   <h4 className="header-title mt-0 mb-1">List Order Recipe</h4>
-                  <p className="sub-header">Menampilkan kesulurhan obat yang terjual melalui resep.</p>
+                  <p className="sub-header">Menampilkan kesulurhan obat yang terjual melalui pesanan racikan resep dokter.</p>
                   <div className="table-responsive">
                     <table className="table m-0">
                       <thead>

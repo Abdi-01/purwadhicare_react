@@ -24,9 +24,9 @@ function FooterUser() {
                 />
               </a>
               <p className="font-size-15 mt-4">
-                Purwadhicare know what's best for u.
-                <br /> Serving sincerity and love.
-                <br /> Everybody's solution for health.
+                Purwadhicare menyediakan layanan jual beli
+                <br /> obat satuan maupun jual beli obat racikan.
+                <br /> Proses cepat dengan biaya pengiriman yang murah.
               </p>
             </div>
             <div className="col-lg-2"></div>

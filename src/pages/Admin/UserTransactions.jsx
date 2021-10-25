@@ -16,8 +16,7 @@ const UserTransactions = () => {
   const [detailTrans, setDetailTrans] = useState([]);
   const [uploadImg, setUploadImg] = useState({
     nameImg: "",
-    previewImg:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png",
+    previewImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png",
   });
   const [btnDisabled, setBtnDisabled] = useState(false);
   const handleClose = () => setShow(false);
@@ -68,9 +67,7 @@ const UserTransactions = () => {
 
   const rejectTransactionBtnHandler = (e, idorder) => {
     e.preventDefault();
-    Axios.patch(
-      `http://localhost:2200/transaction/reject-transaction/${idorder}`
-    )
+    Axios.patch(`http://localhost:2200/transaction/reject-transaction/${idorder}`)
       .then(() => {
         //editToggle(val);
         // cancelQuantity();
@@ -95,9 +92,7 @@ const UserTransactions = () => {
   };
 
   const confirmTransactionBtnHandler = (idorder) => {
-    Axios.patch(
-      `http://localhost:2200/transaction/confirm-transaction/${idorder}`
-    )
+    Axios.patch(`http://localhost:2200/transaction/confirm-transaction/${idorder}`)
       .then(() => {
         fetchProduct();
         fetchTransaction(idorder);
@@ -163,10 +158,7 @@ const UserTransactions = () => {
         break;
     }
 
-    const currentData = rawData.slice(
-      beginningIndex,
-      beginningIndex + itemPerPage
-    );
+    const currentData = rawData.slice(beginningIndex, beginningIndex + itemPerPage);
 
     return currentData.map((val) => {
       const date = val.order_date.slice(0, 10).split("-").reverse().join("/");
@@ -188,29 +180,18 @@ const UserTransactions = () => {
           )}
           <td>
             {val.order_status === "Menunggu Pengiriman" ? (
-              <span className="badge badge-soft-primary">
-                {val.order_status}
-              </span>
+              <span className="badge badge-soft-primary">{val.order_status}</span>
             ) : val.order_status === "Validasi Resep" ? (
-              <span className="badge badge-soft-warning">
-                {val.order_status}
-              </span>
+              <span className="badge badge-soft-warning">{val.order_status}</span>
             ) : val.order_status === "Order Selesai" ? (
-              <span className="badge badge-soft-success">
-                {val.order_status}
-              </span>
+              <span className="badge badge-soft-success">{val.order_status}</span>
             ) : (
-              <span className="badge badge-soft-danger">
-                {val.order_status}
-              </span>
+              <span className="badge badge-soft-danger">{val.order_status}</span>
             )}
           </td>
           <td>{price}</td>
           <td>
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => handleShow(val.idorder)}
-            >
+            <button className="btn btn-primary btn-sm" onClick={() => handleShow(val.idorder)}>
               Lihat Detail
             </button>
           </td>
@@ -222,11 +203,7 @@ const UserTransactions = () => {
   const RenderDetailProduct = () => {
     if (detailTrans.length > 0) {
       console.log(detailTrans);
-      let date = detailTrans[0].order_date
-        .slice(0, 10)
-        .split("-")
-        .reverse()
-        .join("/");
+      let date = detailTrans[0].order_date.slice(0, 10).split("-").reverse().join("/");
       let totalPrice = 0;
       let totalRecipe = 0;
       for (let i = 0; i < detailTrans.length; i++) {
@@ -249,21 +226,13 @@ const UserTransactions = () => {
               <h6>Status:</h6>
               <span>
                 {detailTrans[0].order_status === "Menunggu Pengiriman" ? (
-                  <span className="badge badge-soft-primary">
-                    {detailTrans[0].order_status}
-                  </span>
+                  <span className="badge badge-soft-primary">{detailTrans[0].order_status}</span>
                 ) : detailTrans[0].order_status === "Validasi Resep" ? (
-                  <span className="badge badge-soft-warning">
-                    {detailTrans[0].order_status}
-                  </span>
+                  <span className="badge badge-soft-warning">{detailTrans[0].order_status}</span>
                 ) : detailTrans[0].order_status === "Order Selesai" ? (
-                  <span className="badge badge-soft-success">
-                    {detailTrans[0].order_status}
-                  </span>
+                  <span className="badge badge-soft-success">{detailTrans[0].order_status}</span>
                 ) : (
-                  <span className="badge badge-soft-danger">
-                    {detailTrans[0].order_status}
-                  </span>
+                  <span className="badge badge-soft-danger">{detailTrans[0].order_status}</span>
                 )}
               </span>
               <h6>Nama Costumer:</h6>
@@ -417,35 +386,21 @@ const UserTransactions = () => {
                   <div className="sub-header">
                     <div className="row g-3">
                       <div className="col-md-3">
-                        <h4 className="header-title mt-0 mb-1">
-                          User Transactions
-                        </h4>
-                        <p>
-                          Menampilkan Seluruh transaksi Users di Purwadhicare
-                        </p>
+                        <h4 className="header-title mt-0 mb-1">User Transactions</h4>
+                        <p>Menampilkan Seluruh transaksi Users di Purwadhicare</p>
                       </div>
                       <div className="col-md-2">
                         <label htmlFor="sortBy">Sort By</label>
-                        <select
-                          onChange={sortByInputHandler}
-                          name="sortBy"
-                          className="form-control"
-                        >
+                        <select onChange={sortByInputHandler} name="sortBy" className="form-control">
                           <option value="default">Default</option>
                           <option value="lowPrice">Lowest Price</option>
                           <option value="highPrice">Highest Price</option>
-                          <option value="Old Transaction">
-                            Old Transaction
-                          </option>
-                          <option value="New Transaction">
-                            New Transaction
-                          </option>
+                          <option value="Old Transaction">Old Transaction</option>
+                          <option value="New Transaction">New Transaction</option>
                         </select>
                       </div>
                       <div className="col-md-2">
-                        <label htmlFor="searchCostumerName">
-                          Costumer Name
-                        </label>
+                        <label htmlFor="searchCostumerName">Costumer Name</label>
                         <input
                           onChange={searchCostumerHandler}
                           name="searchCostumerName"
@@ -455,28 +410,13 @@ const UserTransactions = () => {
                       </div>
                       <div className="col-md-3">
                         <label htmlFor="searchStatus">Product Status</label>
-                        <select
-                          onChange={searchStatusHandler}
-                          name="searchStatus"
-                          className="form-control"
-                          type="text"
-                        >
+                        <select onChange={searchStatusHandler} name="searchStatus" className="form-control" type="text">
                           <option value="">All Status</option>
-                          <option defaultValue="Menunggu Pembayaran">
-                            Menunggu Pembayaran
-                          </option>
-                          <option defaultValue="Validasi Resep">
-                            Validasi Resep
-                          </option>
-                          <option defaultValue="Menunggu Pengiriman">
-                            Menunggu Pengiriman
-                          </option>
-                          <option defaultValue="Order Selesai">
-                            Order Selesai
-                          </option>
-                          <option defaultValue="Transaksi Dibatalkan">
-                            Transaksi Dibatalkan
-                          </option>
+                          <option defaultValue="Menunggu Pembayaran">Menunggu Pembayaran</option>
+                          <option defaultValue="Validasi Resep">Validasi Resep</option>
+                          <option defaultValue="Menunggu Pengiriman">Menunggu Pengiriman</option>
+                          <option defaultValue="Order Selesai">Order Selesai</option>
+                          <option defaultValue="Transaksi Dibatalkan">Transaksi Dibatalkan</option>
                         </select>
                       </div>
                       <div className="col-md-2">
@@ -508,10 +448,7 @@ const UserTransactions = () => {
                       {RenderDetailProduct()}
                     </table>
                     <ul className="pagination pagination-rounded">
-                      <li
-                        className="paginate_button page-item previous"
-                        id="basic-datatable_previous"
-                      >
+                      <li className="paginate_button page-item previous" id="basic-datatable_previous">
                         <button
                           disabled={page === 1}
                           aria-controls="basic-datatable"
@@ -526,10 +463,7 @@ const UserTransactions = () => {
                           Page {page} of {maxPage}{" "}
                         </span>
                       </li>
-                      <li
-                        className="paginate_button page-item next"
-                        id="basic-datatable_next"
-                      >
+                      <li className="paginate_button page-item next" id="basic-datatable_next">
                         <button
                           disabled={page === maxPage}
                           aria-controls="basic-datatable"
