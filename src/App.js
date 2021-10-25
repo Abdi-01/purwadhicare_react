@@ -73,18 +73,20 @@ function App() {
           <Route component={ResetPassword} path="/reset-password/:token" />
           <Route component={ForgetPassword} path="/forget-password" />
           <Route component={Verification} path="/authentication/:token" />
-          <Route component={Cart} path="/cart" />
           <Route component={OrderHistory} path="/order-history" />
           <Route component={ProductDetail} path="/productdetail/:idproduct" />
-          <Route component={Recipe} path="/recipe" />
           <Route component={ProductList} path="/productlist" />
-          // <Route component={UserTransactions} path="/user-transactions" />
-          // <Route component={ProductInventory} path="/product-inventory" />
           <PrivateRoute path="/history">
             <OrderList />
           </PrivateRoute>
           <PrivateRoute path="/profile">
             <Profile />
+          </PrivateRoute>
+          <PrivateRoute path="/recipe">
+            <Recipe />
+          </PrivateRoute>
+          <PrivateRoute path="/cart">
+            <Cart />
           </PrivateRoute>
           {user.role === "admin" ? (
             <>
@@ -101,7 +103,12 @@ function App() {
               <PrivateRoute exact path="/order-recipe">
                 <OrderRecipe />
               </PrivateRoute>
-
+              <PrivateRoute exact path="/recipe-list">
+                <RecipeList />
+              </PrivateRoute>
+              <PrivateRoute exact path="/revenue">
+                <Revenue />
+              </PrivateRoute>
               <PrivateRoute exact path="/user-transactions">
                 <UserTransactions />
               </PrivateRoute>

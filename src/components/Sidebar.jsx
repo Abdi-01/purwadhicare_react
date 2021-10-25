@@ -18,6 +18,12 @@ function Sidebar() {
                 </Link>
               </li>
               <li>
+                <Link to="/revenue">
+                  <FiMonitor />
+                  <span> Revenue</span>
+                </Link>
+              </li>
+              <li>
                 <Link to="/product-admin">
                   <FiPackage />
                   <span> Product </span>
@@ -40,6 +46,12 @@ function Sidebar() {
                 <Link to="/user-transactions">
                   <FiFileText />
                   <span> User Transactions</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/recipe-list">
+                  <FiDivide />
+                  <span> Recipe Transactions</span>
                 </Link>
               </li>
             </ul>

@@ -16,9 +16,9 @@ function FooterUser() {
                 <img src="/assets/images/logo.png" alt="" className="logo-dark mr-2" height={42} />
               </a>
               <p className="font-size-15 mt-4">
-                Shreyu makes it easier to build better websites with
-                <br /> great speed. Save hundreds of hours of design
-                <br /> and development by using it.
+                Purwadhicare menyediakan layanan jual beli
+                <br /> obat satuan maupun jual beli obat racikan.
+                <br /> Proses cepat dengan biaya pengiriman yang murah.
               </p>
             </div>
             <div className="col-lg-2"></div>
