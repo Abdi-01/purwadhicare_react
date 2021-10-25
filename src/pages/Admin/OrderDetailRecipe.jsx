@@ -16,7 +16,7 @@ const OrderDetailRecipe = () => {
   const [shipping, setShipping] = useState([]);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(0);
-  const [itemPerPage, setItemPerPage] = useState(7);
+  const [itemPerPage, setItemPerPage] = useState(5);
   const [show, setShow] = useState(false);
   const [courier, setCourier] = useState([]);
   const [totalPrice, setTotalPrice] = useState({
@@ -79,9 +79,9 @@ const OrderDetailRecipe = () => {
     var weight = 0.1;
     recipeProduct.forEach((val) => {
       if (val.unit === "mg") {
-        weight += parseInt(val.total_netto / 1000);
+        weight += parseFloat(val.total_netto / 1000);
       } else {
-        weight += parseInt(val.total_netto);
+        weight += parseFloat(val.total_netto);
       }
     });
     Axios.post(API_URL + "/ongkir/cost", {
@@ -134,10 +134,15 @@ const OrderDetailRecipe = () => {
     if (total_netto > prev_total_netto) {
       alert("Inputan melebihi netto saat ini");
     } else {
-      setRecipeProduct([...recipeProduct, { idorder, idproduct, total_netto, prev_total_netto, price, product_name, unit }]);
-      const totalHarga = parseInt(totalPrice.total + price);
-      setTotalPrice({ ...totalPrice, subTotal: parseInt(totalHarga), total: parseInt(totalHarga) });
-      closeBtnHandler();
+      const findId = recipeProduct.find((item) => item.idproduct === idproduct);
+      if (findId) {
+        alert("Maaf anda telah memasukan product yang sama, silahkan hapus lalu input ulang product");
+      } else {
+        setRecipeProduct([...recipeProduct, { idorder, idproduct, total_netto, prev_total_netto, price, product_name, unit }]);
+        const totalHarga = parseInt(totalPrice.total + price);
+        setTotalPrice({ ...totalPrice, subTotal: parseInt(totalHarga), total: parseInt(totalHarga) });
+        closeBtnHandler();
+      }
     }
   };
 
@@ -425,9 +430,13 @@ const OrderDetailRecipe = () => {
                   <p className="sub-header">
                     Menampilkan kesulurhan daftar order product berdasarkan resep racikan dokter yang belum diproses oleh admin.
                   </p>
-                  <button className="btn btn-success btn-sm" data-toggle="modal" data-target="#exampleModal">
-                    Lihat Resep
-                  </button>
+                  <img
+                    src={API_URL + shipping.recipe_image}
+                    className="img-fluid rounded float-left"
+                    style={{ cursor: "pointer" }}
+                    alt="resep"
+                    onClick={() => window.open(API_URL + shipping.recipe_image, "_blank")}
+                  />
                   <div className="table-responsive">
                     <table className="table m-0">
                       <thead>
@@ -476,35 +485,6 @@ const OrderDetailRecipe = () => {
               </div>
             </div>
             <div className="col-5">{renderShipping()}</div>
-          </div>
-        </div>
-      </div>
-      <div
-        className="modal fade"
-        id="exampleModal"
-        tabIndex={-1}
-        role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
-                Resep Dokter
-              </h5>
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div className="modal-body">
-              <img className="img-fluid mx-auto d-block" src={API_URL + shipping.recipe_image} alt="resep" />
-            </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-dismiss="modal">
-                Tutup
-              </button>
-            </div>
           </div>
         </div>
       </div>

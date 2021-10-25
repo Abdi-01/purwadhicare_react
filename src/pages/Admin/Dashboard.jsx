@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../constants/API";
 import { formatRupiah } from "../../helpers/formatRupiah";
+import ReactToExcel from "react-html-table-to-excel";
 
 function Dashboard() {
   const [report, setReport] = useState([]);
   const [card, setCard] = useState({});
-
-  console.log(card);
 
   useEffect(() => {
     fetchReport();
@@ -51,7 +50,7 @@ function Dashboard() {
   const renderReport = () => {
     return (
       <div className="table-responsive mt-4">
-        <table className="table table-hover table-nowrap mb-0">
+        <table className="table table-hover table-nowrap mb-0" id="table-to-xls">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -142,9 +141,13 @@ function Dashboard() {
             <div className="col-xl-12">
               <div className="card">
                 <div className="card-body">
-                  <button className="btn btn-primary btn-sm float-right">
-                    <i className="uil uil-export ml-1" /> Export Excel
-                  </button>
+                  <ReactToExcel
+                    className="btn btn-primary btn-sm float-right"
+                    table="table-to-xls"
+                    filename="SalesReport"
+                    sheet="report"
+                    buttonText="Export Excel"
+                  />
                   <h5 className="card-title mt-0 mb-0 header-title">Product Orders</h5>
                   {renderReport()}
                   {/* end table-responsive*/}

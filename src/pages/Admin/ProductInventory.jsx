@@ -11,6 +11,13 @@ const ProductInventory = () => {
   const [maxPage, setMaxPage] = useState(0);
   const [itemPerPage, setItemPerPage] = useState(7);
   const [show, setShow] = useState(false);
+
+  const [editProductList, setEditProductList] = useState({
+    idproduct: 0,
+    total_netto: 0,
+    stock_bottle: 0,
+    netto: 0,
+  });
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -21,6 +28,7 @@ const ProductInventory = () => {
   const fetchProduct = () => {
     Axios.get(API_URL + "/product/inventory")
       .then((res) => {
+        console.log(res.data[0]);
         setFilterProductList(res.data[0]);
         setMaxPage(Math.ceil(res.data[0].length / itemPerPage));
       })
@@ -65,13 +73,10 @@ const ProductInventory = () => {
   // };
 
   const saveStockBtnHandler = () => {
-    Axios.patch(
-      `http://localhost:2200/product/edit-product/${editProductList.idproduct}`,
-      {
-        //  huruf kalimat terakhir harus sama dengan input handler di bawah
-        total_netto: editProductList.stock_bottle * editProductList.netto,
-      }
-    )
+    Axios.patch(`http://localhost:2200/product/edit-product/${editProductList.idproduct}`, {
+      //  huruf kalimat terakhir harus sama dengan input handler di bawah
+      total_netto: editProductList.stock_bottle * editProductList.netto,
+    })
       .then(() => {
         alert(`Berhasil update stok`);
         handleClose();
@@ -114,7 +119,7 @@ const ProductInventory = () => {
             )}
           </td>
           <td>
-            <button className="btn btn-primary btn-sm" onClick={handleShow}>
+            <button className="btn btn-primary btn-sm" onClick={() => editToggle(val)}>
               Edit Stok
             </button>
           </td>
@@ -132,14 +137,8 @@ const ProductInventory = () => {
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-
               <Form.Label>Edit Jumlah Botol</Form.Label>
-              <Form.Control
-                onChange={inputHandlerEdit}
-                type="text"
-                name="stock_bottle"
-              />
-
+              <Form.Control onChange={inputHandlerEdit} type="text" name="stock_bottle" />
             </Form.Group>
           </Form>
         </Modal.Body>
