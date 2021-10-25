@@ -41,6 +41,55 @@ const ProductInventory = () => {
     }
   };
 
+  const editToggle = (editData) => {
+    setEditProductList({
+      idproduct: editData.idproduct,
+      total_netto: editData.total_netto,
+      stock_bottle: editData.stock_bottle,
+      netto: editData.netto,
+    });
+    handleShow();
+    console.log(editProductList);
+  };
+
+  const cancelEdit = () => {
+    setEditProductList({
+      ...editProductList,
+      idproduct: 0,
+    });
+    handleClose();
+  };
+
+  // const bottleToTotalNetto = (idproduct) => {
+  //   editProductList.jumlah_botol*editProductList.netto
+  // };
+
+  const saveStockBtnHandler = () => {
+    Axios.patch(
+      `http://localhost:2200/product/edit-product/${editProductList.idproduct}`,
+      {
+        //  huruf kalimat terakhir harus sama dengan input handler di bawah
+        total_netto: editProductList.stock_bottle * editProductList.netto,
+      }
+    )
+      .then(() => {
+        alert(`Berhasil update stok`);
+        handleClose();
+        fetchProduct();
+      })
+      .catch(() => {
+        alert("Terjadi kesalahan server");
+      });
+  };
+
+  const inputHandlerEdit = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    console.log(name, value);
+    // const { name, value } = event.target;
+    setEditProductList({ ...editProductList, [name]: value });
+  };
+
   const renderProduct = () => {
     const beginningIndex = (page - 1) * itemPerPage;
     let rawData = [...filterProductList];
@@ -83,16 +132,24 @@ const ProductInventory = () => {
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label>Input Netto</Form.Label>
-              <Form.Control type="text" name="productName" />
+
+              <Form.Label>Edit Jumlah Botol</Form.Label>
+              <Form.Control
+                onChange={inputHandlerEdit}
+                type="text"
+                name="stock_bottle"
+              />
+
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={cancelEdit}>
             Close
           </Button>
-          <Button variant="primary">Save Changes</Button>
+          <Button onClick={saveStockBtnHandler} variant="primary">
+            Save Changes
+          </Button>
         </Modal.Footer>
       </Modal>
     );
