@@ -12,18 +12,26 @@ function FooterUser() {
         <div className="container">
           <div className="row">
             <div className="col-lg-6">
-              <a href="index.html" className="navbar-brand mr-lg-5 font-size-22 font-weight-bold text-dark">
-                <img src="/assets/images/logo.png" alt="" className="logo-dark mr-2" height={42} />
+              <a
+                href="index.html"
+                className="navbar-brand mr-lg-5 font-size-22 font-weight-bold text-dark"
+              >
+                <img
+                  src="/assets/images/logo.png"
+                  alt=""
+                  className="logo-dark mr-2"
+                  height={42}
+                />
               </a>
               <p className="font-size-15 mt-4">
-                Shreyu makes it easier to build better websites with
-                <br /> great speed. Save hundreds of hours of design
-                <br /> and development by using it.
+                Purwadhicare menyediakan layanan jual beli
+                <br /> obat satuan maupun jual beli obat racikan.
+                <br /> Proses cepat dengan biaya pengiriman yang murah.
               </p>
             </div>
             <div className="col-lg-2"></div>
             <div className="col-lg-2"></div>
-            <div className="col-lg-2">
+            {/* <div className="col-lg-2">
               <h5>Help</h5>
               <ul className="list-unstyled pl-0 mb-0 mt-3">
                 <li className="mt-2">
@@ -37,12 +45,14 @@ function FooterUser() {
                   </a>
                 </li>
               </ul>
-            </div>
+            </div> */}
           </div>
           <div className="row">
             <div className="col-lg-12">
               <div className="mt-5">
-                <p className="mt-4 text-center mb-0">© 2021 Purwadhicare. All right reserved</p>
+                <p className="mt-4 text-center mb-0">
+                  © 2021 Purwadhicare. All right reserved
+                </p>
               </div>
             </div>
           </div>

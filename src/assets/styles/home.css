@@ -1,0 +1,125 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&amp;display=swap");
+body {
+  font-family: "Poppins", sans-serif;
+  color: #022334 !important;
+  font-size: 15px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.home {
+  min-height: 100vh;
+  padding: 100px 0 0 0;
+}
+.home-text h1 {
+  font-size: 45px;
+  font-weight: 700;
+  margin: 0 0 20px;
+}
+.home-text p {
+  font-size: 18px;
+  line-height: 28px;
+  margin: 0;
+  font-weight: 300;
+}
+.btn-1 {
+  background-color: aqua;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 30px;
+  color: azure;
+  font-size: 16px;
+  text-transform: capitalize;
+  transition: all 0.5 ease;
+  font-weight: 500;
+}
+.home .home-btn {
+  margin-top: 40px;
+}
+
+.features-box {
+  position: relative;
+  -webkit-box-shadow: 0px 3px 6px 1px rgba(38, 107, 193, 0.08);
+  box-shadow: 0px 3px 6px 1px rgba(38, 107, 193, 0.08);
+  padding: 35px 30px;
+}
+
+.features-box .features-title {
+  -webkit-text-stroke: 2px #4252f9;
+  color: #ffffff;
+  font-size: 40px;
+}
+
+.features-box .features-img img {
+  width: 50px;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  -webkit-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
+  background: #ffffff;
+  opacity: 0.1;
+}
+
+.title-sub-heading {
+  background: rgba(66, 82, 249, 0.2);
+  padding: 7px 22px;
+  display: inline-block;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.features-box:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.features-box:hover .features-img img {
+  left: 30px;
+  opacity: 1;
+}
+
+.title-heading {
+  font-size: 28px;
+}
+
+.title-desc {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.title-sub-heading {
+  background: rgba(66, 82, 249, 0.2);
+  padding: 7px 22px;
+  display: inline-block;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.search-form button {
+  position: relative;
+  top: 7px;
+  outline: none !important;
+  border-radius: 5px;
+  font-size: 15px;
+  padding: 9px 30px;
+}
+
+.search-form form {
+  position: relative;
+  max-width: 600px;
+  margin: 0px auto;
+}
+
+.pointer {
+  cursor: pointer;
+}

@@ -1,15 +1,25 @@
 import React from "react";
-import { FiShoppingCart, FiUser } from "react-icons/fi";
+import { FiShoppingCart, FiUser, FiLogOut } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../redux/actions";
+import { getCartData } from "../redux/actions/cart";
 
 function Navbar() {
+  const dispatch = useDispatch();
+  const userGlobal = useSelector((state) => state.user);
+  const cartGlobal = useSelector((state) => state.cart);
+  const { user } = userGlobal;
+
+  console.log(cartGlobal.cartList.length);
+
   return (
     <div>
       <div className="navbar navbar-expand flex-column flex-md-row navbar-custom">
         <div className="container-fluid">
           {/* LOGO */}
           <div className="navbar-brand mr-0 mr-md-2 logo">
-            <Link to="/">
+            <Link to={user.role === "admin" ? "/dashboard" : "/"}>
               <span className="logo-lg">
                 <img src="/assets/images/logo.png" alt="" height={45} />
               </span>
@@ -27,19 +37,44 @@ function Navbar() {
             </li>
           </ul>
           <ul className="navbar-nav flex-row ml-auto d-flex list-unstyled topnav-menu float-right mb-0">
-            <li className="dropdown notification-list" data-toggle="tooltip" data-placement="left" title="Settings">
-              <a href="disable" className="nav-link right-bar-toggle">
-                {/* <FiSettings /> */}
-                <FiShoppingCart />
-              </a>
-            </li>
-            <li className="dropdown notification-list" data-toggle="tooltip" data-placement="left" title="Settings">
-              <Link to="/profile">
+            {user.role === "admin" ? null : (
+              <>
+                <li>
+                  <Link to="/productlist">
+                    <div className="nav-link right-bar-toggle">Produk</div>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/history">
+                    <div className="nav-link right-bar-toggle">Transaksi</div>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/cart">
+                    <div className="nav-link right-bar-toggle">
+                      <FiShoppingCart /> {cartGlobal.cartList.length}
+                    </div>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/profile">
+                    <div className="nav-link right-bar-toggle">
+                      <FiUser />
+                    </div>
+                  </Link>
+                </li>
+              </>
+            )}
+
+            {user.iduser ? (
+              <li>
                 <div className="nav-link right-bar-toggle">
-                  <FiUser />
+                  <Link to="/login" onClick={() => dispatch(logout())}>
+                    <FiLogOut />
+                  </Link>
                 </div>
-              </Link>
-            </li>
+              </li>
+            ) : null}
           </ul>
         </div>
       </div>

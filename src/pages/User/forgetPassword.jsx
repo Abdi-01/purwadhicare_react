@@ -16,7 +16,7 @@ function ForgetPassword() {
     axios
       .post(API_URL + "/user/forgetPassword", { email })
       .then((res) => {
-        Swal.fire("Reset Password!", "Silahkan Cek Email Anda", "success");
+        Swal.fire("Reset Password!", "reset Password berhasil!", "success");
         console.log("success");
       })
       .catch((err) => {
