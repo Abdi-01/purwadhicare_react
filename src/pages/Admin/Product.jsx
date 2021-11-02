@@ -3,7 +3,7 @@ import Axios from "axios";
 import "../../assets/styles/admin.css";
 import { FiPlus } from "react-icons/fi";
 import { Button, Modal, Form } from "react-bootstrap";
-
+import { API_URL } from '../../constants/API'
 function Admin() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -36,7 +36,7 @@ function Admin() {
   console.log("perpage", editProductList.itemPerPage);
   const fetchProducts = () => {
     // yang mau dipanggil
-    Axios.get("http://localhost:2200/product/get")
+    Axios.get(API_URL + "/product/get")
       .then((result) => {
         console.log(result.data.length);
         setProductList(result.data);
@@ -61,7 +61,7 @@ function Admin() {
   };
 
   const saveBtnHandler = () => {
-    Axios.patch(`http://localhost:2200/product/edit-product/${editProductList.idproduct}`, {
+    Axios.patch(`${API_URL}/product/edit-product/${editProductList.idproduct}`, {
       //  huruf kalimat terakhir harus sama dengan input handler di bawah
       category: editProductList.category,
       product_name: editProductList.productName,
@@ -102,7 +102,7 @@ function Admin() {
   const deleteBtnHandler = (deleteId) => {
     const confirmDelete = window.confirm("Sure want to delete?");
     if (confirmDelete) {
-      Axios.delete(`http://localhost:2200/product/delete-product/${deleteId}`)
+      Axios.delete(`${API_URL}/product/delete-product/${deleteId}`)
         .then(() => {
           fetchProducts();
         })
@@ -229,7 +229,7 @@ function Admin() {
   };
 
   const addNewProduct = () => {
-    Axios.post("http://localhost:2200/product/add-product", {
+    Axios.post(API_URL + "/product/add-product", {
       category: addProductList.category,
       product_name: addProductList.productName,
       description: addProductList.description,

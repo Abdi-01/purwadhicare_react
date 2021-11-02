@@ -1,8 +1,9 @@
 import Axios from "axios";
+import { API_URL } from "../../constants/API";
 
 export const getCartData = (iduser) => {
   return (dispatch) => {
-    Axios.get(`http://localhost:2200/cart/get?iduser=${iduser}`)
+    Axios.get(`${API_URL}/cart/get?iduser=${iduser}`)
       .then((result) => {
         // dispatch ke cart reducer dengan payload = result.data
         // agar payload bisa masuk ke dalam cartList

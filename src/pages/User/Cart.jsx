@@ -60,7 +60,7 @@ function Cart() {
   }, [totalPrice.ongkir]);
 
   const fetchCart = () => {
-    Axios.get(`http://localhost:2200/cart/get?iduser=${globalUser.user.iduser}`)
+    Axios.get(`${API_URL}/cart/get?iduser=${globalUser.user.iduser}`)
       .then((result) => {
         setCart(result.data);
       })
@@ -138,7 +138,7 @@ function Cart() {
   };
 
   const deleteCartHandler = (idcart) => {
-    Axios.delete(`http://localhost:2200/cart/delete-cart/${idcart}`)
+    Axios.delete(`${API_URL}/cart/delete-cart/${idcart}`)
       .then(() => {
         fetchCart();
       })

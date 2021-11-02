@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import { propTypes } from "react-bootstrap/esm/Image";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
+import { API_URL } from "../../constants/API";
 import { getCartData } from "../../redux/actions";
 
 function ProductDetail(props) {
@@ -17,7 +18,7 @@ function ProductDetail(props) {
 
   const fetchProductData = () => {
     // alert(props.match.params.idproduct)
-    Axios.get(`http://localhost:2200/product/get`, {
+    Axios.get(`${API_URL}/product/get`, {
       params: {
         idproduct: props.match.params.idproduct,
       },
@@ -46,7 +47,7 @@ function ProductDetail(props) {
 
   const addToCartHandler = () => {
     // cek apa user sudah memiliki barang di cart
-    Axios.get(`http://localhost:2200/cart/get`, {
+    Axios.get(`${API_URL}/cart/get`, {
       params: {
         iduser: globalUser.user.iduser,
         idproduct: productData.idproduct,
@@ -56,7 +57,7 @@ function ProductDetail(props) {
       console.log(result.data.length);
       if (result.data.length) {
         Axios.patch(
-          `http://localhost:2200/cart/edit-cart/${result.data[0].idcart}`,
+          `${API_URL}/cart/edit-cart/${result.data[0].idcart}`,
           {
             quantity: quantity + result.data[0].quantity,
           }
@@ -70,7 +71,7 @@ function ProductDetail(props) {
           });
       } else {
         // jika barang belum ada di cart
-        Axios.post("http://localhost:2200/cart/add-cart", {
+        Axios.post(API_URL + "/cart/add-cart", {
           iduser: globalUser.user.iduser,
           idproduct: productData.idproduct,
           quantity: quantity,

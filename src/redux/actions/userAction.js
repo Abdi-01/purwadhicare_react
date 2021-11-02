@@ -35,7 +35,7 @@ export const login = (data, history) => async (dispatch) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user_data", JSON.stringify(dataLogin));
     dispatch({ type: "LOGIN", payload: dataLogin });
-    const resultCart = await Axios.get(`http://localhost:2200/cart/get?iduser=${dataLogin.iduser}`);
+    const resultCart = await Axios.get(`${API_URL}/cart/get?iduser=${dataLogin.iduser}`);
     dispatch({
         type: "FILL_CART",
         payload: resultCart.data,

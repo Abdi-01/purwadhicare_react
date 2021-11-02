@@ -3,6 +3,7 @@ import ProductCard from "../../components/ProductCard";
 // utk global state instal redux, redux-thunk, react-redux
 import Axios from "axios";
 import { Link } from "react-router-dom";
+import { API_URL } from "../../constants/API";
 
 function ProductList() {
   const [productList, setProductList] = useState([]);
@@ -21,7 +22,7 @@ function ProductList() {
 
   const fetchProducts = () => {
     // yang mau dipanggil
-    Axios.get("http://localhost:2200/product/get")
+    Axios.get(API_URL+ "/product/get")
       .then((result) => {
         setProductList(result.data);
         setFilterProductList(result.data);

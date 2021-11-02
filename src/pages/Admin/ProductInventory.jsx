@@ -73,7 +73,7 @@ const ProductInventory = () => {
   // };
 
   const saveStockBtnHandler = () => {
-    Axios.patch(`http://localhost:2200/product/edit-product/${editProductList.idproduct}`, {
+    Axios.patch(`${API_URL}/product/edit-product/${editProductList.idproduct}`, {
       //  huruf kalimat terakhir harus sama dengan input handler di bawah
       total_netto: editProductList.stock_bottle * editProductList.netto,
     })

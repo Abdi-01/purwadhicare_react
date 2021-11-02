@@ -3,6 +3,7 @@ import Axios from "axios";
 
 // utk global state instal redux, redux-thunk, react-redux
 import { useSelector } from "react-redux";
+import { API_URL } from "../../constants/API";
 
 function Revenue() {
   const [allRevenue, setAllRevenue] = useState(0);
@@ -11,7 +12,7 @@ function Revenue() {
   const [endDate, setEndDate] = useState("")
 
   const fetchAllRevenue = () => {
-    Axios.get(`http://localhost:2200/transaction/all-revenue`)
+    Axios.get(`${API_URL}/transaction/all-revenue`)
       .then((result) => {
         console.log(result.data);
         setAllRevenue(result.data[0].allrevenue);
@@ -39,7 +40,7 @@ function Revenue() {
    const selectRevenueByDate = (fromDate, lastDate) => {
     console.log(fromDate, lastDate)
     // http://localhost:2200/transaction/selected-revenue?fromDate=2020-9-01&lastDate=2020-11-31 
-    Axios.get(`http://localhost:2200/transaction/selected-revenue?fromDate=${fromDate}&lastDate=${lastDate}`)
+    Axios.get(`${API_URL}/transaction/selected-revenue?fromDate=${fromDate}&lastDate=${lastDate}`)
       .then((result) => {
         console.log(result.data);
         setSelectedRevenue(result.data);

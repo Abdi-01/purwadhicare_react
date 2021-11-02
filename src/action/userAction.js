@@ -1,5 +1,5 @@
 import Axios from "axios";
-
+import { API_URL } from '../constants/API'
 // Action Untuk Fitur Register
 export const register = (data, setToLogin) => {
   return async (dispatch) => {
@@ -7,7 +7,7 @@ export const register = (data, setToLogin) => {
     dispatch({ type: "LOADING", payload: true });
     dispatch({ type: "ERROR", payload: [] });
     try {
-      await Axios.put("http://localhost:2200/user/register", data);
+      await Axios.put(API_URL + "/user/register", data);
       {
         setToLogin(true);
       }
@@ -26,7 +26,7 @@ export const register = (data, setToLogin) => {
 export const login = (data, history) => async (dispatch) => {
   dispatch({ type: "LOADING", payload: true });
   try {
-    const result = await Axios.post("http://localhost:2200/user/login", data);
+    const result = await Axios.post(API_URL + "/user/login", data);
     localStorage.setItem("token", result.data.token);
     dispatch({ type: "LOGIN", payload: result.data.user });
     // console.log(result.data.dataLogin);

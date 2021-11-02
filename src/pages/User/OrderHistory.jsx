@@ -1,6 +1,7 @@
 import Axios from "axios";
 import { useSelector } from "react-redux";
 import React, { useState, useEffect } from "react";
+import { API_URL } from "../../constants/API";
 
 function History() {
   const globalUser = useSelector((state) => state.user);
@@ -10,7 +11,7 @@ function History() {
 
   const fetchTransactions = () => {
     Axios.get(
-      `http://localhost:2200/transaction/get-history?iduser=${globalUser.user.iduser}`
+      `${API_URL}/transaction/get-history?iduser=${globalUser.user.iduser}`
     )
       .then((result) => {
         console.log(result.data);
@@ -56,7 +57,7 @@ function History() {
   };
 
   const seeDetailsBtnHandler = (idorder) => {
-    Axios.get(`http://localhost:2200/transaction/get-detail?idorder=${idorder}`)
+    Axios.get(`${API_URL}/transaction/get-detail?idorder=${idorder}`)
       .then((result) => {
         console.log(result.data);
         setTransactionDetail(result.data);

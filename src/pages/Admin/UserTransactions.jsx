@@ -67,14 +67,14 @@ const UserTransactions = () => {
 
   const rejectTransactionBtnHandler = (e, idorder) => {
     e.preventDefault();
-    Axios.patch(`http://localhost:2200/transaction/reject-transaction/${idorder}`)
+    Axios.patch(`${API_URL}/transaction/reject-transaction/${idorder}`)
       .then(() => {
         //editToggle(val);
         // cancelQuantity();
         fetchProduct();
         fetchTransaction(idorder);
 
-        Axios.patch(`http://localhost:2200/transaction/cancel-quantity`, {
+        Axios.patch(`${API_URL}/transaction/cancel-quantity`, {
           detailTrans,
         })
           .then(() =>
@@ -92,7 +92,7 @@ const UserTransactions = () => {
   };
 
   const confirmTransactionBtnHandler = (idorder) => {
-    Axios.patch(`http://localhost:2200/transaction/confirm-transaction/${idorder}`)
+    Axios.patch(`${API_URL}/transaction/confirm-transaction/${idorder}`)
       .then(() => {
         fetchProduct();
         fetchTransaction(idorder);
